@@ -24,6 +24,9 @@ jobs:
         - 'pypy-3.9'
 
     steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v3
+
     - name: 📥 Install Poetry
       run: pipx install poetry
 
@@ -32,9 +35,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: poetry
-
-    - name: 📥 Checkout
-      uses: actions/checkout@v3
 
     - name: 🐍 Set up environment
       run: |
