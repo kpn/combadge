@@ -45,6 +45,7 @@ jobs:
       run: make
       env:
         PYTEST_ADDOPTS: "--color=yes"
+        MYPY_FORCE_COLOR: 1
 
     - name: 📤 Codecov
       uses: codecov/codecov-action@v3
