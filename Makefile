@@ -6,7 +6,7 @@ check: lint unittests
 
 .PHONY: install
 install:
-	poetry install --with dev
+	poetry install --all-extras --with dev
 
 .PHONY: lint
 lint: lint/black lint/flake8 lint/isort lint/mypy
