@@ -10,7 +10,6 @@ on:
 
 env:
   FORCE_COLOR: 1
-  PYTEST_ADDOPTS: "--color=yes"
 
 jobs:
   check:
@@ -33,6 +32,8 @@ jobs:
 
     - name: 📥 Install Poetry
       run: pipx install poetry
+      env:
+        TERM: ANSI
 
     - name: 🐍 Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -40,13 +41,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: poetry
 
-    - name: 🐍 Set up environment
-      run: |
-        pip install 'poetry>=1.3.2,<2.0.0'
-        make install
-
     - name: 🧪 Make
       run: make
+      env:
+        PYTEST_ADDOPTS: "--color=yes"
 
     - name: 📤 Codecov
       uses: codecov/codecov-action@v3
