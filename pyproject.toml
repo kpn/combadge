@@ -1,13 +1,53 @@
 [tool.poetry]
 name = "combadge"
 version = "0.1.0"
-description = ""
+description = "Generic API client based on Pydantic"
 authors = ["Pavel Perestoronin <pavel.perestoronin@kpn.com>"]
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.11"
+[tool.black]
+line-length = 120
+target_version = ["py38", "py39", "py310", "py311"]
+
+[tool.isort]
+combine_as_imports = true
+default_section = "THIRDPARTY"
+force_grid_wrap = 0
+from_first = false
+include_trailing_comma = true
+known_first_party = ["cachetory", "tests"]
+length_sort = false
+line_length = 120
+multi_line_output = 3
+order_by_type = true
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+use_parentheses = true
+
+[tool.mypy]
+allow_untyped_globals = true
+ignore_missing_imports = true
+pretty = true
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*"]
+relative_files = true
+source = ["cachetory"]
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+typing-extensions = "^4.4.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+black = "^22.12.0"
+isort = "^5.11.4"
+pytest = "^7.2.1"
+mypy = { git = "git@github.com:python/mypy.git", rev = "757e0d4894d68b43810d5723ad496c268a850468" }
