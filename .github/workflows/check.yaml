@@ -44,9 +44,8 @@ jobs:
     - name: 🧪 Make
       run: make
 
-    - name: 📤 Upload coverage
+    - name: 📤 Codecov
       uses: codecov/codecov-action@v3
-      if: matrix.python-version == '3.10'
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         env_vars: PYTHON
