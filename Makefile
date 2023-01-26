@@ -40,7 +40,7 @@ format/black:
 
 .PHONY: unittests
 unittests:
-	poetry run pytest tests
+	poetry run pytest --cov=./ --cov-report=xml tests
 
 .PHONY: build
 build:
