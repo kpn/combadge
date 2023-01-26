@@ -32,8 +32,6 @@ jobs:
 
     - name: 📥 Install Poetry
       run: pipx install poetry
-      env:
-        TERM: ANSI
 
     - name: 🐍 Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -43,9 +41,6 @@ jobs:
 
     - name: 🧪 Make
       run: make
-      env:
-        PYTEST_ADDOPTS: "--color=yes"
-        MYPY_FORCE_COLOR: 1
 
     - name: 📤 Codecov
       uses: codecov/codecov-action@v3
