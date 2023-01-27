@@ -67,7 +67,7 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
 
         fault_type = BaseSoapFault
 
-        response_type = ...
+        response_type: Any = ...
         for return_type in return_types:
             if isinstance(return_type, type) and issubclass(return_type, BaseSoapFault):
                 fault_type = Union[return_type, fault_type]  # type: ignore
