@@ -39,10 +39,30 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: poetry
 
-    - name: 🧪 Make
-      run: make
+    - name: 📥 Install the package
+      run: make install
+
+    - name: "🪄 Linter: Black"
+      run: make lint/black
+
+    - name: "🪄 Linter: Ruff"
+      if: success() || failure()
+      run: make lint/ruff
+
+    - name: "🪄 Linter: mypy"
+      if: success() || failure()
+      run: make lint/mypy
+
+    - name: 🧪 Tests
+      if: success() || failure()
+      run: make unittests
+
+    - name: 📦 Build package
+      if: success() || failure()
+      run: make build
 
     - name: 📤 Codecov
+      if: success() || failure()
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}

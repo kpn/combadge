@@ -1,11 +1,10 @@
 from abc import abstractmethod
 from typing import Any
-from unittest.mock import MagicMock
 
 from typing_extensions import Protocol
 
-from combadge.binder import _enumerate_methods, bind
-from combadge.interfaces import SupportsBindMethod, SupportsService
+from combadge.binder import BaseBoundService, _enumerate_methods, _update_bound_service
+from combadge.interfaces import SupportsService
 
 
 def test_enumerate_bindable_methods() -> None:
@@ -34,27 +33,24 @@ def test_enumerate_private_methods() -> None:
     """Test that «private» methods are ignored."""
 
     class TestService(SupportsService):
-        def _ignored(cls) -> None:
+        def _ignored(self) -> None:
             raise NotImplementedError
 
     assert list(_enumerate_methods(TestService)) == []
 
 
-def test_bind() -> None:
+def test_update_bound_service() -> None:
     class TestProtocol(Protocol):
-        @abstractmethod
         def call(self, request: Any) -> None:
             """Call the test protocol method."""
+
+    class BoundService(BaseBoundService, TestProtocol):
+        def call(self, request: Any) -> None:
             raise NotImplementedError
 
-    class Binder(SupportsBindMethod):
-        def bind_method(self, _request_type: Any, _response_type: Any, _method: Any) -> MagicMock:
-            return MagicMock(name="resolved_method")
+    _update_bound_service(BoundService, TestProtocol)
 
-    service = bind(TestProtocol, Binder())
-
-    assert type(service).__name__ == "BoundService[TestProtocol]"
-    assert type(service).__qualname__ == "bind.<locals>.BoundService[test_bind.<locals>.TestProtocol]"
-
-    assert isinstance(service.call, MagicMock)
-    assert service.call.__doc__ == TestProtocol.call.__doc__
+    assert BoundService.__name__ == "BoundService[TestProtocol]"
+    assert BoundService.__qualname__ == (
+        "test_update_bound_service.<locals>.BoundService[test_update_bound_service.<locals>.TestProtocol]"
+    )
