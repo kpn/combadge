@@ -81,4 +81,8 @@ service = SupportsNumberConversion.bind(ZeepBackend(client.service))
 ```python
 response = service.number_to_words(NumberToWordsRequest(number=42))
 assert response.unwrap().__root__ == "forty two "
+
+response = service.number_to_words(NumberToWordsRequest(number=-1))
+with raises(NumberTooLargeResponse.Error):
+    response.raise_for_result()
 ```
