@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterable, Union
 
 from pydantic import BaseModel, Field
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 from typing_extensions import Annotated, Literal
 from zeep import AsyncClient, Client
 
@@ -45,7 +45,7 @@ class SupportsNumberConversionAsync(SupportsService):
         raise NotImplementedError
 
 
-@fixture()
+@fixture
 def number_conversion_service() -> Iterable[SupportsNumberConversion]:
     with Client(
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
@@ -54,7 +54,7 @@ def number_conversion_service() -> Iterable[SupportsNumberConversion]:
         yield SupportsNumberConversion.bind(ZeepBackend(client.service))
 
 
-@fixture()
+@fixture
 def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]:
     with AsyncClient(
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
@@ -67,6 +67,14 @@ def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]
 def test_happy_path_scalar_response(number_conversion_service: SupportsNumberConversion) -> None:
     response = number_conversion_service.number_to_words(NumberToWordsRequest(number=42))
     assert response.unwrap().__root__ == "forty two "
+
+
+@mark.vcr(decode_compressed_response=True)
+def test_sad_path_scalar_response(number_conversion_service: SupportsNumberConversion) -> None:
+    response = number_conversion_service.number_to_words(NumberToWordsRequest(number=-1))
+
+    with raises(NumberTooLargeResponse.Error):
+        response.raise_for_result()
 
 
 @mark.vcr
