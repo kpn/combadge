@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, Awaitable, Type, TypeVar, Union
+from typing import Any, Awaitable, TypeVar, Union
 
 from pydantic import BaseModel
 from typing_extensions import Protocol, Self
@@ -10,15 +10,17 @@ from combadge.binder import BaseBoundService, bind
 from combadge.response import ResponseT, ResponseT_co
 
 
-class ServiceProtocol(Protocol):
+class SupportsService(Protocol):
     """
     Convenience protocol that forwards the `bind` call.
+
     You can still inherit from `Protocol` directly and call `bind` manually.
     """
 
     @classmethod
-    def bind(cls, backend: SupportsBindMethod) -> Self:
-        return bind(cls, backend)
+    def bind(cls, to_backend: SupportsBindMethod) -> Self:
+        """Bind the protocol to the specified backend."""
+        return bind(cls, to_backend)
 
 
 ServiceProtocolT = TypeVar("ServiceProtocolT")
@@ -28,11 +30,13 @@ RequestT_contra = TypeVar("RequestT_contra", bound=BaseModel, contravariant=True
 
 
 class SupportsBindMethod(Protocol):
+    """Supports binding a method to the current instance."""
+
     @abstractmethod
     def bind_method(
         self,
-        request_type: Type[RequestT],
-        response_type: Type[ResponseT],
+        request_type: type[RequestT],
+        response_type: type[ResponseT],
         method: Any,
     ) -> SupportsMethodCall[RequestT, ResponseT]:
         """
@@ -59,6 +63,8 @@ class SupportsMethodCall(Protocol[RequestT_contra, ResponseT_co]):
         __request: RequestT_contra,
     ) -> Union[ResponseT_co, Awaitable[ResponseT_co]]:
         """
+        Call the service method.
+
         Args:
             __service: bound service instance, usually not needed
             __request: request model

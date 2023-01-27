@@ -50,6 +50,54 @@ allow_untyped_globals = true
 ignore_missing_imports = true
 pretty = true
 
+[tool.ruff]
+line-length = 120
+target-version = "py38"
+select = [
+    "A",
+    "ANN",
+    "B",
+    "C4",
+    "COM",
+    "D",
+    "E",
+    "F",
+    "I",
+    "N",
+    "PIE",
+    "PT",
+    "PTH",
+    "RET",
+    "SIM",
+    "T20",
+    "TRY",
+    "UP",
+    "W",
+    "YTT",
+]
+ignore = [
+    "ANN101",
+    "ANN102",
+    "ANN401",
+    "D100",
+    "D103",
+    "D104",
+    "D202",
+    "D203",
+    "D212",  # alternative of D213
+    "D406",
+    "D407",
+    "RET505",
+    "TRY003",
+    "UP006",  # 3.9
+    "UP007",  # 3.10
+    "UP033",  # 3.9
+]
+unfixable = ["B"]
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+
 [tool.coverage.run]
 branch = true
 omit = ["tests/*"]
@@ -82,3 +130,4 @@ mypy = { git = "https://github.com/python/mypy.git", rev = "757e0d4894d68b43810d
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
 types-requests = "^2.28.11.8"
+ruff = "^0.0.236"

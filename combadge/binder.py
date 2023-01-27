@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from functools import update_wrapper
-from typing import TYPE_CHECKING, Any, Iterable, Tuple, Type, get_type_hints
+from typing import TYPE_CHECKING, Any, Iterable, Type, get_type_hints
 
 from pydantic import BaseModel
 
@@ -19,11 +19,12 @@ class BaseBoundService:
 def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod) -> "ServiceProtocolT":
     """
     Hereinafter «binding» is constructing a callable service instance from the protocol specification.
+
     This function returns an instance which implements the specified protocol
     by calling the specified backend.
 
     Args:
-        from_protocol: service protocol description, used to extract request and response types etc
+        from_protocol: service protocol description, used to extract request and response types etc.
         to_backend: backend which should perform the service requests
     """
 
@@ -45,8 +46,8 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
     return BoundService()
 
 
-def enumerate_methods(of_protocol: Type) -> Iterable[Tuple[str, Any]]:
-    """Enumerates the service protocol methods."""
+def enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
+    """Enumerate the service protocol methods."""
     for name, method in inspect.getmembers(of_protocol, callable):
         if name.startswith("_"):
             continue
@@ -56,8 +57,8 @@ def enumerate_methods(of_protocol: Type) -> Iterable[Tuple[str, Any]]:
         yield name, method
 
 
-def extract_types(method: Any) -> Tuple[Type["RequestT"], Type["ResponseT"]]:
-    """Extracts request and response types from the method."""
+def extract_types(method: Any) -> tuple[type["RequestT"], type["ResponseT"]]:
+    """Extract request and response types from the method."""
     type_hints = get_type_hints(method)
     response_type = type_hints.pop("return", SuccessfulResponse)
     type_hints.pop("self", None)

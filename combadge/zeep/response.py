@@ -1,8 +1,6 @@
 """Response extensions for SOAP."""
 
-from typing import TypeVar
-
-from typing_extensions import NoReturn
+from typing import NoReturn, TypeVar
 
 from combadge.response import FaultyResponse
 
@@ -24,7 +22,7 @@ class BaseSoapFault(FaultyResponse):
     message: str
 
     def raise_for_result(self) -> NoReturn:
-        """Always raises itself."""
+        """Raise itself always."""
         raise self.Error(f"{self.code}: {self.message}")
 
 

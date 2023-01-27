@@ -3,20 +3,18 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, Union
+from typing import Any, TypeVar, Union
 
 from pydantic import BaseModel
 from typing_extensions import NoReturn, Self
 
 
 class BaseResponse(ABC, BaseModel):
-    """
-    Base model representing any possible service response.
-    """
+    """Base model representing any possible service response."""
 
     @abstractmethod
     def raise_for_result(self) -> Union[None, NoReturn]:
-        """Raises an exception if the service call has failed."""
+        """Raise an exception if the service call has failed."""
         raise NotImplementedError
 
     @abstractmethod
@@ -34,10 +32,14 @@ class SuccessfulResponse(BaseResponse):
     """
 
     def raise_for_result(self) -> None:
-        """This call is a no-op since the response is successful."""
+        """
+        Do nothing.
+
+        This call is a no-op since the response is successful.
+        """
 
     def unwrap(self) -> Self:
-        """Simply returns itself since there's no error."""
+        """Return itself since there's no error."""
         return self
 
 
@@ -60,8 +62,8 @@ class FaultyResponse(BaseResponse, ABC):
         that is available via the class attribute and raised by `raise_for_result()`.
         """
 
-    def __init_subclass__(cls, **kwargs) -> None:
-        """Builds the derived exception class."""
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        """Build the derived exception class."""
 
         error_bases = tuple(base.Error for base in cls.__bases__ if issubclass(base, FaultyResponse))
 
@@ -79,11 +81,11 @@ class FaultyResponse(BaseResponse, ABC):
         cls.Error = DerivedException  # type: ignore
 
     def raise_for_result(self) -> NoReturn:
-        """Always raises the derived exception."""
+        """Raise the derived exception."""
         raise self.Error
 
     def unwrap(self) -> NoReturn:
-        """Always raises the derived exception."""
+        """Raise the derived exception."""
         raise self.Error
 
 

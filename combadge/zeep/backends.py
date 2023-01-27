@@ -3,7 +3,8 @@ from os import PathLike, fspath
 from typing import Any, Generic, List, Optional, Tuple, Type, TypeVar, Union, cast
 
 from pydantic import parse_obj_as
-from typing_extensions import get_args as get_type_args, get_origin as get_type_origin
+from typing_extensions import get_args as get_type_args
+from typing_extensions import get_origin as get_type_origin
 from zeep.helpers import serialize_object
 
 from combadge.binder import BaseBoundService
@@ -50,7 +51,8 @@ class BaseZeepBackend(ABC, Generic[AuthT, ServiceProxyT, OperationProxyT]):
         verify_ssl: bool = True,
         cert: Optional[Tuple[str, str]] = None,
         plugins: Optional[List[Plugin]] = None,
-    ):
+    ) -> None:
+        """Instantiate the backend."""
         self._service = self._create_service(
             wsdl_path=fspath(wsdl_path),
             port=port,
@@ -73,7 +75,7 @@ class BaseZeepBackend(ABC, Generic[AuthT, ServiceProxyT, OperationProxyT]):
         timeout: Optional[int],
         plugins: Optional[List[Plugin]],
     ) -> ServiceProxyT:
-        """Factory method: delegates a service instantiation specific to the sync/async client."""
+        """Instantiate a service specific to the sync/async client."""
         raise NotImplementedError
 
     @staticmethod
@@ -86,10 +88,13 @@ class BaseZeepBackend(ABC, Generic[AuthT, ServiceProxyT, OperationProxyT]):
     @staticmethod
     def _split_response_type(response_type: Any) -> Tuple[Any, Any]:
         """
-        SOAP faults are handled separately.
-        This functions splits the response type into non-faults and faults.
+        Split the response type into non-faults and faults.
+
+        SOAP faults are handled separately, so we need to extract them from the annotated
+        response type.
         """
-        if get_type_origin(response_type) is Union:
+
+        if get_type_origin(response_type) is Union:  # noqa: SIM108
             return_types = get_type_args(response_type)
         else:
             return_types = (response_type,)
@@ -118,12 +123,12 @@ class BaseZeepBackend(ABC, Generic[AuthT, ServiceProxyT, OperationProxyT]):
 
     @staticmethod
     def _parse_response(value: Any, response_type: Type[ResponseT]) -> ResponseT:
-        """Parses the response value using the generic response types."""
+        """Parse the response value using the generic response types."""
         return parse_obj_as(response_type, serialize_object(value, dict))
 
     @staticmethod
     def _parse_soap_fault(exception: Fault, fault_type: Type[SoapFaultT]) -> SoapFaultT:
-        """Parses the SOAP fault."""
+        """Parse the SOAP fault."""
         return parse_obj_as(fault_type, exception.__dict__)
 
 
@@ -173,13 +178,11 @@ class ZeepBackend(
 
         if port:
             binding_name, address = port
-            service = client.create_service(binding_name, address)
+            return client.create_service(binding_name, address)
         else:
-            service = client.service
+            return client.service
 
-        return service
-
-    def bind_method(
+    def bind_method(  # noqa: D102
         self,
         _request_type: Type[RequestT],
         response_type: Type[ResponseT],
@@ -239,13 +242,11 @@ if httpx is not None:
 
             if port:
                 binding_name, address = port
-                service = client.create_service(binding_name, address)
+                return client.create_service(binding_name, address)
             else:
-                service = client.service
+                return client.service
 
-            return service
-
-        def bind_method(
+        def bind_method(  # noqa: D102
             self,
             _request_type: Type[RequestT],
             response_type: Type[ResponseT],

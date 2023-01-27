@@ -6,7 +6,7 @@ T = TypeVar("T")
 
 
 def soap_name(name: str) -> Callable[[T], T]:
-    """Assigns the operation name to the method."""
+    """Assign the operation name to the method."""
 
     def wrap(wrapped: T) -> T:
         wrapped.__soap_operation_name__ = name  # type: ignore
