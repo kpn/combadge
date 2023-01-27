@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, TypeVar, Union
+from typing import Any, Type, TypeVar, Union
 
 from pydantic import BaseModel
 from typing_extensions import NoReturn, Self
@@ -15,6 +15,11 @@ class BaseResponse(ABC, BaseModel):
     @abstractmethod
     def raise_for_result(self) -> Union[None, NoReturn]:
         """Raise an exception if the service call has failed."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def expect(self, exception_type: Type[BaseException], *args: Any) -> Union[None, NoReturn]:
+        """Raise the specified exception if the service call has failed."""
         raise NotImplementedError
 
     @abstractmethod
@@ -37,6 +42,9 @@ class SuccessfulResponse(BaseResponse):
 
         This call is a no-op since the response is successful.
         """
+
+    def expect(self, _exception_type: Type[BaseException], *_args: Any) -> Union[None, NoReturn]:
+        """Do nothing."""
 
     def unwrap(self) -> Self:
         """Return itself since there's no error."""
@@ -83,6 +91,10 @@ class FaultyResponse(BaseResponse, ABC):
     def raise_for_result(self) -> NoReturn:
         """Raise the derived exception."""
         raise self.Error
+
+    def expect(self, exception_type: Type[BaseException], *args: Any) -> Union[None, NoReturn]:
+        """Raise the specified exception with the derived exception context."""
+        raise exception_type(*args) from self.Error
 
     def unwrap(self) -> NoReturn:
         """Raise the derived exception."""

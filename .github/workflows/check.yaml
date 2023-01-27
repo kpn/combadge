@@ -49,6 +49,13 @@ jobs:
       if: success() || failure()
       run: make lint/ruff
 
+    - name: "🗃 Cache: mypy"
+      if: success() || failure()
+      uses: actions/cache@v3
+      with:
+        path: ".mypy_cache"
+        key: ${{ runner.os }}-${{ matrix.python-version }}-mypy
+
     - name: "🪄 Linter: mypy"
       if: success() || failure()
       run: make lint/mypy
