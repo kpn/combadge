@@ -12,7 +12,7 @@ from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, S
 from combadge.binder import BaseBoundService
 from combadge.interfaces import RequestT, SupportsBindMethod, SupportsMethodCall
 from combadge.response import ResponseT, SuccessfulResponse
-from combadge.support.zeep.response import BaseSoapFault, SoapFaultT
+from combadge.support.soap.response import BaseSoapFault, SoapFaultT
 
 ServiceProxyT = TypeVar("ServiceProxyT", bound=ServiceProxy)
 """

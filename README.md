@@ -7,6 +7,15 @@
 ![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)
 [![License](https://img.shields.io/github/license/kpn/combadge)](LICENSE)
 
+## Features
+
+- [**Pydantic**](https://docs.pydantic.dev/)-based request and response models
+- Automatically derived exception classes
+- Using [**Protocol**](https://peps.python.org/pep-0544/)s to define service classes
+- Built-in backends:
+  - [Zeep](https://docs.python-zeep.org/en/master/), sync and async
+- Pluggable backends
+
 ## 🚀 Quickstart
 
 ### 1️⃣ Declare a request model
