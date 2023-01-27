@@ -31,10 +31,10 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
     class BoundService(BaseBoundService, from_protocol):  # type: ignore
         """Bound service class that implements the protocol."""
 
-    for name, method in enumerate_methods(from_protocol):
+    for name, method in _enumerate_methods(from_protocol):
         request_type: Type[BaseModel]
         response_type: Type[BaseResponse]
-        request_type, response_type = extract_types(method)
+        request_type, response_type = _extract_types(method)
         resolved_method = to_backend.bind_method(request_type, response_type, method)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)
@@ -46,8 +46,9 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
     return BoundService()
 
 
-def enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
+def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
     """Enumerate the service protocol methods."""
+
     for name, method in inspect.getmembers(of_protocol, callable):
         if name.startswith("_"):
             continue
@@ -57,8 +58,9 @@ def enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
         yield name, method
 
 
-def extract_types(method: Any) -> tuple[type["RequestT"], type["ResponseT"]]:
+def _extract_types(method: Any) -> tuple[type["RequestT"], type["ResponseT"]]:
     """Extract request and response types from the method."""
+
     type_hints = get_type_hints(method)
     response_type = type_hints.pop("return", SuccessfulResponse)
     type_hints.pop("self", None)
