@@ -46,7 +46,9 @@ sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 use_parentheses = true
 
 [tool.mypy]
+allow_redefinition = true
 allow_untyped_globals = true
+check_untyped_defs = true
 ignore_missing_imports = true
 pretty = true
 
@@ -101,8 +103,15 @@ docstring-quotes = "double"
 [tool.coverage.run]
 branch = true
 omit = ["tests/*"]
-relative_files = true
-source = ["cachetory"]
+source = ["combadge"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "except ImportError",
+    "if TYPE_CHECKING:",
+]
 
 [build-system]
 requires = ["poetry-core"]
