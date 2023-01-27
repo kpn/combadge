@@ -1,0 +1,75 @@
+from abc import abstractmethod
+from pathlib import Path
+from typing import Iterable, Union
+
+from pydantic import BaseModel, Field
+from pytest import fixture, mark
+from typing_extensions import Annotated, Literal
+from zeep import AsyncClient, Client
+
+from combadge.decorators import soap_name
+from combadge.interfaces import SupportsService
+from combadge.response import FaultyResponse, SuccessfulResponse
+from combadge.support.zeep.backends import ZeepBackend, ZeepBackendAsync
+
+
+class NumberToWordsRequest(BaseModel):
+    number: Annotated[int, Field(alias="ubiNum")]
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class NumberToWordsResponse(SuccessfulResponse):
+    __root__: str
+
+
+class NumberTooLargeResponse(FaultyResponse):
+    __root__: Literal["number too large"]
+
+
+class SupportsNumberConversion(SupportsService):
+    @soap_name("NumberToWords")
+    @abstractmethod
+    def number_to_words(self, request: NumberToWordsRequest) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+        raise NotImplementedError
+
+
+class SupportsNumberConversionAsync(SupportsService):
+    @soap_name("NumberToWords")
+    @abstractmethod
+    async def number_to_words(
+        self,
+        request: NumberToWordsRequest,
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+        raise NotImplementedError
+
+
+@fixture()
+def number_conversion_service() -> Iterable[SupportsNumberConversion]:
+    with Client(
+        wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
+        port_name="NumberConversionSoap",
+    ) as client:
+        yield SupportsNumberConversion.bind(ZeepBackend(client.service))
+
+
+@fixture()
+def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]:
+    with AsyncClient(
+        wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
+        port_name="NumberConversionSoap",
+    ) as client:
+        yield SupportsNumberConversionAsync.bind(ZeepBackendAsync(client.service))
+
+
+@mark.vcr(decode_compressed_response=True)
+def test_happy_path_scalar_response(number_conversion_service: SupportsNumberConversion) -> None:
+    response = number_conversion_service.number_to_words(NumberToWordsRequest(number=42))
+    assert response.unwrap().__root__ == "forty two "
+
+
+@mark.vcr
+async def test_happy_path_scalar_response_async(number_conversion_service_async: SupportsNumberConversionAsync) -> None:
+    response = await number_conversion_service_async.number_to_words(NumberToWordsRequest(number=42))
+    assert response.unwrap().__root__ == "forty two "

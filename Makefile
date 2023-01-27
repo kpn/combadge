@@ -36,7 +36,7 @@ format/ruff:
 
 .PHONY: unittests
 unittests:
-	poetry run pytest --cov=./ --cov-report=xml tests
+	poetry run pytest tests
 
 .PHONY: build
 build:

@@ -1,25 +1,16 @@
 from abc import ABC
-from typing import Any, Generic, List, Optional, Tuple, Type, TypeVar, Union, cast
+from typing import Any, Generic, Tuple, Type, TypeVar, Union, cast
 
 from pydantic import parse_obj_as
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
+from zeep import Settings
+from zeep.exceptions import Fault
 from zeep.helpers import serialize_object
+from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, ServiceProxy
 
 from combadge.binder import BaseBoundService
 from combadge.interfaces import RequestT, SupportsBindMethod, SupportsMethodCall
-
-try:
-    import httpx
-except ImportError:
-    httpx = None  # type: ignore
-
-from requests import Session
-from requests.auth import HTTPBasicAuth
-from zeep import Client, Plugin, Settings, Transport
-from zeep.exceptions import Fault
-from zeep.proxy import OperationProxy, ServiceProxy
-
 from combadge.response import ResponseT, SuccessfulResponse
 from combadge.support.zeep.response import BaseSoapFault, SoapFaultT
 
@@ -120,31 +111,6 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
 
-    def _create_service(
-        self,
-        *,
-        wsdl_path: str,
-        port: Optional[Tuple[str, str]],
-        auth: Optional[HTTPBasicAuth],
-        verify_ssl: bool,
-        cert: Optional[Tuple[str, str]],
-        timeout: Optional[int],
-        plugins: Optional[List[Plugin]],
-    ) -> ServiceProxy:
-        session = Session()
-        session.auth = auth
-        session.verify = verify_ssl
-        session.cert = cert
-
-        transport = Transport(session=session, timeout=timeout)
-        client = Client(wsdl=wsdl_path, transport=transport, settings=ZEEP_SETTINGS, plugins=plugins)
-
-        if port:
-            binding_name, address = port
-            return client.create_service(binding_name, address)
-        else:
-            return client.service
-
     def bind_method(  # noqa: D102
         self,
         _request_type: Type[RequestT],
@@ -161,38 +127,35 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
         return resolved_method
 
 
-if httpx is not None:
-    from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
+class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsBindMethod):
+    """Asynchronous Zeep service. When updating, make sure to update the sync variant too."""
 
-    class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsBindMethod):
-        """Asynchronous Zeep service. When updating, make sure to update the sync variant too."""
+    async def __call__(
+        self,
+        operation_name: str,
+        request: RequestT,
+        response_type: Type[ResponseT],
+        fault_type: Type[SoapFaultT],
+    ) -> Union[ResponseT, BaseSoapFault]:
+        """Call the specified service method."""
+        operation = self._get_operation(operation_name)
+        try:
+            response = await operation(**request.dict(by_alias=True))
+        except Fault as e:
+            return self._parse_soap_fault(e, fault_type)
+        return self._parse_response(response, response_type)
 
-        async def __call__(
-            self,
-            operation_name: str,
-            request: RequestT,
-            response_type: Type[ResponseT],
-            fault_type: Type[SoapFaultT],
-        ) -> Union[ResponseT, BaseSoapFault]:
-            """Call the specified service method."""
-            operation = self._get_operation(operation_name)
-            try:
-                response = await operation(**request.dict(by_alias=True))
-            except Fault as e:
-                return self._parse_soap_fault(e, fault_type)
-            return self._parse_response(response, response_type)
+    def bind_method(  # noqa: D102
+        self,
+        _request_type: Type[RequestT],
+        response_type: Type[ResponseT],
+        method: Any,
+    ) -> SupportsMethodCall[RequestT, ResponseT]:
+        soap_name = self._validate_operation_name(method)
+        response_type, fault_type = self._split_response_type(response_type)
 
-        def bind_method(  # noqa: D102
-            self,
-            _request_type: Type[RequestT],
-            response_type: Type[ResponseT],
-            method: Any,
-        ) -> SupportsMethodCall[RequestT, ResponseT]:
-            soap_name = self._validate_operation_name(method)
-            response_type, fault_type = self._split_response_type(response_type)
+        # noinspection PyShadowingNames
+        async def resolved_method(_service: BaseBoundService, request: RequestT) -> ResponseT:
+            return cast(ResponseT, await self(soap_name, request, response_type, fault_type))
 
-            # noinspection PyShadowingNames
-            async def resolved_method(_service: BaseBoundService, request: RequestT) -> ResponseT:
-                return cast(ResponseT, await self(soap_name, request, response_type, fault_type))
-
-            return resolved_method
+        return resolved_method
