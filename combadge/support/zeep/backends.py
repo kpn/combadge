@@ -113,7 +113,15 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
         response_type: Type[ResponseT],
         fault_type: Type[SoapFaultT],
     ) -> Union[ResponseT, SoapFaultT]:
-        """Call the specified service method."""
+        """
+        Call the specified service method.
+
+        Args:
+            operation_name: SOAP operation name per WSDL
+            request: request body
+            response_type: non-fault response model type
+            fault_type: SOAP fault model type
+        """
         operation = self._get_operation(operation_name)
         try:
             response = operation(**request.dict(by_alias=True))
@@ -151,7 +159,15 @@ class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], 
         response_type: Type[ResponseT],
         fault_type: Type[SoapFaultT],
     ) -> Union[ResponseT, BaseSoapFault]:
-        """Call the specified service method."""
+        """
+        Call the specified service method.
+
+        Args:
+            operation_name: SOAP operation name per WSDL
+            request: request body
+            response_type: non-fault response model type
+            fault_type: SOAP fault model type
+        """
         operation = self._get_operation(operation_name)
         try:
             response = await operation(**request.dict(by_alias=True))

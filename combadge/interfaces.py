@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from platform import python_implementation
 from typing import TypeVar
+
+if python_implementation() == "PyPy":
+    import typing
+
+    # TypeError: Parameters to Protocol[...] must all be type variables.
+    del typing.Protocol
 
 from pydantic import BaseModel
 from typing_extensions import ParamSpec, Protocol, Self
