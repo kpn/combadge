@@ -62,7 +62,7 @@ jobs:
 
     - name: 🧪 Tests
       if: success() || failure()
-      run: make unittests
+      run: make test
 
     - name: 📦 Build package
       if: success() || failure()
