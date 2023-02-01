@@ -9,6 +9,7 @@ on:
     - main
 
 env:
+  ANSICON: 1
   FORCE_COLOR: 1
 
 jobs:
@@ -39,6 +40,16 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: poetry
 
+    - name: "🗃 Cache"
+      if: success() || failure()
+      uses: actions/cache@v3
+      with:
+        path: |
+          .mypy_cache
+          .pytest_cache
+          .ruff_cache
+        key: ${{ runner.os }}-${{ matrix.python-version }}-check
+
     - name: 📥 Install the package
       run: make install
 
@@ -48,13 +59,6 @@ jobs:
     - name: "🪄 Linter: Ruff"
       if: success() || failure()
       run: make lint/ruff
-
-    - name: "🗃 Cache: mypy"
-      if: success() || failure()
-      uses: actions/cache@v3
-      with:
-        path: ".mypy_cache"
-        key: ${{ runner.os }}-${{ matrix.python-version }}-mypy
 
     - name: "🪄 Linter: mypy"
       if: success() || failure()
