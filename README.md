@@ -55,8 +55,8 @@ class NumberTooLargeResponse(FaultyResponse):
 ### 4️⃣ Declare the interface
 
 ```python
-from combadge.decorators import soap_name
 from combadge.interfaces import SupportsService
+from combadge.support.soap.decorators import soap_name
 
 
 class SupportsNumberConversion(SupportsService):

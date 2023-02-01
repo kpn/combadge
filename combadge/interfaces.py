@@ -35,7 +35,6 @@ class SupportsBindMethod(Protocol):
     @abstractmethod
     def bind_method(
         self,
-        request_type: type[RequestT],
         response_type: type[ResponseT],
         method: Any,
     ) -> SupportsMethodCall[RequestT, ResponseT]:
@@ -43,7 +42,6 @@ class SupportsBindMethod(Protocol):
         «Binds» the `method` to the current instance (for example, a backend).
 
         Args:
-            request_type: request type extracted from the service protocol
             response_type: response type extracted from the service protocol
             method: original protocol method
 

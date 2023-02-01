@@ -4,12 +4,10 @@ import inspect
 from functools import update_wrapper
 from typing import TYPE_CHECKING, Any, Iterable, Type, get_type_hints
 
-from pydantic import BaseModel
-
 from combadge.response import BaseResponse, ResponseT, SuccessfulResponse
 
 if TYPE_CHECKING:
-    from combadge.interfaces import RequestT, ServiceProtocolT, SupportsBindMethod
+    from combadge.interfaces import ServiceProtocolT, SupportsBindMethod, SupportsMethodCall
 
 
 class BaseBoundService:
@@ -32,10 +30,8 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
         """Bound service class that implements the protocol."""
 
     for name, method in _enumerate_methods(from_protocol):
-        request_type: Type[BaseModel]
-        response_type: Type[BaseResponse]
-        request_type, response_type = _extract_types(method)
-        resolved_method = to_backend.bind_method(request_type, response_type, method)
+        response_type: Type[BaseResponse] = _extract_return_type(method)
+        resolved_method: SupportsMethodCall[Any, BaseResponse] = to_backend.bind_method(response_type, method)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)
 
@@ -64,13 +60,6 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
         yield name, method
 
 
-def _extract_types(method: Any) -> tuple[type["RequestT"], type["ResponseT"]]:
-    """Extract request and response types from the method."""
-
-    type_hints = get_type_hints(method)
-    response_type = type_hints.pop("return", SuccessfulResponse)
-    type_hints.pop("self", None)
-    if len(type_hints) != 1:
-        raise ValueError(f"expected exactly one request parameter, but got {type_hints}")
-    request_type = next(iter(type_hints.values()))
-    return request_type, response_type
+def _extract_return_type(method: Any) -> Type["ResponseT"]:
+    """Extract return type from the method."""
+    return get_type_hints(method).pop("return", SuccessfulResponse)

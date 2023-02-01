@@ -1,8 +1,8 @@
 .PHONY: all
-all: install lint unittests build
+all: install lint test build
 
 .PHONY: check
-check: lint unittests
+check: lint test
 
 .PHONY: install
 install:
@@ -34,8 +34,8 @@ format/black:
 format/ruff:
 	poetry run ruff --fix combadge tests
 
-.PHONY: unittests
-unittests:
+.PHONY: test
+test:
 	poetry run pytest tests
 
 .PHONY: build

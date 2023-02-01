@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from typing import Any, Callable
 
-from pytest import mark, raises
+from pytest import mark
 from typing_extensions import Protocol
 
-from combadge.binder import BaseBoundService, _enumerate_methods, _extract_types, _update_bound_service
+from combadge.binder import BaseBoundService, _enumerate_methods, _extract_return_type, _update_bound_service
 from combadge.interfaces import SupportsService
 
 
@@ -61,30 +61,12 @@ class ExampleProtocol(Protocol):
     def valid_method(self, request: int) -> str:
         ...
 
-    def missing_request(self) -> str:
-        ...
-
-    def too_many_parameters(self, request_1: Any, request_2: Any) -> None:
-        ...
-
 
 @mark.parametrize(
-    ("method", "request_type", "response_type"),
+    ("method", "return_type"),
     [
-        (ExampleProtocol.valid_method, int, str),
+        (ExampleProtocol.valid_method, str),
     ],
 )
-def test_extract_types(method: Callable[..., Any], request_type: Any, response_type: Any) -> None:
-    assert _extract_types(method) == (request_type, response_type)
-
-
-@mark.parametrize(
-    "method",
-    [
-        ExampleProtocol.missing_request,
-        ExampleProtocol.too_many_parameters,
-    ],
-)
-def test_extract_types_value_error(method: Callable[..., Any]) -> None:
-    with raises(ValueError):
-        _extract_types(method)
+def test_extract_types(method: Callable[..., Any], return_type: Any) -> None:
+    assert _extract_return_type(method) == return_type

@@ -113,7 +113,6 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
 
     def bind_method(  # noqa: D102
         self,
-        _request_type: Type[RequestT],
         response_type: Type[ResponseT],
         method: Any,
     ) -> SupportsMethodCall[RequestT, ResponseT]:
@@ -147,7 +146,6 @@ class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], 
 
     def bind_method(  # noqa: D102
         self,
-        _request_type: Type[RequestT],
         response_type: Type[ResponseT],
         method: Any,
     ) -> SupportsMethodCall[RequestT, ResponseT]:
