@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from platform import python_implementation
 from typing import TypeVar
 
 from pydantic import BaseModel
@@ -25,7 +26,12 @@ class SupportsService(Protocol):
 
 ServiceProtocolT = TypeVar("ServiceProtocolT")
 RequestT = TypeVar("RequestT", bound=BaseModel)
-RequestP = ParamSpec("RequestP")
+
+if python_implementation() != "PyPy":
+    RequestP = ParamSpec("RequestP")
+else:  # pragma: no cover
+    # PyPy doesn't support `ParamSpec` in `Protocol` 😮
+    RequestP = TypeVar("RequestP")  # type: ignore[misc]
 
 
 class SupportsBindMethod(Protocol):
