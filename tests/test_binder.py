@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Callable
+from typing import Any, Callable, Type
 
 from pytest import mark
 from typing_extensions import Protocol
@@ -68,5 +68,5 @@ class ExampleProtocol(Protocol):
         (ExampleProtocol.valid_method, str),
     ],
 )
-def test_extract_types(method: Callable[..., Any], return_type: Any) -> None:
+def test_extract_types(method: Callable[..., Any], return_type: Type[Any]) -> None:
     assert _extract_return_type(method) == return_type

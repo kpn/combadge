@@ -1,9 +1,8 @@
 from abc import ABC
-from typing import Any, Generic, Tuple, Type, TypeVar, Union, cast
+from typing import Any, Generic, Tuple, Type, TypeVar, Union
 from warnings import warn
 
 from pydantic import BaseModel, parse_obj_as
-from typing_extensions import Concatenate
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
 from zeep import Settings
@@ -12,7 +11,7 @@ from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService
-from combadge.core.interfaces import RequestP, RequestT, SupportsBindMethod, SupportsMethodCall
+from combadge.core.interfaces import SupportsBindMethod, SupportsMethodCall
 from combadge.core.response import ResponseT, SuccessfulResponse
 from combadge.core.warnings import ServiceCallWarning
 from combadge.support.soap.response import BaseSoapFault, SoapFaultT
@@ -46,7 +45,7 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
             raise ValueError("Zeep resolver requires each method to have a SOAP operation name") from e
 
     @staticmethod
-    def _split_response_type(response_type: Any) -> Tuple[Any, Any]:
+    def _split_response_type(response_type: Type[Any]) -> Tuple[Type[BaseModel], Type[BaseSoapFault]]:
         """
         Split the response type into non-faults and faults.
 
@@ -83,8 +82,9 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
             raise RuntimeError(f"available operations are: {dir(self._service)}") from e
 
     @staticmethod
-    def _validate_call_args(*args: Any, **kwargs: Any) -> None:
-        """Validate that no extra parameters are passed into a service call."""
+    def _validate_call_args(body: Any, *args: Any, **kwargs: Any) -> None:
+        if not isinstance(body, BaseModel):
+            raise TypeError(f"the body is not an instance of `BaseModel`, got `{type(body)}`")
         if args or kwargs:
             warn(ServiceCallWarning(f"{len(args)} positional args and {len(kwargs)} are ignored"))
 
@@ -131,20 +131,20 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
 
     def bind_method(  # noqa: D102
         self,
-        response_type: Type[ResponseT],
-        method: SupportsMethodCall[Concatenate[RequestT, RequestP], ResponseT],
-    ) -> SupportsMethodCall[Concatenate[RequestT, RequestP], ResponseT]:
+        response_type: Type[Union[BaseModel, BaseSoapFault]],
+        method: SupportsMethodCall,
+    ) -> SupportsMethodCall:
         soap_name = self._validate_operation_name(method)
-        response_type, fault_type = self._split_response_type(response_type)
+        clean_response_type, fault_type = self._split_response_type(response_type)
 
         def resolved_method(
             _service: BaseBoundService,
-            body: RequestT,
-            *args: RequestP.args,
-            **kwargs: RequestP.kwargs,
-        ) -> ResponseT:
-            self._validate_call_args(*args, **kwargs)
-            return cast(ResponseT, self(soap_name, body, response_type, fault_type))
+            body: Any,
+            *args: Any,
+            **kwargs: Any,
+        ) -> BaseModel:
+            self._validate_call_args(body, *args, **kwargs)
+            return self(soap_name, body, clean_response_type, fault_type)
 
         return resolved_method  # type: ignore[return-value]
 
@@ -158,7 +158,7 @@ class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], 
         request: BaseModel,
         response_type: Type[ResponseT],
         fault_type: Type[SoapFaultT],
-    ) -> Union[ResponseT, BaseSoapFault]:
+    ) -> BaseModel:
         """
         Call the specified service method.
 
@@ -177,19 +177,19 @@ class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], 
 
     def bind_method(  # noqa: D102
         self,
-        response_type: Type[ResponseT],
-        method: SupportsMethodCall[Concatenate[RequestT, RequestP], ResponseT],
-    ) -> SupportsMethodCall[Concatenate[RequestT, RequestP], ResponseT]:
+        response_type: Type[Union[BaseModel, BaseSoapFault]],
+        method: SupportsMethodCall,
+    ) -> SupportsMethodCall:
         soap_name = self._validate_operation_name(method)
-        response_type, fault_type = self._split_response_type(response_type)
+        clean_response_type, fault_type = self._split_response_type(response_type)
 
         async def resolved_method(
             _service: BaseBoundService,
-            body: RequestT,
-            *args: RequestP.args,
-            **kwargs: RequestP.kwargs,
-        ) -> ResponseT:
-            self._validate_call_args(*args, **kwargs)
-            return cast(ResponseT, await self(soap_name, body, response_type, fault_type))
+            body: Any,
+            *args: Any,
+            **kwargs: Any,
+        ) -> BaseModel:
+            self._validate_call_args(body, *args, **kwargs)
+            return await self(soap_name, body, clean_response_type, fault_type)
 
         return resolved_method  # type: ignore[return-value]

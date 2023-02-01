@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from platform import python_implementation
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel
-from typing_extensions import ParamSpec, Protocol, Self
+from typing_extensions import Protocol, Self
 
 from combadge.core.binder import BaseBoundService, bind
-from combadge.core.response import ResponseT, ResponseT_co
 
 
 class SupportsService(Protocol):
@@ -25,24 +23,13 @@ class SupportsService(Protocol):
 
 
 ServiceProtocolT = TypeVar("ServiceProtocolT")
-RequestT = TypeVar("RequestT", bound=BaseModel)
-
-if python_implementation() != "PyPy":
-    RequestP = ParamSpec("RequestP")
-else:  # pragma: no cover
-    # PyPy doesn't support `ParamSpec` in `Protocol` 😮
-    RequestP = TypeVar("RequestP")  # type: ignore[misc]
 
 
 class SupportsBindMethod(Protocol):
     """Supports binding a method to the current instance."""
 
     @abstractmethod
-    def bind_method(
-        self,
-        response_type: type[ResponseT],
-        method: SupportsMethodCall[RequestP, ResponseT],
-    ) -> SupportsMethodCall[RequestP, ResponseT]:
+    def bind_method(self, response_type: type[BaseModel], method: SupportsMethodCall) -> SupportsMethodCall:
         """
         «Binds» the `method` to the current instance (for example, a backend).
 
@@ -56,7 +43,7 @@ class SupportsBindMethod(Protocol):
         raise NotImplementedError
 
 
-class SupportsMethodCall(Protocol[RequestP, ResponseT_co]):
+class SupportsMethodCall(Protocol):
     """
     Bound method call specification.
 
@@ -64,12 +51,7 @@ class SupportsMethodCall(Protocol[RequestP, ResponseT_co]):
     """
 
     @abstractmethod
-    def __call__(
-        self,
-        __service: BaseBoundService,
-        *__args: RequestP.args,
-        **__kwargs: RequestP.kwargs,
-    ) -> ResponseT_co:
+    def __call__(self, __service: BaseBoundService, *__args: Any, **__kwargs: Any) -> BaseModel:
         """
         Call the service method.
 

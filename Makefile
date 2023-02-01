@@ -9,7 +9,7 @@ install:
 	poetry install --all-extras --with dev
 
 .PHONY: lint
-lint: lint/black lint/ruff lint/mypy
+lint: lint/ruff lint/black lint/mypy
 
 .PHONY: lint/black
 lint/black:
@@ -24,7 +24,7 @@ lint/mypy:
 	poetry run mypy combadge tests
 
 .PHONY: format
-format: format/black format/ruff
+format: format/ruff format/black
 
 .PHONY: format/black
 format/black:

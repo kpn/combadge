@@ -101,5 +101,4 @@ class FaultyResponse(BaseResponse, ABC):
         raise self.Error
 
 
-ResponseT = TypeVar("ResponseT", bound=BaseResponse)
-ResponseT_co = TypeVar("ResponseT_co", bound=BaseResponse, covariant=True)
+ResponseT = TypeVar("ResponseT", bound=BaseModel)

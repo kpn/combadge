@@ -4,7 +4,9 @@ import inspect
 from functools import update_wrapper
 from typing import TYPE_CHECKING, Any, Iterable, Type, get_type_hints
 
-from combadge.core.response import BaseResponse, ResponseT, SuccessfulResponse
+from pydantic import BaseModel
+
+from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import ServiceProtocolT, SupportsBindMethod, SupportsMethodCall
@@ -30,8 +32,8 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
         """Bound service class that implements the protocol."""
 
     for name, method in _enumerate_methods(from_protocol):
-        response_type: Type[BaseResponse] = _extract_return_type(method)
-        resolved_method: SupportsMethodCall[Any, BaseResponse] = to_backend.bind_method(response_type, method)
+        response_type: Type[BaseModel] = _extract_return_type(method)
+        resolved_method: SupportsMethodCall = to_backend.bind_method(response_type, method)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)
 
@@ -60,6 +62,6 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
         yield name, method
 
 
-def _extract_return_type(method: Any) -> Type["ResponseT"]:
+def _extract_return_type(method: Any) -> Type[BaseModel]:
     """Extract return type from the method."""
     return get_type_hints(method).pop("return", SuccessfulResponse)
