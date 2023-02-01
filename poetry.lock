@@ -571,7 +571,7 @@ files = [
 
 [[package]]
 name = "mypy"
-version = "1.0.0+dev.757e0d4894d68b43810d5723ad496c268a850468"
+version = "1.0.0+dev.c3750099f4bffeb1b962a6b59a3851d297f9ba41"
 description = "Optional static typing for Python"
 category = "dev"
 optional = false

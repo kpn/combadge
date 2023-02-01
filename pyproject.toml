@@ -138,3 +138,11 @@ types-requests = "^2.28.11.8"
 ruff = "^0.0.236"
 pytest-recording = "^0.12.1"
 pytest-asyncio = "^0.20.3"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+pattern = "default-unprefixed"
+style = "semver"
+strict = false # TODO
+latest-tag = true

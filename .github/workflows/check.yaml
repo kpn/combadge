@@ -30,6 +30,8 @@ jobs:
     steps:
     - name: 📥 Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: 📥 Install Poetry
       run: pipx install poetry
@@ -68,9 +70,9 @@ jobs:
       if: success() || failure()
       run: make test
 
-    - name: 📦 Build package
+    - name: "📦 Build and publish package: dry run"
       if: success() || failure()
-      run: make build
+      run: poetry publish --build --dry-run --ansi
 
     - name: 📤 Codecov
       if: success() || failure()
