@@ -1,0 +1,1 @@
+"""Client-independent REST support."""

@@ -4,10 +4,10 @@ import inspect
 from functools import update_wrapper
 from typing import TYPE_CHECKING, Any, Iterable, Type, get_type_hints
 
-from combadge.response import BaseResponse, ResponseT, SuccessfulResponse
+from combadge.core.response import BaseResponse, ResponseT, SuccessfulResponse
 
 if TYPE_CHECKING:
-    from combadge.interfaces import ServiceProtocolT, SupportsBindMethod, SupportsMethodCall
+    from combadge.core.interfaces import ServiceProtocolT, SupportsBindMethod, SupportsMethodCall
 
 
 class BaseBoundService:

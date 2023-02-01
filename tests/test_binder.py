@@ -4,8 +4,8 @@ from typing import Any, Callable
 from pytest import mark
 from typing_extensions import Protocol
 
-from combadge.binder import BaseBoundService, _enumerate_methods, _extract_return_type, _update_bound_service
-from combadge.interfaces import SupportsService
+from combadge.core.binder import BaseBoundService, _enumerate_methods, _extract_return_type, _update_bound_service
+from combadge.core.interfaces import SupportsService
 
 
 def test_enumerate_bindable_methods() -> None:

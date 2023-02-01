@@ -11,11 +11,11 @@ from zeep.exceptions import Fault
 from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, ServiceProxy
 
-from combadge.binder import BaseBoundService
-from combadge.interfaces import RequestP, RequestT, SupportsBindMethod, SupportsMethodCall
-from combadge.response import ResponseT, SuccessfulResponse
+from combadge.core.binder import BaseBoundService
+from combadge.core.interfaces import RequestP, RequestT, SupportsBindMethod, SupportsMethodCall
+from combadge.core.response import ResponseT, SuccessfulResponse
+from combadge.core.warnings import ServiceCallWarning
 from combadge.support.soap.response import BaseSoapFault, SoapFaultT
-from combadge.warnings import ServiceCallWarning
 
 ServiceProxyT = TypeVar("ServiceProxyT", bound=ServiceProxy)
 """

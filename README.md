@@ -18,70 +18,48 @@
 
 ## 🚀 Quickstart
 
-### 1️⃣ Declare a request model
-
 ```python
-from typing import Annotated
+from typing import Annotated, Literal
 
+import zeep
+from combadge.core.interfaces import SupportsService
+from combadge.core.response import FaultyResponse, SuccessfulResponse
+from combadge.support.soap.decorators import soap_name
+from combadge.support.zeep.backends import ZeepBackend
 from pydantic import BaseModel, Field
 
 
+# 1️⃣ Declare a request model:
 class NumberToWordsRequest(BaseModel):
     number: Annotated[int, Field(alias="ubiNum")]
-```
-
-### 2️⃣ Declare a response model
-
-```python
-from combadge.response import SuccessfulResponse
 
 
+# 2️⃣ Declare a response model:
 class NumberToWordsResponse(SuccessfulResponse):
     __root__: str
-```
-
-### 3️⃣ Optionally: declare error response models
-
-```python
-from typing import Literal
-
-from combadge.response import FaultyResponse
 
 
+# 3️⃣ Optionally, declare error response models:
 class NumberTooLargeResponse(FaultyResponse):
     __root__: Literal["number too large"]
-```
-
-### 4️⃣ Declare the interface
-
-```python
-from combadge.interfaces import SupportsService
-from combadge.support.soap.decorators import soap_name
 
 
+# 4️⃣ Declare the interface:
 class SupportsNumberConversion(SupportsService):
     @soap_name("NumberToWords")
     def number_to_words(self, request: NumberToWordsRequest) -> NumberTooLargeResponse | NumberToWordsResponse:
         ...
-```
-
-### 5️⃣ Bind the service
-
-```python
-import zeep
-from combadge.support.zeep.backends import ZeepBackend
 
 
+# 5️⃣ Bind the service:
 client = zeep.Client(wsdl="NumberConversion.wsdl")
 service = SupportsNumberConversion.bind(ZeepBackend(client.service))
-```
 
-### 🚀 Call the service
-
-```python
+# 🚀 Call the service:
 response = service.number_to_words(NumberToWordsRequest(number=42))
 assert response.unwrap().__root__ == "forty two "
 
+# ☣️ Error classes are automatically derived for error models:
 response = service.number_to_words(NumberToWordsRequest(number=-1))
 with raises(NumberTooLargeResponse.Error):
     response.raise_for_result()

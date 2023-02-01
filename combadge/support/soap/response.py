@@ -2,7 +2,7 @@
 
 from typing import NoReturn, TypeVar
 
-from combadge.response import FaultyResponse
+from combadge.core.response import FaultyResponse
 
 
 class BaseSoapFault(FaultyResponse):

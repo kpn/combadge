@@ -1,4 +1,4 @@
-from combadge.response import FaultyResponse
+from combadge.core.response import FaultyResponse
 
 
 def test_error_inheritance() -> None:

@@ -7,8 +7,8 @@ from pytest import fixture, mark
 from typing_extensions import Annotated
 from zeep import Client
 
-from combadge.interfaces import SupportsService
-from combadge.response import SuccessfulResponse
+from combadge.core.interfaces import SupportsService
+from combadge.core.response import SuccessfulResponse
 from combadge.support.soap.decorators import soap_name
 from combadge.support.zeep.backends import ZeepBackend
 

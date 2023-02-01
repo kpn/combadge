@@ -6,8 +6,8 @@ from typing import TypeVar
 from pydantic import BaseModel
 from typing_extensions import ParamSpec, Protocol, Self
 
-from combadge.binder import BaseBoundService, bind
-from combadge.response import ResponseT, ResponseT_co
+from combadge.core.binder import BaseBoundService, bind
+from combadge.core.response import ResponseT, ResponseT_co
 
 
 class SupportsService(Protocol):
