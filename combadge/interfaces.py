@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+import typing
 from abc import abstractmethod
 from platform import python_implementation
 from typing import TypeVar
 
 if python_implementation() == "PyPy":
-    import typing
-
-    # TypeError: Parameters to Protocol[...] must all be type variables.
+    # MyPy doesn't support `ParamSpec` in `Protocol` 😮
     del typing.Protocol
 
 from pydantic import BaseModel
 from typing_extensions import ParamSpec, Protocol, Self
+
+if python_implementation() == "PyPy":
+    typing.Protocol = Protocol  # type: ignore[assignment]
 
 from combadge.binder import BaseBoundService, bind
 from combadge.response import ResponseT, ResponseT_co
