@@ -593,8 +593,8 @@ reports = ["lxml"]
 [package.source]
 type = "git"
 url = "https://github.com/python/mypy.git"
-reference = "757e0d4894d68b43810d5723ad496c268a850468"
-resolved_reference = "757e0d4894d68b43810d5723ad496c268a850468"
+reference = "c3750099f4bffeb1b962a6b59a3851d297f9ba41"
+resolved_reference = "c3750099f4bffeb1b962a6b59a3851d297f9ba41"
 
 [[package]]
 name = "mypy-extensions"
@@ -1262,4 +1262,4 @@ zeep = ["zeep"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "0b98817d89ac0dd952ce161e41b32ffe1aef867cb0d37ef9e1e7aebae6d13963"
+content-hash = "fbe759a3ed6dc7dd665efbfe6343d9e48d49ca7389288c093853754232f1fe01"

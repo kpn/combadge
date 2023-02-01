@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, Awaitable, TypeVar, Union
+from typing import TypeVar
 
 from pydantic import BaseModel
-from typing_extensions import Protocol, Self
+from typing_extensions import ParamSpec, Protocol, Self
 
 from combadge.binder import BaseBoundService, bind
 from combadge.response import ResponseT, ResponseT_co
@@ -24,9 +24,8 @@ class SupportsService(Protocol):
 
 
 ServiceProtocolT = TypeVar("ServiceProtocolT")
-
 RequestT = TypeVar("RequestT", bound=BaseModel)
-RequestT_contra = TypeVar("RequestT_contra", bound=BaseModel, contravariant=True)
+RequestP = ParamSpec("RequestP")
 
 
 class SupportsBindMethod(Protocol):
@@ -36,8 +35,8 @@ class SupportsBindMethod(Protocol):
     def bind_method(
         self,
         response_type: type[ResponseT],
-        method: Any,
-    ) -> SupportsMethodCall[RequestT, ResponseT]:
+        method: SupportsMethodCall[RequestP, ResponseT],
+    ) -> SupportsMethodCall[RequestP, ResponseT]:
         """
         «Binds» the `method` to the current instance (for example, a backend).
 
@@ -51,21 +50,27 @@ class SupportsBindMethod(Protocol):
         raise NotImplementedError
 
 
-class SupportsMethodCall(Protocol[RequestT_contra, ResponseT_co]):
-    """Bound method call specification. Usually implemented by a backend in its `bind_method`."""
+class SupportsMethodCall(Protocol[RequestP, ResponseT_co]):
+    """
+    Bound method call specification.
+
+    Usually implemented by a backend in its `bind_method`.
+    """
 
     @abstractmethod
     def __call__(
         self,
         __service: BaseBoundService,
-        __request: RequestT_contra,
-    ) -> Union[ResponseT_co, Awaitable[ResponseT_co]]:
+        *__args: RequestP.args,
+        **__kwargs: RequestP.kwargs,
+    ) -> ResponseT_co:
         """
         Call the service method.
 
         Args:
             __service: bound service instance, usually not needed
-            __request: request model
+            __args: positional request parameters
+            __kwargs: keyword request parameters
 
         Returns:
             Parsed response model.
