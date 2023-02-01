@@ -5,7 +5,6 @@ from warnings import warn
 from pydantic import BaseModel, parse_obj_as
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
-from zeep import Settings
 from zeep.exceptions import Fault
 from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, ServiceProxy
@@ -97,10 +96,6 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
     def _parse_soap_fault(exception: Fault, fault_type: Type[SoapFaultT]) -> SoapFaultT:
         """Parse the SOAP fault."""
         return parse_obj_as(fault_type, exception.__dict__)
-
-
-ZEEP_SETTINGS = Settings(xsd_ignore_sequence_order=True)
-"""Shared Zeep client settings."""
 
 
 class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMethod):

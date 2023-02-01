@@ -1256,10 +1256,10 @@ test = ["coverage[toml] (==5.2.1)", "flake8 (==3.8.3)", "flake8-blind-except (==
 xmlsec = ["xmlsec (>=0.6.1)"]
 
 [extras]
-async = ["httpx"]
+httpx = ["httpx"]
 zeep = ["zeep"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "fbe759a3ed6dc7dd665efbfe6343d9e48d49ca7389288c093853754232f1fe01"
+content-hash = "62126f34bb218aae302cbdd2a193ebabbbc04a1de03f4bab09143ab6f3352db9"
