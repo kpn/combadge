@@ -23,7 +23,7 @@
 ```python
 # test_id=test_quickstart
 
-from typing import Literal
+from typing import Literal, Union
 
 import zeep
 from combadge.core.interfaces import SupportsService
@@ -56,7 +56,7 @@ class NumberTooLargeResponse(FaultyResponse):
 # 4️⃣ Declare the interface:
 class SupportsNumberConversion(SupportsService):
     @soap_name("NumberToWords")
-    def number_to_words(self, request: NumberToWordsRequest) -> NumberTooLargeResponse | NumberToWordsResponse:
+    def number_to_words(self, request: NumberToWordsRequest) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         ...
 
 
