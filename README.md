@@ -23,7 +23,7 @@
 ```python
 # test_id=test_quickstart
 
-from typing import Annotated, Literal
+from typing import Literal
 
 import zeep
 from combadge.core.interfaces import SupportsService
@@ -32,6 +32,7 @@ from combadge.support.soap.decorators import soap_name
 from combadge.support.zeep.backends import ZeepBackend
 from pydantic import BaseModel, Field
 from pytest import raises
+from typing_extensions import Annotated
 
 
 # 1️⃣ Declare a request model:
