@@ -53,7 +53,7 @@ class SupportsMethodCall(Protocol):
         Call the service method.
 
         Args:
-            __service: bound service instance, usually not needed
+            __service: bound service instance
             __args: positional request parameters
             __kwargs: keyword request parameters
 

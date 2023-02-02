@@ -29,7 +29,7 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
         to_backend: backend which should perform the service requests
     """
 
-    class BoundService(BaseBoundService, from_protocol):  # type: ignore
+    class BoundService(BaseBoundService, from_protocol):  # type: ignore[misc, valid-type]
         """Bound service class that implements the protocol."""
 
     for name, method in _enumerate_methods(from_protocol):
