@@ -18,7 +18,11 @@
 
 ## 🚀 Quickstart
 
+ℹ️ This `README` is [tested](tests/integration/test_readme.py) and should run «as is».
+
 ```python
+# test_id=test_quickstart
+
 from typing import Annotated, Literal
 
 import zeep
@@ -27,11 +31,15 @@ from combadge.core.response import FaultyResponse, SuccessfulResponse
 from combadge.support.soap.decorators import soap_name
 from combadge.support.zeep.backends import ZeepBackend
 from pydantic import BaseModel, Field
+from pytest import raises
 
 
 # 1️⃣ Declare a request model:
 class NumberToWordsRequest(BaseModel):
     number: Annotated[int, Field(alias="ubiNum")]
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 # 2️⃣ Declare a response model:
@@ -52,7 +60,7 @@ class SupportsNumberConversion(SupportsService):
 
 
 # 5️⃣ Bind the service:
-client = zeep.Client(wsdl="NumberConversion.wsdl")
+client = zeep.Client(wsdl="tests/integration/wsdl/NumberConversion.wsdl")
 service = SupportsNumberConversion.bind(ZeepBackend(client.service))
 
 # 🚀 Call the service:
