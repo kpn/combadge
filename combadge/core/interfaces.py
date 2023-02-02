@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, TypeVar
+from typing import Any
 
 from pydantic import BaseModel
 from typing_extensions import Protocol, Self
@@ -20,9 +20,6 @@ class SupportsService(Protocol):
     def bind(cls, to_backend: SupportsBindMethod) -> Self:
         """Bind the protocol to the specified backend."""
         return bind(cls, to_backend)
-
-
-ServiceProtocolT = TypeVar("ServiceProtocolT")
 
 
 class SupportsBindMethod(Protocol):

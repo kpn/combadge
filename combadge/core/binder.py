@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import ServiceProtocolT, SupportsBindMethod, SupportsMethodCall
+    from combadge.core.interfaces import SupportsBindMethod, SupportsMethodCall
+    from combadge.core.typevars import ServiceProtocolT
 
 
 class BaseBoundService:

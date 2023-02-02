@@ -11,7 +11,8 @@ from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, S
 
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import SupportsBindMethod, SupportsMethodCall
-from combadge.core.response import ResponseT, SuccessfulResponse
+from combadge.core.response import SuccessfulResponse
+from combadge.core.typevars import ResponseT
 from combadge.core.warnings import ServiceCallWarning
 from combadge.support.soap.response import BaseSoapFault, SoapFaultT
 

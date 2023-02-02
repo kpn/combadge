@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Type, TypeVar, Union
+from typing import Any, Type, Union
 
 from pydantic import BaseModel
 from typing_extensions import NoReturn, Self
@@ -99,6 +99,3 @@ class FaultyResponse(BaseResponse, ABC):
     def unwrap(self) -> NoReturn:
         """Raise the derived exception."""
         raise self.Error
-
-
-ResponseT = TypeVar("ResponseT", bound=BaseModel)
