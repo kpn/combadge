@@ -2,21 +2,21 @@ from typing import Any, List, Type
 
 import pytest
 
-from combadge.core.mark import ParameterMark, _extract_parameter_marks, _get_method_marks
+from combadge.core.mark import MethodMark, ParameterMark, _extract_parameter_marks
 from combadge.support.marks import _BODY_MARK, Body
-from combadge.support.soap.marks import OperationNameMark
+from combadge.support.soap.marks import OperationNameMethodMark
 
 
 def test_get_method_marks() -> None:
     def method() -> None:
         pass
 
-    marks = _get_method_marks(method)
+    marks = MethodMark.extract(method)
     assert marks == []
 
-    mark = OperationNameMark("test")
+    mark = OperationNameMethodMark("test")
     marks.append(mark)
-    assert _get_method_marks(method) == [mark]
+    assert MethodMark.extract(method) == [mark]
 
 
 @pytest.mark.parametrize(

@@ -10,7 +10,7 @@ from zeep import Client
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import SuccessfulResponse
 from combadge.support.marks import Body
-from combadge.support.soap.decorators import operation_name
+from combadge.support.soap.marks import operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 
 

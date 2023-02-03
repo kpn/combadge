@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Type, TypeVar
 
-from typing_extensions import Annotated, get_origin
+from typing_extensions import Annotated, ParamSpec, get_origin
 from typing_extensions import get_args as get_type_args
 
+P = ParamSpec("P")
 T = TypeVar("T")
 
 
@@ -14,24 +17,27 @@ class MethodMark(ABC):
     def prepare_request(self, request: Dict[str, Any]) -> None:
         """Modify the request according to the mark."""
 
+    @staticmethod
+    def extract(from_method: Any) -> List[MethodMark]:
+        """Extract the method's marks."""
+        try:
+            marks = from_method.__combadge_marks__
+        except AttributeError:
+            marks = from_method.__combadge_marks__ = []
+        return marks
 
-def _get_method_marks(method: Any) -> List[MethodMark]:
-    """Extract the method's marks."""
-    try:
-        marks = method.__combadge_marks__
-    except AttributeError:
-        marks = method.__combadge_marks__ = []
-    return marks
 
+def make_method_mark_decorator(type_factory: Callable[P, MethodMark]) -> Callable[P, Callable[[T], T]]:
+    """Make a method decorator for the current class."""
 
-def _make_method_mark_wrapper(mark: MethodMark) -> Callable[[T], T]:
-    """Make a method decorator wrapper for the specified mark."""
+    def decorator(*args: P.args, **kwargs: P.kwargs) -> Callable[[T], T]:
+        def wrap(wrapped: T) -> T:
+            MethodMark.extract(wrapped).append(type_factory(*args, **kwargs))
+            return wrapped
 
-    def wrap(wrapped: T) -> T:
-        _get_method_marks(wrapped).append(mark)
-        return wrapped
+        return wrap
 
-    return wrap
+    return decorator
 
 
 class ParameterMark(ABC):

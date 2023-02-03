@@ -32,8 +32,8 @@ from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import FaultyResponse, SuccessfulResponse
-from combadge.support.marks import _BODY_MARK
-from combadge.support.soap.decorators import operation_name
+from combadge.support.marks import Body
+from combadge.support.soap.marks import operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 
 
@@ -55,10 +55,7 @@ class NumberTooLargeResponse(FaultyResponse):
 # 4️⃣ Declare the interface:
 class SupportsNumberConversion(SupportsService):
     @operation_name("NumberToWords")
-    def number_to_words(
-        self,
-        request: Annotated[NumberToWordsRequest, _BODY_MARK],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+    def number_to_words(self, request: Body[NumberToWordsRequest]) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         ...
 
 
