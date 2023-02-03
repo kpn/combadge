@@ -17,5 +17,4 @@ class BodyParameterMark(ParameterMark):
 
 T = TypeVar("T")
 
-_BODY_MARK = BodyParameterMark()
-Body: TypeAlias = Annotated[T, _BODY_MARK]
+Body: TypeAlias = Annotated[T, BodyParameterMark()]
