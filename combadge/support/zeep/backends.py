@@ -10,7 +10,7 @@ from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService
-from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
+from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import ResponseT
 from combadge.core.warnings import ServiceCallWarning
@@ -99,7 +99,7 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
         return parse_obj_as(fault_type, exception.__dict__)
 
 
-class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMethod):
+class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindServiceMethod):
     """Synchronous Zeep service. When updating, make sure to update the async variant too."""
 
     def __call__(
@@ -128,8 +128,8 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
     def bind_method(  # noqa: D102
         self,
         response_type: Type[Union[BaseModel, BaseSoapFault]],
-        method: SupportsServiceCall,
-    ) -> SupportsServiceCall:
+        method: SupportsServiceMethodCall,
+    ) -> SupportsServiceMethodCall:
         soap_name = self._validate_operation_name(method)
         clean_response_type, fault_type = self._split_response_type(response_type)
 
@@ -145,7 +145,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
         return resolved_method  # type: ignore[return-value]
 
 
-class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsBindMethod):
+class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsBindServiceMethod):
     """Asynchronous Zeep service. When updating, make sure to update the sync variant too."""
 
     async def __call__(
@@ -174,8 +174,8 @@ class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], 
     def bind_method(  # noqa: D102
         self,
         response_type: Type[Union[BaseModel, BaseSoapFault]],
-        method: SupportsServiceCall,
-    ) -> SupportsServiceCall:
+        method: SupportsServiceMethodCall,
+    ) -> SupportsServiceMethodCall:
         soap_name = self._validate_operation_name(method)
         clean_response_type, fault_type = self._split_response_type(response_type)
 

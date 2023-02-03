@@ -9,6 +9,7 @@ from typing_extensions import Protocol, Self
 from combadge.core.binder import BaseBoundService, bind
 
 
+# TODO: this could go if I moved the method to `BaseBoundService`.
 class SupportsService(Protocol):
     """
     Convenience protocol that forwards the `bind` call.
@@ -17,16 +18,20 @@ class SupportsService(Protocol):
     """
 
     @classmethod
-    def bind(cls, to_backend: SupportsBindMethod) -> Self:
+    def bind(cls, to_backend: SupportsBindServiceMethod) -> Self:
         """Bind the protocol to the specified backend."""
         return bind(cls, to_backend)
 
 
-class SupportsBindMethod(Protocol):
+class SupportsBindServiceMethod(Protocol):
     """Supports binding a method to the current instance."""
 
     @abstractmethod
-    def bind_method(self, response_type: type[BaseModel], method: SupportsServiceCall) -> SupportsServiceCall:
+    def bind_method(
+        self,
+        response_type: type[BaseModel],
+        method: SupportsServiceMethodCall,
+    ) -> SupportsServiceMethodCall:
         """
         «Binds» the `method` to the current instance (for example, a backend).
 
@@ -40,7 +45,7 @@ class SupportsBindMethod(Protocol):
         raise NotImplementedError
 
 
-class SupportsServiceCall(Protocol):
+class SupportsServiceMethodCall(Protocol):
     """
     Bound method call specification.
 
