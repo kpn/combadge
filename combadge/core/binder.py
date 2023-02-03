@@ -8,7 +8,7 @@ from inspect import signature as get_signature
 from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Tuple, Type
 
 try:
-    from inspect import get_annotations
+    from inspect import get_annotations  # type: ignore[attr-defined]
 except ImportError:
     from get_annotations import get_annotations  # type: ignore[no-redef]
 
