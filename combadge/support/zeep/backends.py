@@ -10,7 +10,7 @@ from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy, OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService
-from combadge.core.interfaces import SupportsBindMethod, SupportsMethodCall
+from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import ResponseT
 from combadge.core.warnings import ServiceCallWarning
@@ -128,8 +128,8 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
     def bind_method(  # noqa: D102
         self,
         response_type: Type[Union[BaseModel, BaseSoapFault]],
-        method: SupportsMethodCall,
-    ) -> SupportsMethodCall:
+        method: SupportsServiceCall,
+    ) -> SupportsServiceCall:
         soap_name = self._validate_operation_name(method)
         clean_response_type, fault_type = self._split_response_type(response_type)
 
@@ -174,8 +174,8 @@ class ZeepBackendAsync(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], 
     def bind_method(  # noqa: D102
         self,
         response_type: Type[Union[BaseModel, BaseSoapFault]],
-        method: SupportsMethodCall,
-    ) -> SupportsMethodCall:
+        method: SupportsServiceCall,
+    ) -> SupportsServiceCall:
         soap_name = self._validate_operation_name(method)
         clean_response_type, fault_type = self._split_response_type(response_type)
 

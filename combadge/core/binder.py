@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import SupportsBindMethod, SupportsMethodCall
+    from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
     from combadge.core.typevars import ServiceProtocolT
 
 
@@ -34,7 +34,7 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
 
     for name, method in _enumerate_methods(from_protocol):
         response_type: Type[BaseModel] = _extract_return_type(method)
-        resolved_method: SupportsMethodCall = to_backend.bind_method(response_type, method)
+        resolved_method: SupportsServiceCall = to_backend.bind_method(response_type, method)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)
 

@@ -26,7 +26,7 @@ class SupportsBindMethod(Protocol):
     """Supports binding a method to the current instance."""
 
     @abstractmethod
-    def bind_method(self, response_type: type[BaseModel], method: SupportsMethodCall) -> SupportsMethodCall:
+    def bind_method(self, response_type: type[BaseModel], method: SupportsServiceCall) -> SupportsServiceCall:
         """
         «Binds» the `method` to the current instance (for example, a backend).
 
@@ -40,7 +40,7 @@ class SupportsBindMethod(Protocol):
         raise NotImplementedError
 
 
-class SupportsMethodCall(Protocol):
+class SupportsServiceCall(Protocol):
     """
     Bound method call specification.
 
