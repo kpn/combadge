@@ -21,26 +21,25 @@
 ℹ️ This `README` is [tested](tests/integration/test_readme.py) and should run «as is».
 
 ```python
-# test_id=test_quickstart
+# test_id=quickstart
 
 from typing import Literal, Union
 
 import zeep
-from combadge.core.interfaces import SupportsService
-from combadge.core.response import FaultyResponse, SuccessfulResponse
-from combadge.support.soap.decorators import soap_name
-from combadge.support.zeep.backends import ZeepBackend
 from pydantic import BaseModel, Field
 from pytest import raises
 from typing_extensions import Annotated
 
+from combadge.core.interfaces import SupportsService
+from combadge.core.response import FaultyResponse, SuccessfulResponse
+from combadge.support.marks import _BODY_MARK
+from combadge.support.soap.decorators import operation_name
+from combadge.support.zeep.backends.sync import ZeepBackend
+
 
 # 1️⃣ Declare a request model:
-class NumberToWordsRequest(BaseModel):
+class NumberToWordsRequest(BaseModel, allow_population_by_field_name=True):
     number: Annotated[int, Field(alias="ubiNum")]
-
-    class Config:
-        allow_population_by_field_name = True
 
 
 # 2️⃣ Declare a response model:
@@ -55,8 +54,11 @@ class NumberTooLargeResponse(FaultyResponse):
 
 # 4️⃣ Declare the interface:
 class SupportsNumberConversion(SupportsService):
-    @soap_name("NumberToWords")
-    def number_to_words(self, request: NumberToWordsRequest) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+    @operation_name("NumberToWords")
+    def number_to_words(
+        self,
+        request: Annotated[NumberToWordsRequest, _BODY_MARK],
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         ...
 
 
@@ -68,7 +70,7 @@ service = SupportsNumberConversion.bind(ZeepBackend(client.service))
 response = service.number_to_words(NumberToWordsRequest(number=42))
 assert response.unwrap().__root__ == "forty two "
 
-# ☣️ Error classes are automatically derived for error models:
+# ☢️ Error classes are automatically derived for error models:
 response = service.number_to_words(NumberToWordsRequest(number=-1))
 with raises(NumberTooLargeResponse.Error):
     response.raise_for_result()

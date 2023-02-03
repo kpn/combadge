@@ -1,13 +1,11 @@
 from typing import Callable, TypeVar
 
+from combadge.core.mark import _make_method_mark_wrapper
+from combadge.support.soap.marks import OperationNameMark
+
 T = TypeVar("T")
 
 
-def soap_name(name: str) -> Callable[[T], T]:
+def operation_name(name: str) -> Callable[[T], T]:
     """Assign the SOAP operation name to the method."""
-
-    def wrap(wrapped: T) -> T:
-        wrapped.__soap_operation_name__ = name  # type: ignore[attr-defined]
-        return wrapped
-
-    return wrap
+    return _make_method_mark_wrapper(OperationNameMark(name))

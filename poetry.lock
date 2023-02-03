@@ -296,6 +296,18 @@ files = [
 test = ["pytest (>=6)"]
 
 [[package]]
+name = "get-annotations"
+version = "0.1.2"
+description = "A backport of Python 3.10's inspect.get_annotation() function"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+files = [
+    {file = "get-annotations-0.1.2.tar.gz", hash = "sha256:da7b69b8043237cc7f7ce5919e9cc59bd18fc4e2704b43eb34e3ba4fa9374bab"},
+    {file = "get_annotations-0.1.2-py3-none-any.whl", hash = "sha256:788ba8aa2434ee34ffb985c4aea2f9e575204c884c0e0dd0f969be846470e527"},
+]
+
+[[package]]
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -1262,4 +1274,4 @@ zeep = ["zeep"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "62126f34bb218aae302cbdd2a193ebabbbc04a1de03f4bab09143ab6f3352db9"
+content-hash = "cd91565cd6bf7ece6d29647fcb0ce6bd494eaed85f0467affd999b53b2e07f0e"

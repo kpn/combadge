@@ -1,10 +1,10 @@
 from abc import abstractmethod
-from typing import Any, Callable, Type
+from typing import Any, Mapping, Type
 
 from pytest import mark
 from typing_extensions import Protocol
 
-from combadge.core.binder import BaseBoundService, _enumerate_methods, _extract_return_type, _update_bound_service
+from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service
 from combadge.core.interfaces import SupportsService
 
 
@@ -57,16 +57,11 @@ def test_update_bound_service() -> None:
     )
 
 
-class ExampleProtocol(Protocol):
-    def valid_method(self, request: int) -> str:
-        ...
-
-
 @mark.parametrize(
-    ("method", "return_type"),
+    ("type_hints", "return_type"),
     [
-        (ExampleProtocol.valid_method, str),
+        ({"return": str}, str),
     ],
 )
-def test_extract_types(method: Callable[..., Any], return_type: Type[Any]) -> None:
-    assert _extract_return_type(method) == return_type
+def test_extract_return_type(type_hints: Mapping[str, Any], return_type: Type[Any]) -> None:
+    assert Signature._extract_return_type(type_hints) == return_type

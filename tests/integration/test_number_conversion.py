@@ -9,15 +9,14 @@ from zeep import AsyncClient, Client
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import FaultyResponse, SuccessfulResponse
-from combadge.support.soap.decorators import soap_name
-from combadge.support.zeep.backends import ZeepBackend, ZeepBackendAsync
+from combadge.support.marks import Body
+from combadge.support.soap.decorators import operation_name
+from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
+from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
 
 
-class NumberToWordsRequest(BaseModel):
+class NumberToWordsRequest(BaseModel, allow_population_by_field_name=True):
     number: Annotated[int, Field(alias="ubiNum")]
-
-    class Config:
-        allow_population_by_field_name = True
 
 
 class NumberToWordsResponse(SuccessfulResponse):
@@ -29,18 +28,21 @@ class NumberTooLargeResponse(FaultyResponse):
 
 
 class SupportsNumberConversion(SupportsService):
-    @soap_name("NumberToWords")
+    @operation_name("NumberToWords")
     @abstractmethod
-    def number_to_words(self, request: NumberToWordsRequest) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+    def number_to_words(
+        self,
+        request: Body[NumberToWordsRequest],
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         raise NotImplementedError
 
 
 class SupportsNumberConversionAsync(SupportsService):
-    @soap_name("NumberToWords")
+    @operation_name("NumberToWords")
     @abstractmethod
     async def number_to_words(
         self,
-        request: NumberToWordsRequest,
+        request: Body[NumberToWordsRequest],
     ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         raise NotImplementedError
 
@@ -51,7 +53,7 @@ def number_conversion_service() -> Iterable[SupportsNumberConversion]:
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
         port_name="NumberConversionSoap",
     ) as client:
-        yield SupportsNumberConversion.bind(ZeepBackend(client.service))
+        yield SupportsNumberConversion.bind(SyncZeepBackend(client.service))
 
 
 @fixture
@@ -60,7 +62,7 @@ def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
         port_name="NumberConversionSoap",
     ) as client:
-        yield SupportsNumberConversionAsync.bind(ZeepBackendAsync(client.service))
+        yield SupportsNumberConversionAsync.bind(AsyncZeepBackend(client.service))
 
 
 @mark.vcr(decode_compressed_response=True)

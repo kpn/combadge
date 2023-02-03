@@ -9,8 +9,9 @@ from zeep import Client
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import SuccessfulResponse
-from combadge.support.soap.decorators import soap_name
-from combadge.support.zeep.backends import ZeepBackend
+from combadge.support.marks import Body
+from combadge.support.soap.decorators import operation_name
+from combadge.support.zeep.backends.sync import ZeepBackend
 
 
 class CountryInfoRequest(BaseModel):
@@ -27,9 +28,9 @@ class CountryInfoResponse(SuccessfulResponse):
 
 
 class SupportsCountryInfo(SupportsService):
-    @soap_name("ListOfContinentsByName")
+    @operation_name("ListOfContinentsByName")
     @abstractmethod
-    def list_of_continents_by_name(self, request: CountryInfoRequest) -> CountryInfoResponse:
+    def list_of_continents_by_name(self, request: Body[CountryInfoRequest]) -> CountryInfoResponse:
         raise NotImplementedError
 
 

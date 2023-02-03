@@ -32,7 +32,7 @@ lint/mypy:
 	poetry run mypy combadge tests
 
 .PHONY: format
-format: format/ruff format/black
+format: format/black format/ruff
 
 .PHONY: format/black
 format/black:

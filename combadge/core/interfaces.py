@@ -6,10 +6,9 @@ from typing import Any
 from pydantic import BaseModel
 from typing_extensions import Protocol, Self
 
-from combadge.core.binder import BaseBoundService, bind
+from combadge.core.binder import BaseBoundService, Signature, bind
 
 
-# TODO: this could go if I moved the method to `BaseBoundService`.
 class SupportsService(Protocol):
     """
     Convenience protocol that forwards the `bind` call.
@@ -27,17 +26,12 @@ class SupportsBindServiceMethod(Protocol):
     """Supports binding a method to the current instance."""
 
     @abstractmethod
-    def bind_method(
-        self,
-        response_type: type[BaseModel],
-        method: SupportsServiceMethodCall,
-    ) -> SupportsServiceMethodCall:
+    def bind_method(self, signature: Signature) -> SupportsServiceMethodCall:
         """
         «Binds» the `method` to the current instance (for example, a backend).
 
         Args:
-            response_type: response type extracted from the service protocol
-            method: original protocol method
+            signature: extracted method signature
 
         Returns:
             Callable service method which is fully capable of sending a request and receiving a response.
