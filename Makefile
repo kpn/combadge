@@ -1,12 +1,20 @@
 .PHONY: all
 all: install lint test build
 
-.PHONY: check
-check: lint test
+.PHONY: clean
+clean:
+	poetry run ruff --clean
+	rm -rf .mypy_cache
+	rm -rf .pytest_cache
+	rm -rf *.coverage coverage.*
+	rm -rf dist
 
 .PHONY: install
 install:
 	poetry install --all-extras --with dev
+
+.PHONY: check
+check: lint test
 
 .PHONY: lint
 lint: lint/ruff lint/black lint/mypy
