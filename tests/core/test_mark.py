@@ -1,10 +1,10 @@
 from typing import Any, List, Type
 
 import pytest
-from typing_extensions import get_args as get_type_args
+from typing_extensions import Annotated
 
 from combadge.core.mark import MethodMark, ParameterMark, _extract_parameter_marks
-from combadge.support.marks import Body
+from combadge.support.http.marks import AcceptLanguage, Body, BodyParameterMark, Header, HeaderParameterMark
 from combadge.support.soap.marks import OperationNameMethodMark
 
 
@@ -24,7 +24,9 @@ def test_get_method_marks() -> None:
     ("type_", "expected"),
     [
         (int, []),
-        (Body[int], [get_type_args(Body)[1]]),
+        (Body[int], [BodyParameterMark()]),
+        (Annotated[str, Header("X-Header")], [HeaderParameterMark("X-Header")]),
+        (AcceptLanguage[str], [HeaderParameterMark("Accept-Language")]),
     ],
 )
 def test_extract_parameter_marks(type_: Type[Any], expected: List[ParameterMark]) -> None:

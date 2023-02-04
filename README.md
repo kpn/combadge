@@ -32,7 +32,7 @@ from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import FaultyResponse, SuccessfulResponse
-from combadge.support.marks import Body
+from combadge.support.http.marks import Body
 from combadge.support.soap.marks import operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 

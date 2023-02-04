@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 from combadge.core.mark import MethodMark, make_method_mark_decorator
-from combadge.support.abc import RequiresOperationName
+from combadge.support.http.abc import RequiresOperationName
 
 
 @dataclass

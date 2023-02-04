@@ -13,6 +13,8 @@ T = TypeVar("T")
 class MethodMark(ABC):
     """Method-specific mark."""
 
+    __slots__ = ()
+
     @abstractmethod
     def prepare_request(self, request: Dict[str, Any]) -> None:
         """Modify the request according to the mark."""
@@ -42,6 +44,8 @@ def make_method_mark_decorator(type_factory: Callable[P, MethodMark]) -> Callabl
 
 class ParameterMark(ABC):
     """Parameter-specific mark."""
+
+    __slots__ = ()
 
     @abstractmethod
     def prepare_request(self, request: Dict[str, Any], value: Any) -> None:

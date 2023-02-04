@@ -1,7 +1,7 @@
 """Protocol-specific abstract base classes."""
 
 from abc import ABC
-from typing import ClassVar
+from typing import Any, ClassVar, List, Tuple
 
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
@@ -19,3 +19,10 @@ class RequiresBody(ABC, BaseModel):
 
     KEY: ClassVar[str] = "body"
     body: Annotated[BaseModel, Field(..., alias=KEY)]
+
+
+class SupportsHeaders(ABC, BaseModel):
+    """Adds support for additional HTTP headers."""
+
+    KEY: ClassVar[str] = "headers"
+    headers: Annotated[List[Tuple[str, Any]], Field(alias=KEY, default_factory=list)]

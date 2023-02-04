@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from combadge.support.abc import RequiresBody, RequiresOperationName
+from combadge.support.http.abc import RequiresBody, RequiresOperationName
 
 
 class Request(RequiresOperationName, RequiresBody, BaseModel):
