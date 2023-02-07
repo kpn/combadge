@@ -66,7 +66,7 @@ class PathMark(MethodMark):
         if callable(path_or_factory):
             self._factory = path_or_factory
         else:
-            self._factory = path_or_factory.format  # type: ignore[arg-type]
+            self._factory = path_or_factory.format
 
     def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
         request[RequiresPath.KEY] = self._factory(**_arguments)
