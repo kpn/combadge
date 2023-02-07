@@ -41,6 +41,25 @@ Header: TypeAlias = HeaderParameterMark
 
 
 @dataclass
+class PathMark(MethodMark):
+    """
+    Specifies a fixed URL path.
+
+    Example:
+        >>> @path("/hello/world")
+    """
+
+    path: str
+    __slots__ = ("path",)
+
+    def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
+        request[RequiresPath.KEY] = self.path
+
+
+path = make_method_mark_decorator(PathMark)
+
+
+@dataclass
 class PathFormatMark(MethodMark):
     """
     Specifies a URL path format.
