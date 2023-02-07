@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, TypeVar
+from typing import Any, Callable, Dict, TypeVar, Union
 
 from typing_extensions import Annotated, TypeAlias
 
@@ -40,61 +40,36 @@ class HeaderParameterMark(ParameterMark):
 Header: TypeAlias = HeaderParameterMark
 
 
-@dataclass
 class PathMark(MethodMark):
     """
-    Specifies a fixed URL path.
+    Specifies a URL path.
 
     Example:
         >>> @path("/hello/world")
+        >>> def call() -> None: ...
+
+        >>> @path("/hello/{name}")
+        >>> def call(name: str) -> None: ...
+
+        >>> @path(lambda name, **_: f"/hello/{name}")
+        >>> def call(name: str) -> None: ...
+
+    Notes:
+        - Always refer to parameters with their names. Positional arguments, e.g. `{0}` are
+          intentionally unsupported.
     """
 
-    path: str
-    __slots__ = ("path",)
+    _factory: Callable[..., str]
+    __slots__ = ("_factory",)
+
+    def __init__(self, path_or_factory: Union[str, Callable[..., str]]) -> None:  # noqa: D107
+        if callable(path_or_factory):
+            self._factory = path_or_factory
+        else:
+            self._factory = path_or_factory.format  # type: ignore[arg-type]
 
     def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresPath.KEY] = self.path
+        request[RequiresPath.KEY] = self._factory(**_arguments)
 
 
 path = make_method_mark_decorator(PathMark)
-
-
-@dataclass
-class PathFormatMark(MethodMark):
-    """
-    Specifies a URL path format.
-
-    Example:
-        >>> @path_format("/hello/{name}")
-
-    Notes:
-        - Referencing parameters by their position, e.g. `{0}` is not possible. Refer to them by their names.
-    """
-
-    format_: str
-    __slots__ = ("format_",)
-
-    def prepare_request(self, request: Dict[str, Any], arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresPath.KEY] = self.format_.format(**arguments)
-
-
-path_format = make_method_mark_decorator(PathFormatMark)
-
-
-@dataclass
-class PathFactoryMark(MethodMark):
-    """
-    Specifies a URL path factory.
-
-    Example:
-        >>> @path_factory(lambda name, **_: f"/hello/{name}")
-    """
-
-    factory: Callable[..., str]
-    __slots__ = ("factory",)
-
-    def prepare_request(self, request: Dict[str, Any], arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresPath.KEY] = self.factory(**arguments)
-
-
-path_factory = make_method_mark_decorator(PathFactoryMark)
