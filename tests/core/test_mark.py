@@ -4,7 +4,8 @@ import pytest
 from typing_extensions import Annotated
 
 from combadge.core.mark import MethodMark, ParameterMark, _extract_parameter_marks
-from combadge.support.http.marks import AcceptLanguage, Body, BodyParameterMark, Header, HeaderParameterMark
+from combadge.support.http.headers import AcceptLanguage
+from combadge.support.http.marks import Body, BodyParameterMark, Header, HeaderParameterMark
 from combadge.support.soap.marks import OperationNameMethodMark
 
 

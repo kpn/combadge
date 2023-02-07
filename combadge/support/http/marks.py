@@ -11,7 +11,6 @@ from combadge.core.mark import ParameterMark
 from combadge.support.http.abc import RequiresBody, SupportsHeaders
 
 T = TypeVar("T")
-V = TypeVar("V")
 
 
 @dataclass
@@ -40,4 +39,3 @@ class HeaderParameterMark(ParameterMark):
 
 
 Header: TypeAlias = HeaderParameterMark
-AcceptLanguage: TypeAlias = Annotated[T, Header("Accept-Language")]
