@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 from combadge.core.mark import MethodMark, make_method_mark_decorator
-from combadge.support.http.abc import RequiresOperationName
+from combadge.support.soap.abc import RequiresOperationName
 
 
 @dataclass
@@ -13,7 +13,7 @@ class OperationNameMethodMark(MethodMark):
 
     __slots__ = ("name",)
 
-    def prepare_request(self, request: Dict[str, Any]) -> None:  # noqa: D102
+    def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
         request[RequiresOperationName.KEY] = self.name
 
 

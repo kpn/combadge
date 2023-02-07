@@ -28,7 +28,7 @@ def build_request(
     arguments = signature.inner.bind(service, *call_args, **call_kwargs).arguments
     request: Dict[str, Any] = {}
     for mark in signature.method_marks:
-        mark.prepare_request(request)
+        mark.prepare_request(request, arguments)
     for name, mark in signature.parameter_marks:
         try:
             value = arguments[name]

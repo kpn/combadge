@@ -16,8 +16,17 @@ class MethodMark(ABC):
     __slots__ = ()
 
     @abstractmethod
-    def prepare_request(self, request: Dict[str, Any]) -> None:
-        """Modify the request according to the mark."""
+    def prepare_request(self, request: Dict[str, Any], arguments: Dict[str, Any]) -> None:
+        """
+        Modify the request according to the mark.
+
+        Args:
+            request: request that is being constructed, please refer to the ABCs for relevant keys
+            arguments: service call argument values, mapped by their names
+
+        Notes:
+            - Positional arguments are provided by their names, too
+        """
 
     @staticmethod
     def extract(from_method: Any) -> List[MethodMark]:
