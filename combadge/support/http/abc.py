@@ -1,7 +1,7 @@
 """Protocol-specific abstract base classes."""
 
 from abc import ABC
-from typing import Any, ClassVar, List, Tuple
+from typing import Any, ClassVar, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
@@ -12,6 +12,13 @@ class RequiresBody(ABC, BaseModel):
 
     KEY: ClassVar[str] = "body"
     body: Annotated[BaseModel, Field(..., alias=KEY)]
+
+
+class SupportsBody(ABC, BaseModel):
+    """Supports an optional request body (for example, a JSON payload or a SOAP body)."""
+
+    KEY: ClassVar[str] = "body"
+    body: Annotated[Optional[BaseModel], Field(alias=KEY)] = None
 
 
 class SupportsHeaders(ABC, BaseModel):
