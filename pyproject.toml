@@ -132,7 +132,7 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
-mypy = { git = "https://github.com/python/mypy.git", rev = "c3750099f4bffeb1b962a6b59a3851d297f9ba41" }
+mypy = "^1.0.0"
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
 types-requests = "^2.28.11.8"
