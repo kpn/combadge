@@ -1,14 +1,10 @@
-"""Generic marks applicable to a variety of protocols."""
-
-from __future__ import annotations
-
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, TypeVar, Union
+from typing import Any, Dict, TypeVar
 
 from typing_extensions import Annotated, TypeAlias
 
-from combadge.core.mark import MethodMark, ParameterMark, make_method_mark_decorator
-from combadge.support.http.abc import RequiresBody, RequiresPath, SupportsHeaders
+from combadge.core.mark import ParameterMark
+from combadge.support.http.abc import RequiresBody, SupportsHeaders
 
 T = TypeVar("T")
 
@@ -38,38 +34,3 @@ class HeaderParameterMark(ParameterMark):
 
 
 Header: TypeAlias = HeaderParameterMark
-
-
-class PathMark(MethodMark):
-    """
-    Specifies a URL path.
-
-    Example:
-        >>> @path("/hello/world")
-        >>> def call() -> None: ...
-
-        >>> @path("/hello/{name}")
-        >>> def call(name: str) -> None: ...
-
-        >>> @path(lambda name, **_: f"/hello/{name}")
-        >>> def call(name: str) -> None: ...
-
-    Notes:
-        - Always refer to parameters with their names. Positional arguments, e.g. `{0}` are
-          intentionally unsupported.
-    """
-
-    _factory: Callable[..., str]
-    __slots__ = ("_factory",)
-
-    def __init__(self, path_or_factory: Union[str, Callable[..., str]]) -> None:  # noqa: D107
-        if callable(path_or_factory):
-            self._factory = path_or_factory
-        else:
-            self._factory = path_or_factory.format
-
-    def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresPath.KEY] = self._factory(**_arguments)
-
-
-path = make_method_mark_decorator(PathMark)

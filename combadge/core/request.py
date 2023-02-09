@@ -25,10 +25,18 @@ def build_request(
         call_args: service method call positional arguments
         call_kwargs: service method call keyword arguments
     """
-    arguments = signature.inner.bind(service, *call_args, **call_kwargs).arguments
+    bound_arguments = signature.inner.bind(service, *call_args, **call_kwargs)
+    bound_arguments.apply_defaults()
+    arguments = bound_arguments.arguments
+
     request: Dict[str, Any] = {}
+
+    # Apply the method marks: they receive all the arguments at once.
     for mark in signature.method_marks:
+        # TODO: pass `bound_arguments.args` too.
         mark.prepare_request(request, arguments)
+
+    # Apply the parameter marks: they receive their respective values.
     for name, mark in signature.parameter_marks:
         try:
             value = arguments[name]
@@ -36,4 +44,6 @@ def build_request(
             pass
         else:
             mark.prepare_request(request, value)
+
+    # Validate and return the request.
     return type_.parse_obj(request)

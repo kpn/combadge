@@ -66,7 +66,7 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
 def _update_bound_service(service_class: Type[BaseBoundService], with_protocol: Type[Any]) -> None:
     """Update the generated service class' magic attributes."""
 
-    del service_class.__abstractmethods__  # type: ignore
+    del service_class.__abstractmethods__  # type: ignore[attr-defined]
     service_class.__name__ = f"{service_class.__name__}[{with_protocol.__name__}]"
     service_class.__qualname__ = f"{service_class.__qualname__}[{with_protocol.__qualname__}]"
     service_class.__doc__ = service_class.__doc__

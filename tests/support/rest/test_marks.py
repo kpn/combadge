@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
-from combadge.support.http.abc import RequiresPath
-from combadge.support.http.marks import PathMark
+from combadge.support.rest.abc import RequiresPath
+from combadge.support.rest.marks import PathMark
 
 
 def test_path_format() -> None:

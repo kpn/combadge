@@ -15,6 +15,7 @@ class MethodMark(ABC):
 
     __slots__ = ()
 
+    # TODO: support positional args.
     @abstractmethod
     def prepare_request(self, request: Dict[str, Any], arguments: Dict[str, Any]) -> None:
         """
