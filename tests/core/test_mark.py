@@ -6,7 +6,7 @@ from typing_extensions import Annotated
 from combadge.core.mark import MethodMark, ParameterMark
 from combadge.support.http.headers import AcceptLanguage
 from combadge.support.http.marks import Body, BodyParameterMark, Header, HeaderParameterMark
-from combadge.support.soap.marks import OperationNameMethodMark
+from combadge.support.soap.marks import _OperationNameMethodMark
 
 
 def test_get_method_marks() -> None:
@@ -16,7 +16,7 @@ def test_get_method_marks() -> None:
     marks = MethodMark.extract(method)
     assert marks == []
 
-    mark = OperationNameMethodMark("test")
+    mark = _OperationNameMethodMark("test")
     marks.append(mark)
     assert MethodMark.extract(method) == [mark]
 

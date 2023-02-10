@@ -3,14 +3,13 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Tuple
 
-from combadge.core.mark import MethodMark, make_method_mark_decorator
+from combadge.core.mark import MethodMark
+from combadge.core.typevars import Identity
 from combadge.support.soap.abc import RequiresOperationName
 
 
 @dataclass
-class OperationNameMethodMark(MethodMark[RequiresOperationName]):
-    """Designates a service call's operation name (for example, SOAP name)."""
-
+class _OperationNameMethodMark(MethodMark[RequiresOperationName]):
     name: str
 
     __slots__ = ("name",)
@@ -24,4 +23,6 @@ class OperationNameMethodMark(MethodMark[RequiresOperationName]):
         request.operation_name = self.name
 
 
-operation_name = make_method_mark_decorator(OperationNameMethodMark)
+def operation_name(name: str) -> Identity:
+    """Designates a service call's operation name (for example, SOAP name)."""
+    return _OperationNameMethodMark(name).mark

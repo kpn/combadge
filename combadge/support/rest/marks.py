@@ -7,31 +7,14 @@ from typing import Any, Callable, Dict, Tuple, TypeVar, Union
 
 from typing_extensions import TypeAlias
 
-from combadge.core.mark import MethodMark, ParameterMark, make_method_mark_decorator
+from combadge.core.mark import MethodMark, ParameterMark
+from combadge.core.typevars import Identity
 from combadge.support.rest.abc import RequiresMethod, RequiresPath, SupportsQueryParams
 
 T = TypeVar("T")
 
 
-class PathMark(MethodMark[RequiresPath]):
-    """
-    Specifies a URL path.
-
-    Example:
-        >>> @path("/hello/world")
-        >>> def call() -> None: ...
-
-        >>> @path("/hello/{name}")
-        >>> def call(name: str) -> None: ...
-
-        >>> @path(lambda name, **_: f"/hello/{name}")
-        >>> def call(name: str) -> None: ...
-
-    Notes:
-        - Always refer to parameters with their names. Positional arguments, e.g. `{0}` are
-          intentionally unsupported.
-    """
-
+class _PathMark(MethodMark[RequiresPath]):
     _factory: Callable[..., str]
     __slots__ = ("_factory",)
 
@@ -50,13 +33,25 @@ class PathMark(MethodMark[RequiresPath]):
         request.path = self._factory(*args, **kwargs)
 
 
-path = make_method_mark_decorator(PathMark)
+def path(path_or_factory: Union[str, Callable[..., str]]) -> Identity:
+    """
+    Specify a URL path.
+
+    Example:
+        >>> @path("/hello/world")
+        >>> def call() -> None: ...
+
+        >>> @path("/hello/{name}")
+        >>> def call(name: str) -> None: ...
+
+        >>> @path(lambda name, **_: f"/hello/{name}")
+        >>> def call(name: str) -> None: ...
+    """
+    return _PathMark(path_or_factory).mark
 
 
 @dataclass
-class RestMethodMark(MethodMark[RequiresMethod]):
-    """Specifies HTTP/REST method."""
-
+class _RestMethodMark(MethodMark[RequiresMethod]):
     method: str  # TODO: enum?
 
     def prepare_request(  # noqa: D102
@@ -68,7 +63,9 @@ class RestMethodMark(MethodMark[RequiresMethod]):
         request.method = self.method
 
 
-method = make_method_mark_decorator(RestMethodMark)
+def method(method: str) -> Identity:
+    """Specify a HTTP/REST method."""
+    return _RestMethodMark(method).mark
 
 
 @dataclass

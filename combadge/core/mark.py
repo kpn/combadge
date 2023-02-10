@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generic, List, Tuple, Type, TypeVar
+from typing import Any, Dict, Generic, List, Tuple, Type, TypeVar
 
-from typing_extensions import Annotated, ParamSpec, get_origin
+from typing_extensions import Annotated, get_origin
 from typing_extensions import get_args as get_type_args
 
 from combadge.core.typevars import RequestT
 
-P = ParamSpec("P")
 T = TypeVar("T")
 
 
@@ -37,18 +36,10 @@ class MethodMark(ABC, Generic[RequestT]):
             marks = from_method.__combadge_marks__ = []
         return marks
 
-
-def make_method_mark_decorator(type_factory: Callable[P, MethodMark]) -> Callable[P, Callable[[T], T]]:
-    """Make a method decorator for the current class."""
-
-    def decorator(*args: P.args, **kwargs: P.kwargs) -> Callable[[T], T]:
-        def wrap(wrapped: T) -> T:
-            MethodMark.extract(wrapped).append(type_factory(*args, **kwargs))
-            return wrapped
-
-        return wrap
-
-    return decorator
+    def mark(self, wrapped: T) -> T:
+        """Mark `wrapped`."""
+        MethodMark.extract(wrapped).append(self)
+        return wrapped
 
 
 class ParameterMark(Generic[RequestT], ABC):
