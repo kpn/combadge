@@ -1,4 +1,4 @@
-"""These are building blocks (à la mixins) of concrete backend's request classes."""
+"""Mixins for concrete RESTful API request classes."""
 
 from abc import ABC
 from typing import Any, List, Tuple

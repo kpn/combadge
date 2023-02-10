@@ -1,3 +1,5 @@
+"""Internal type variables."""
+
 from typing import TypeVar
 
 from pydantic import BaseModel

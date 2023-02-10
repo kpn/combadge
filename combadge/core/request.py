@@ -28,6 +28,8 @@ def build_request(
     bound_arguments.apply_defaults()
     arguments = bound_arguments.arguments
 
+    # Construct an initial empty request without validation.
+    # See also: https://github.com/pydantic/pydantic/issues/1864#issuecomment-679044432
     request = request_class.construct()
 
     # Apply the method marks: they receive all the arguments at once.
@@ -45,7 +47,6 @@ def build_request(
             mark.prepare_request(request, value)
 
     # Validate and return the request.
-    # See also: https://github.com/pydantic/pydantic/issues/1864#issuecomment-679044432
     *_, error = validate_model(request_class, request.__dict__)
     if error:
         raise error  # TODO: introduce `CombadgeBaseError`.

@@ -1,3 +1,5 @@
+"""Mixins for HTTP-related request classes."""
+
 from abc import ABC
 from typing import Any, List, Optional, Tuple
 

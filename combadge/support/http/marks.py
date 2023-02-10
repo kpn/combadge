@@ -1,3 +1,5 @@
+"""Marks for HTTP-compatible requests."""
+
 from dataclasses import dataclass
 from typing import Any, TypeVar, Union
 
