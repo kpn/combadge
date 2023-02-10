@@ -1,10 +1,9 @@
 from typing import Any, Type
 
-from httpx import Client, HTTPError, Response
+from httpx import Client, Response
 from pydantic import BaseModel, parse_obj_as
 
 from combadge.core.binder import BaseBoundService, Signature
-from combadge.core.errors import CombadgeBackendError, CombadgeValidationError
 from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
@@ -27,18 +26,14 @@ class HttpxBackend(SupportsBindServiceMethod):
 
     def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
         """Call the backend."""
-        try:
-            response: Response = self._client.request(
-                request.method,
-                request.path,
-                json=request.body_dict(),
-                params=request.query_params,
-            )
-            response.raise_for_status()
-        except HTTPError as e:
-            raise CombadgeBackendError from e
-        with CombadgeValidationError.wrap():
-            return parse_obj_as(response_type, response.json())
+        response: Response = self._client.request(
+            request.method,
+            request.path,
+            json=request.body_dict(),
+            params=request.query_params,
+        )
+        response.raise_for_status()
+        return parse_obj_as(response_type, response.json())
 
     def bind_method(self, signature: Signature) -> SupportsServiceMethodCall:  # noqa: D102
         def resolved_method(service: BaseBoundService, *args: Any, **kwargs: Any) -> BaseModel:

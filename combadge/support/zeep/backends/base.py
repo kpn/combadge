@@ -8,7 +8,6 @@ from zeep.exceptions import Fault
 from zeep.helpers import serialize_object
 from zeep.proxy import OperationProxy, ServiceProxy
 
-from combadge.core.errors import CombadgeValidationError
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.response import BaseSoapFault, SoapFaultT
@@ -73,11 +72,9 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
     @staticmethod
     def _parse_response(value: Any, response_type: Type[ResponseT]) -> ResponseT:
         """Parse the response value using the generic response types."""
-        with CombadgeValidationError.wrap():
-            return parse_obj_as(response_type, serialize_object(value, dict))
+        return parse_obj_as(response_type, serialize_object(value, dict))
 
     @staticmethod
     def _parse_soap_fault(exception: Fault, fault_type: Type[SoapFaultT]) -> SoapFaultT:
         """Parse the SOAP fault."""
-        with CombadgeValidationError.wrap():
-            return parse_obj_as(fault_type, exception.__dict__)
+        return parse_obj_as(fault_type, exception.__dict__)
