@@ -15,7 +15,7 @@ from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
 class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindServiceMethod):
-    """Synchronous Zeep service. When updating, make sure to update the async variant too."""
+    """Synchronous Zeep service."""
 
     def __call__(
         self,
