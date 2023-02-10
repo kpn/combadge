@@ -1,10 +1,11 @@
 from typing import Any, Type, Union
 
 from pydantic import BaseModel
-from zeep.exceptions import Fault
+from zeep.exceptions import Error, Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService, Signature
+from combadge.core.errors import CombadgeBackendError
 from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
@@ -35,6 +36,8 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindSer
             response = operation(**request.body.dict(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
+        except Error as e:
+            raise CombadgeBackendError from e
         return self._parse_response(response, response_type)
 
     def bind_method(self, signature: Signature) -> SupportsServiceMethodCall:  # noqa: D102

@@ -18,3 +18,7 @@ class CombadgeValidationError(BaseCombadgeError):
             yield
         except ValidationError as e:
             raise cls from e
+
+
+class CombadgeBackendError(BaseCombadgeError):
+    """Any other error produced by a backend."""
