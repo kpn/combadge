@@ -33,7 +33,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Annotated, Protocol
 
 from combadge.core.binder import bind
-from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
+from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.rest.marks import QueryParam, method, path
 
 
@@ -61,7 +61,7 @@ class SupportsWttrIn(Protocol):
 
 
 # 3️⃣ Bind the service:
-backend = SyncHttpxBackend(Client(base_url="https://wttr.in"))
+backend = HttpxBackend(Client(base_url="https://wttr.in"))
 service = bind(SupportsWttrIn, backend)
 
 # 🚀 Call the service:
