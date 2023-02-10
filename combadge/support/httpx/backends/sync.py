@@ -27,12 +27,11 @@ class HttpxBackend(SupportsBindServiceMethod):
 
     def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
         """Call the backend."""
-        json = body.json(by_alias=True) if (body := request.body) is not None else None
         try:
             response: Response = self._client.request(
                 request.method,
                 request.path,
-                json=json,
+                json=request.body_dict(),
                 params=request.query_params,
             )
             response.raise_for_status()
