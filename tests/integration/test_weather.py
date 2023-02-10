@@ -29,13 +29,13 @@ def test_weather_sync() -> None:
             self,
             *,
             in_: str,
-            format_: Annotated[str, QueryParam("format")],
+            format_: Annotated[str, QueryParam("format")] = "j1",
         ) -> Weather:
             raise NotImplementedError
 
     backend = SyncHttpxBackend(Client(base_url="https://wttr.in"))
     service = bind(SupportsWttrIn, backend)  # type: ignore[type-abstract]
-    response = service.get_weather(in_="amsterdam", format_="j1")
+    response = service.get_weather(in_="amsterdam")
 
     assert response.current[0].humidity == 93
     assert response.current[0].temperature == 2
@@ -50,13 +50,13 @@ async def test_weather_async() -> None:
             self,
             *,
             in_: str,
-            format_: Annotated[str, QueryParam("format")],
+            format_: Annotated[str, QueryParam("format")] = "j1",
         ) -> Weather:
             raise NotImplementedError
 
     backend = AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in"))
     service = bind(SupportsWttrIn, backend)  # type: ignore[type-abstract]
-    response = await service.get_weather(in_="amsterdam", format_="j1")
+    response = await service.get_weather(in_="amsterdam")
 
     assert response.current[0].humidity == 71
     assert response.current[0].temperature == 8.0
