@@ -1,7 +1,7 @@
 """Mixins for SOAP request classes."""
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 from combadge.core.mark import MethodMark, make_method_mark_decorator
 from combadge.support.soap.abc import RequiresOperationName
@@ -15,7 +15,12 @@ class OperationNameMethodMark(MethodMark[RequiresOperationName]):
 
     __slots__ = ("name",)
 
-    def prepare_request(self, request: RequiresOperationName, _arguments: Dict[str, Any]) -> None:  # noqa: D102
+    def prepare_request(  # noqa: D102
+        self,
+        request: RequiresOperationName,
+        _args: Tuple[Any, ...],
+        _kwargs: Dict[str, Any],
+    ) -> None:
         request.operation_name = self.name
 
 

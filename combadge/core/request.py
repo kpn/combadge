@@ -25,9 +25,13 @@ def build_request(
         call_args: service method call positional arguments
         call_kwargs: service method call keyword arguments
     """
-    bound_arguments = signature.inner.bind(service, *call_args, **call_kwargs)
+
+    bound_arguments = signature.bind_arguments(service, *call_args, **call_kwargs)
     bound_arguments.apply_defaults()
-    arguments = bound_arguments.arguments
+
+    all_arguments = bound_arguments.arguments
+    call_args = bound_arguments.args
+    call_kwargs = bound_arguments.kwargs
 
     # Construct an initial empty request without validation.
     # See also: https://github.com/pydantic/pydantic/issues/1864#issuecomment-679044432
@@ -35,13 +39,12 @@ def build_request(
 
     # Apply the method marks: they receive all the arguments at once.
     for mark in signature.method_marks:
-        # TODO: pass `bound_arguments.args` too.
-        mark.prepare_request(request, arguments)
+        mark.prepare_request(request, call_args, call_kwargs)
 
     # Apply the parameter marks: they receive their respective values.
     for name, mark in signature.parameter_marks:
         try:
-            value = arguments[name]
+            value = all_arguments[name]
         except KeyError:
             pass
         else:

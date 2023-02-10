@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generic, List, Type, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Tuple, Type, TypeVar
 
 from typing_extensions import Annotated, ParamSpec, get_origin
 from typing_extensions import get_args as get_type_args
@@ -19,16 +19,14 @@ class MethodMark(ABC, Generic[RequestT]):
 
     # TODO: support positional args.
     @abstractmethod
-    def prepare_request(self, request: RequestT, arguments: Dict[str, Any]) -> None:
+    def prepare_request(self, request: RequestT, args: Tuple[Any, ...], kwargs: Dict[str, Any]) -> None:
         """
         Modify the request according to the mark.
 
         Args:
             request: request that is being constructed, please refer to the ABCs for relevant keys
-            arguments: service call argument values, mapped by their names
-
-        Notes:
-            - Positional arguments are provided by their names, too
+            args: service call positional arguments
+            kwargs: service call keyword arguments
         """
 
     @staticmethod

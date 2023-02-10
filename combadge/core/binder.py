@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import update_wrapper
-from inspect import Signature as BuiltinSignature
+from inspect import BoundArguments
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Tuple, Type
+from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Mapping, Tuple, Type
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -80,7 +80,7 @@ class Signature:
     Why? Because passing all these parameters into `bind_method` would be messy.
     """
 
-    inner: BuiltinSignature
+    bind_arguments: Callable[..., BoundArguments]
     method_marks: List[MethodMark]
     parameter_marks: List[Tuple[str, ParameterMark]]
     return_type: Type[BaseModel]
@@ -90,7 +90,7 @@ class Signature:
         """Create a signature from the specified method."""
         type_hints = get_annotations(method, eval_str=True)
         return Signature(
-            inner=get_signature(method),
+            bind_arguments=get_signature(method).bind,
             method_marks=MethodMark.extract(method),
             parameter_marks=list(cls._extract_parameter_marks(type_hints)),
             return_type=cls._extract_return_type(type_hints),

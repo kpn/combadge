@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, TypeVar, Union
+from typing import Any, Callable, Dict, Tuple, TypeVar, Union
 
 from typing_extensions import TypeAlias
 
@@ -41,8 +41,13 @@ class PathMark(MethodMark[RequiresPath]):
         else:
             self._factory = path_or_factory.format
 
-    def prepare_request(self, request: RequiresPath, _arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request.path = self._factory(**_arguments)
+    def prepare_request(  # noqa: D102
+        self,
+        request: RequiresPath,
+        args: Tuple[Any, ...],
+        kwargs: Dict[str, Any],
+    ) -> None:
+        request.path = self._factory(*args, **kwargs)
 
 
 path = make_method_mark_decorator(PathMark)
@@ -54,7 +59,12 @@ class RestMethodMark(MethodMark[RequiresMethod]):
 
     method: str  # TODO: enum?
 
-    def prepare_request(self, request: RequiresMethod, _arguments: Dict[str, Any]) -> None:  # noqa: D102
+    def prepare_request(  # noqa: D102
+        self,
+        request: RequiresMethod,
+        _args: Tuple[Any, ...],
+        _kwargs: Dict[str, Any],
+    ) -> None:
         request.method = self.method
 
 
