@@ -14,7 +14,7 @@ except ImportError:
 
 from pydantic import BaseModel
 
-from combadge.core.mark import MethodMark, ParameterMark, _extract_parameter_marks
+from combadge.core.mark import MethodMark, ParameterMark
 from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
@@ -100,7 +100,7 @@ class Signature:
     def _extract_parameter_marks(annotations: Mapping[str, Any]) -> Iterable[Tuple[str, ParameterMark]]:
         """Extract all parameter marks for all the parameters."""
         for name, hint in annotations.items():
-            for mark in _extract_parameter_marks(hint):
+            for mark in ParameterMark.extract(hint):
                 yield name, mark
 
     @staticmethod

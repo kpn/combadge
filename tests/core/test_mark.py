@@ -3,7 +3,7 @@ from typing import Any, List, Type
 import pytest
 from typing_extensions import Annotated
 
-from combadge.core.mark import MethodMark, ParameterMark, _extract_parameter_marks
+from combadge.core.mark import MethodMark, ParameterMark
 from combadge.support.http.headers import AcceptLanguage
 from combadge.support.http.marks import Body, BodyParameterMark, Header, HeaderParameterMark
 from combadge.support.soap.marks import OperationNameMethodMark
@@ -31,4 +31,4 @@ def test_get_method_marks() -> None:
     ],
 )
 def test_extract_parameter_marks(type_: Type[Any], expected: List[ParameterMark]) -> None:
-    assert _extract_parameter_marks(type_) == expected
+    assert ParameterMark.extract(type_) == expected

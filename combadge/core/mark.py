@@ -17,7 +17,6 @@ class MethodMark(ABC, Generic[RequestT]):
 
     __slots__ = ()
 
-    # TODO: support positional args.
     @abstractmethod
     def prepare_request(self, request: RequestT, args: Tuple[Any, ...], kwargs: Dict[str, Any]) -> None:
         """
@@ -57,12 +56,13 @@ class ParameterMark(Generic[RequestT], ABC):
 
     __slots__ = ()
 
+    @staticmethod
+    def extract(type_: Type[Any]) -> List[ParameterMark]:
+        """Extract all parameter marks from the type annotation."""
+        if get_origin(type_) is Annotated:
+            return [arg for arg in get_type_args(type_) if isinstance(arg, ParameterMark)]
+        return []
+
     @abstractmethod
     def prepare_request(self, request: RequestT, value: Any) -> None:
         """Update the request according to the mark and the actual argument."""
-
-
-def _extract_parameter_marks(type_: Type[Any]) -> List[ParameterMark]:
-    if get_origin(type_) is Annotated:
-        return [arg for arg in get_type_args(type_) if isinstance(arg, ParameterMark)]
-    return []
