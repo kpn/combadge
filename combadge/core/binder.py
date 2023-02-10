@@ -14,7 +14,7 @@ except ImportError:
 
 from pydantic import BaseModel
 
-from combadge.core.mark import MethodMark, ParameterMark
+from combadge.core.mark import MethodCallMark, ParameterMark
 from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
@@ -81,7 +81,7 @@ class Signature:
     """
 
     bind_arguments: Callable[..., BoundArguments]
-    method_marks: List[MethodMark]
+    method_marks: List[MethodCallMark]
     parameter_marks: List[Tuple[str, ParameterMark]]
     return_type: Type[BaseModel]
 
@@ -91,7 +91,7 @@ class Signature:
         type_hints = get_annotations(method, eval_str=True)
         return Signature(
             bind_arguments=get_signature(method).bind,
-            method_marks=MethodMark.extract(method),
+            method_marks=MethodCallMark.set_default(method),
             parameter_marks=list(cls._extract_parameter_marks(type_hints)),
             return_type=cls._extract_return_type(type_hints),
         )

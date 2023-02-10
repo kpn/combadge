@@ -11,8 +11,8 @@ from combadge.core.typevars import RequestT
 T = TypeVar("T")
 
 
-class MethodMark(ABC, Generic[RequestT]):
-    """Method-specific mark."""
+class MethodCallMark(ABC, Generic[RequestT]):
+    """Method-specific mark that modifies an entire request based on all the call arguments."""
 
     __slots__ = ()
 
@@ -28,22 +28,26 @@ class MethodMark(ABC, Generic[RequestT]):
         """
 
     @staticmethod
-    def extract(from_method: Any) -> List[MethodMark]:
-        """Extract the method's marks."""
+    def set_default(in_: Any) -> List[MethodCallMark]:
+        """Ensure that the argument contains the mark list attribute, and return the list."""
         try:
-            marks = from_method.__combadge_marks__
+            marks = in_.__combadge_marks__
         except AttributeError:
-            marks = from_method.__combadge_marks__ = []
+            marks = in_.__combadge_marks__ = []
         return marks
 
-    def mark(self, wrapped: T) -> T:
-        """Mark `wrapped`."""
-        MethodMark.extract(wrapped).append(self)
-        return wrapped
+    def mark(self, what: T) -> T:
+        """
+        Mark the argument with itself.
+
+        This is not a part of the public interface and is used to derive the decorators.
+        """
+        MethodCallMark.set_default(what).append(self)
+        return what
 
 
 class ParameterMark(Generic[RequestT], ABC):
-    """Parameter-specific mark."""
+    """Parameter-specific mark that modifies a request with a call-time argument."""
 
     __slots__ = ()
 

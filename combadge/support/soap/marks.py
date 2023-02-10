@@ -3,13 +3,13 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Tuple
 
-from combadge.core.mark import MethodMark
+from combadge.core.mark import MethodCallMark
 from combadge.core.typevars import Identity
 from combadge.support.soap.abc import RequiresOperationName
 
 
 @dataclass
-class _OperationNameMethodMark(MethodMark[RequiresOperationName]):
+class _OperationNameMethodMark(MethodCallMark[RequiresOperationName]):
     name: str
 
     __slots__ = ("name",)
