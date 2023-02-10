@@ -5,7 +5,7 @@ from functools import update_wrapper
 from inspect import BoundArguments
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Mapping, Tuple, Type
+from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Mapping, ParamSpec, Tuple, Type, TypeVar
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -14,12 +14,15 @@ except ImportError:
 
 from pydantic import BaseModel
 
-from combadge.core.mark import MethodCallMark, ParameterMark
+from combadge.core.mark import MethodMark, ParameterMark
 from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
     from combadge.core.typevars import ServiceProtocolT
+
+T = TypeVar("T")
+P = ParamSpec("P")
 
 
 class BaseBoundService:
@@ -44,11 +47,18 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindServic
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
         resolved_method: SupportsServiceMethodCall = to_backend.bind_method(signature)
+        resolved_method = _wrap(resolved_method, signature.method_marks)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)
 
     _update_bound_service(BoundService, from_protocol)
     return BoundService()
+
+
+def _wrap(method: Callable[P, T], with_marks: Iterable[MethodMark]) -> Callable[P, T]:
+    for mark in with_marks:
+        method = mark.wrap(method)
+    return method
 
 
 def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
@@ -81,7 +91,7 @@ class Signature:
     """
 
     bind_arguments: Callable[..., BoundArguments]
-    method_marks: List[MethodCallMark]
+    method_marks: List[MethodMark]
     parameter_marks: List[Tuple[str, ParameterMark]]
     return_type: Type[BaseModel]
 
@@ -91,7 +101,7 @@ class Signature:
         type_hints = get_annotations(method, eval_str=True)
         return Signature(
             bind_arguments=get_signature(method).bind,
-            method_marks=MethodCallMark.set_default(method),
+            method_marks=MethodMark.ensure_marks(method),
             parameter_marks=list(cls._extract_parameter_marks(type_hints)),
             return_type=cls._extract_return_type(type_hints),
         )

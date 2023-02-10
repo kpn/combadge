@@ -7,14 +7,14 @@ from typing import Any, Callable, Dict, Tuple, TypeVar, Union
 
 from typing_extensions import TypeAlias
 
-from combadge.core.mark import MethodCallMark, ParameterMark
+from combadge.core.mark import MethodMark, ParameterMark
 from combadge.core.typevars import Identity
 from combadge.support.rest.abc import RequiresMethod, RequiresPath, SupportsQueryParams
 
 T = TypeVar("T")
 
 
-class _PathMark(MethodCallMark[RequiresPath]):
+class _PathMark(MethodMark[RequiresPath]):
     _factory: Callable[..., str]
     __slots__ = ("_factory",)
 
@@ -51,7 +51,7 @@ def path(path_or_factory: Union[str, Callable[..., str]]) -> Identity:
 
 
 @dataclass
-class _RestMethodMark(MethodCallMark[RequiresMethod]):
+class _RestMethodMark(MethodMark[RequiresMethod]):
     method: str  # TODO: enum?
 
     def prepare_request(  # noqa: D102

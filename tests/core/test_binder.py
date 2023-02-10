@@ -1,11 +1,12 @@
 from abc import abstractmethod
-from typing import Any, Mapping, Type
+from typing import Any, Callable, Mapping, Tuple, Type
 
 from pytest import mark
 from typing_extensions import Protocol
 
-from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service
+from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service, _wrap
 from combadge.core.interfaces import SupportsService
+from combadge.core.mark import MethodMark, decorator
 
 
 def test_enumerate_bindable_methods() -> None:
@@ -65,3 +66,25 @@ def test_update_bound_service() -> None:
 )
 def test_extract_return_type(type_hints: Mapping[str, Any], return_type: Type[Any]) -> None:
     assert Signature._extract_return_type(type_hints) == return_type
+
+
+def test_decorator_ordering() -> None:
+    """Verify that `@decorator` does not reverse the decorator execution order."""
+
+    def decorate_1(what: Callable[[], Tuple[Any, ...]]) -> Callable[[], Tuple[Any, ...]]:
+        return lambda: (1, *what())
+
+    def decorate_2(what: Callable[[], Tuple[Any, ...]]) -> Callable[[], Tuple[Any, ...]]:
+        return lambda: (2, *what())
+
+    @decorator(decorate_1)
+    @decorator(decorate_2)
+    def get_actual() -> Tuple[Any, ...]:
+        return ()
+
+    @decorate_1
+    @decorate_2
+    def get_expected() -> Tuple[Any, ...]:
+        return ()
+
+    assert _wrap(get_actual, MethodMark.ensure_marks(get_actual))() == get_expected()

@@ -9,5 +9,5 @@ RequestT = TypeVar("RequestT", bound=BaseModel)
 ResponseT = TypeVar("ResponseT", bound=BaseModel)
 ServiceProtocolT = TypeVar("ServiceProtocolT")
 
-T = TypeVar("T")
-Identity: TypeAlias = Callable[[T], T]
+_T = TypeVar("_T")
+Identity: TypeAlias = Callable[[_T], _T]
