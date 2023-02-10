@@ -5,7 +5,9 @@ from functools import update_wrapper
 from inspect import BoundArguments
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Mapping, ParamSpec, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Mapping, Tuple, Type, TypeVar
+
+from typing_extensions import ParamSpec
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]

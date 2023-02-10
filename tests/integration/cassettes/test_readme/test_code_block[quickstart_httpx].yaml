@@ -1,0 +1,632 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate
+      connection:
+      - keep-alive
+      host:
+      - wttr.in
+      user-agent:
+      - python-httpx/0.23.3
+    method: GET
+    uri: https://wttr.in/amsterdam?format=j1
+  response:
+    content: "{\n    \"current_condition\": [\n        {\n            \"FeelsLikeC\":
+      \"5\",\n            \"FeelsLikeF\": \"41\",\n            \"cloudcover\": \"25\",\n
+      \           \"humidity\": \"71\",\n            \"localObsDateTime\": \"2023-02-10
+      03:59 PM\",\n            \"observation_time\": \"02:59 PM\",\n            \"precipInches\":
+      \"0.0\",\n            \"precipMM\": \"0.0\",\n            \"pressure\": \"1034\",\n
+      \           \"pressureInches\": \"31\",\n            \"temp_C\": \"8\",\n            \"temp_F\":
+      \"46\",\n            \"uvIndex\": \"3\",\n            \"visibility\": \"10\",\n
+      \           \"visibilityMiles\": \"6\",\n            \"weatherCode\": \"116\",\n
+      \           \"weatherDesc\": [\n                {\n                    \"value\":
+      \"Partly cloudy\"\n                }\n            ],\n            \"weatherIconUrl\":
+      [\n                {\n                    \"value\": \"\"\n                }\n
+      \           ],\n            \"winddir16Point\": \"WSW\",\n            \"winddirDegree\":
+      \"240\",\n            \"windspeedKmph\": \"26\",\n            \"windspeedMiles\":
+      \"16\"\n        }\n    ],\n    \"nearest_area\": [\n        {\n            \"areaName\":
+      [\n                {\n                    \"value\": \"Amsterdam\"\n                }\n
+      \           ],\n            \"country\": [\n                {\n                    \"value\":
+      \"Netherlands\"\n                }\n            ],\n            \"latitude\":
+      \"52.374\",\n            \"longitude\": \"4.890\",\n            \"population\":
+      \"741636\",\n            \"region\": [\n                {\n                    \"value\":
+      \"North Holland\"\n                }\n            ],\n            \"weatherUrl\":
+      [\n                {\n                    \"value\": \"\"\n                }\n
+      \           ]\n        }\n    ],\n    \"request\": [\n        {\n            \"query\":
+      \"Lat 52.37 and Lon 4.90\",\n            \"type\": \"LatLon\"\n        }\n    ],\n
+      \   \"weather\": [\n        {\n            \"astronomy\": [\n                {\n
+      \                   \"moon_illumination\": \"84\",\n                    \"moon_phase\":
+      \"Waning Gibbous\",\n                    \"moonrise\": \"11:03 PM\",\n                    \"moonset\":
+      \"09:52 AM\",\n                    \"sunrise\": \"08:06 AM\",\n                    \"sunset\":
+      \"05:44 PM\"\n                }\n            ],\n            \"avgtempC\": \"5\",\n
+      \           \"avgtempF\": \"41\",\n            \"date\": \"2023-02-10\",\n            \"hourly\":
+      [\n                {\n                    \"DewPointC\": \"1\",\n                    \"DewPointF\":
+      \"34\",\n                    \"FeelsLikeC\": \"0\",\n                    \"FeelsLikeF\":
+      \"33\",\n                    \"HeatIndexC\": \"3\",\n                    \"HeatIndexF\":
+      \"37\",\n                    \"WindChillC\": \"0\",\n                    \"WindChillF\":
+      \"33\",\n                    \"WindGustKmph\": \"20\",\n                    \"WindGustMiles\":
+      \"13\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"91\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"86\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"0\",\n                    \"humidity\":
+      \"89\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1034\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"3\",\n                    \"tempF\":
+      \"37\",\n                    \"time\": \"0\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"252\",\n                    \"windspeedKmph\":
+      \"10\",\n                    \"windspeedMiles\": \"6\"\n                },\n
+      \               {\n                    \"DewPointC\": \"2\",\n                    \"DewPointF\":
+      \"35\",\n                    \"FeelsLikeC\": \"1\",\n                    \"FeelsLikeF\":
+      \"33\",\n                    \"HeatIndexC\": \"3\",\n                    \"HeatIndexF\":
+      \"38\",\n                    \"WindChillC\": \"1\",\n                    \"WindChillF\":
+      \"33\",\n                    \"WindGustKmph\": \"20\",\n                    \"WindGustMiles\":
+      \"13\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"80\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"94\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"15\",\n                    \"humidity\":
+      \"90\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1035\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"3\",\n                    \"tempF\":
+      \"38\",\n                    \"time\": \"300\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"243\",\n                    \"windspeedKmph\":
+      \"10\",\n                    \"windspeedMiles\": \"6\"\n                },\n
+      \               {\n                    \"DewPointC\": \"2\",\n                    \"DewPointF\":
+      \"35\",\n                    \"FeelsLikeC\": \"1\",\n                    \"FeelsLikeF\":
+      \"33\",\n                    \"HeatIndexC\": \"3\",\n                    \"HeatIndexF\":
+      \"38\",\n                    \"WindChillC\": \"1\",\n                    \"WindChillF\":
+      \"33\",\n                    \"WindGustKmph\": \"21\",\n                    \"WindGustMiles\":
+      \"13\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"45\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"85\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"87\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"39\",\n                    \"humidity\":
+      \"91\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1035\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"3\",\n                    \"tempF\":
+      \"38\",\n                    \"time\": \"600\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"116\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Partly
+      cloudy\"\n                        }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"SW\",\n                    \"winddirDegree\": \"231\",\n                    \"windspeedKmph\":
+      \"10\",\n                    \"windspeedMiles\": \"6\"\n                },\n
+      \               {\n                    \"DewPointC\": \"2\",\n                    \"DewPointF\":
+      \"36\",\n                    \"FeelsLikeC\": \"1\",\n                    \"FeelsLikeF\":
+      \"34\",\n                    \"HeatIndexC\": \"4\",\n                    \"HeatIndexF\":
+      \"39\",\n                    \"WindChillC\": \"1\",\n                    \"WindChillF\":
+      \"34\",\n                    \"WindGustKmph\": \"19\",\n                    \"WindGustMiles\":
+      \"12\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"82\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"88\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"13\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"85\",\n                    \"humidity\":
+      \"90\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1035\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"4\",\n                    \"tempF\":
+      \"39\",\n                    \"time\": \"900\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"119\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Cloudy\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"SW\",\n                    \"winddirDegree\": \"221\",\n                    \"windspeedKmph\":
+      \"10\",\n                    \"windspeedMiles\": \"6\"\n                },\n
+      \               {\n                    \"DewPointC\": \"3\",\n                    \"DewPointF\":
+      \"37\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"39\",\n                    \"HeatIndexC\": \"7\",\n                    \"HeatIndexF\":
+      \"44\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"39\",\n                    \"WindGustKmph\": \"20\",\n                    \"WindGustMiles\":
+      \"13\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"32\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"90\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"89\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"39\",\n                    \"humidity\":
+      \"74\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1036\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"7\",\n                    \"tempF\":
+      \"44\",\n                    \"time\": \"1200\",\n                    \"uvIndex\":
+      \"3\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"116\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Partly
+      cloudy\"\n                        }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"240\",\n                    \"windspeedKmph\":
+      \"15\",\n                    \"windspeedMiles\": \"10\"\n                },\n
+      \               {\n                    \"DewPointC\": \"2\",\n                    \"DewPointF\":
+      \"35\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"40\",\n                    \"HeatIndexC\": \"8\",\n                    \"HeatIndexF\":
+      \"46\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"40\",\n                    \"WindGustKmph\": \"27\",\n                    \"WindGustMiles\":
+      \"17\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"39\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"81\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"74\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"47\",\n                    \"humidity\":
+      \"68\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1034\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"8\",\n                    \"tempF\":
+      \"46\",\n                    \"time\": \"1500\",\n                    \"uvIndex\":
+      \"3\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"116\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Partly
+      cloudy\"\n                        }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"238\",\n                    \"windspeedKmph\":
+      \"20\",\n                    \"windspeedMiles\": \"12\"\n                },\n
+      \               {\n                    \"DewPointC\": \"3\",\n                    \"DewPointF\":
+      \"37\",\n                    \"FeelsLikeC\": \"3\",\n                    \"FeelsLikeF\":
+      \"37\",\n                    \"HeatIndexC\": \"6\",\n                    \"HeatIndexF\":
+      \"43\",\n                    \"WindChillC\": \"3\",\n                    \"WindChillF\":
+      \"37\",\n                    \"WindGustKmph\": \"30\",\n                    \"WindGustMiles\":
+      \"19\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"83\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"87\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"24\",\n                    \"humidity\":
+      \"81\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1033\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"6\",\n                    \"tempF\":
+      \"43\",\n                    \"time\": \"1800\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"239\",\n                    \"windspeedKmph\":
+      \"19\",\n                    \"windspeedMiles\": \"12\"\n                },\n
+      \               {\n                    \"DewPointC\": \"3\",\n                    \"DewPointF\":
+      \"37\",\n                    \"FeelsLikeC\": \"3\",\n                    \"FeelsLikeF\":
+      \"37\",\n                    \"HeatIndexC\": \"7\",\n                    \"HeatIndexF\":
+      \"44\",\n                    \"WindChillC\": \"3\",\n                    \"WindChillF\":
+      \"37\",\n                    \"WindGustKmph\": \"31\",\n                    \"WindGustMiles\":
+      \"19\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"82\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"93\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"12\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"100\",\n                    \"humidity\":
+      \"75\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1033\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"7\",\n                    \"tempF\":
+      \"44\",\n                    \"time\": \"2100\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"122\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Overcast\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"248\",\n                    \"windspeedKmph\":
+      \"20\",\n                    \"windspeedMiles\": \"12\"\n                }\n
+      \           ],\n            \"maxtempC\": \"8\",\n            \"maxtempF\":
+      \"46\",\n            \"mintempC\": \"3\",\n            \"mintempF\": \"37\",\n
+      \           \"sunHour\": \"8.8\",\n            \"totalSnow_cm\": \"0.0\",\n
+      \           \"uvIndex\": \"3\"\n        },\n        {\n            \"astronomy\":
+      [\n                {\n                    \"moon_illumination\": \"76\",\n                    \"moon_phase\":
+      \"Waning Gibbous\",\n                    \"moonrise\": \"No moonrise\",\n                    \"moonset\":
+      \"10:03 AM\",\n                    \"sunrise\": \"08:05 AM\",\n                    \"sunset\":
+      \"05:46 PM\"\n                }\n            ],\n            \"avgtempC\": \"7\",\n
+      \           \"avgtempF\": \"45\",\n            \"date\": \"2023-02-11\",\n            \"hourly\":
+      [\n                {\n                    \"DewPointC\": \"5\",\n                    \"DewPointF\":
+      \"41\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"38\",\n                    \"HeatIndexC\": \"7\",\n                    \"HeatIndexF\":
+      \"44\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"38\",\n                    \"WindGustKmph\": \"29\",\n                    \"WindGustMiles\":
+      \"18\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"85\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"82\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"13\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"100\",\n                    \"humidity\":
+      \"87\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1033\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"7\",\n                    \"tempF\":
+      \"44\",\n                    \"time\": \"0\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"122\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Overcast\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"259\",\n                    \"windspeedKmph\":
+      \"18\",\n                    \"windspeedMiles\": \"11\"\n                },\n
+      \               {\n                    \"DewPointC\": \"5\",\n                    \"DewPointF\":
+      \"42\",\n                    \"FeelsLikeC\": \"3\",\n                    \"FeelsLikeF\":
+      \"37\",\n                    \"HeatIndexC\": \"6\",\n                    \"HeatIndexF\":
+      \"43\",\n                    \"WindChillC\": \"3\",\n                    \"WindChillF\":
+      \"37\",\n                    \"WindGustKmph\": \"27\",\n                    \"WindGustMiles\":
+      \"17\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"45\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"83\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"84\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"61\",\n                    \"humidity\":
+      \"95\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1033\",\n                    \"pressureInches\":
+      \"30\",\n                    \"tempC\": \"6\",\n                    \"tempF\":
+      \"43\",\n                    \"time\": \"300\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"116\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Partly
+      cloudy\"\n                        }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"257\",\n                    \"windspeedKmph\":
+      \"16\",\n                    \"windspeedMiles\": \"10\"\n                },\n
+      \               {\n                    \"DewPointC\": \"5\",\n                    \"DewPointF\":
+      \"41\",\n                    \"FeelsLikeC\": \"3\",\n                    \"FeelsLikeF\":
+      \"38\",\n                    \"HeatIndexC\": \"6\",\n                    \"HeatIndexF\":
+      \"43\",\n                    \"WindChillC\": \"3\",\n                    \"WindChillF\":
+      \"38\",\n                    \"WindGustKmph\": \"24\",\n                    \"WindGustMiles\":
+      \"15\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"41\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"83\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"72\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"54\",\n                    \"humidity\":
+      \"95\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1032\",\n                    \"pressureInches\":
+      \"30\",\n                    \"tempC\": \"6\",\n                    \"tempF\":
+      \"43\",\n                    \"time\": \"600\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"116\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Partly
+      cloudy\"\n                        }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"264\",\n                    \"windspeedKmph\":
+      \"14\",\n                    \"windspeedMiles\": \"9\"\n                },\n
+      \               {\n                    \"DewPointC\": \"5\",\n                    \"DewPointF\":
+      \"42\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"38\",\n                    \"HeatIndexC\": \"6\",\n                    \"HeatIndexF\":
+      \"43\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"38\",\n                    \"WindGustKmph\": \"22\",\n                    \"WindGustMiles\":
+      \"13\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"43\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"92\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"88\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"46\",\n                    \"humidity\":
+      \"94\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1033\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"6\",\n                    \"tempF\":
+      \"43\",\n                    \"time\": \"900\",\n                    \"uvIndex\":
+      \"3\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"116\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Partly
+      cloudy\"\n                        }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"265\",\n                    \"windspeedKmph\":
+      \"13\",\n                    \"windspeedMiles\": \"8\"\n                },\n
+      \               {\n                    \"DewPointC\": \"6\",\n                    \"DewPointF\":
+      \"42\",\n                    \"FeelsLikeC\": \"7\",\n                    \"FeelsLikeF\":
+      \"44\",\n                    \"HeatIndexC\": \"9\",\n                    \"HeatIndexF\":
+      \"48\",\n                    \"WindChillC\": \"7\",\n                    \"WindChillF\":
+      \"44\",\n                    \"WindGustKmph\": \"20\",\n                    \"WindGustMiles\":
+      \"12\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"80\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"86\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"19\",\n                    \"humidity\":
+      \"80\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1034\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"9\",\n                    \"tempF\":
+      \"48\",\n                    \"time\": \"1200\",\n                    \"uvIndex\":
+      \"3\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Sunny\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WNW\",\n                    \"winddirDegree\": \"282\",\n                    \"windspeedKmph\":
+      \"16\",\n                    \"windspeedMiles\": \"10\"\n                },\n
+      \               {\n                    \"DewPointC\": \"6\",\n                    \"DewPointF\":
+      \"43\",\n                    \"FeelsLikeC\": \"8\",\n                    \"FeelsLikeF\":
+      \"46\",\n                    \"HeatIndexC\": \"10\",\n                    \"HeatIndexF\":
+      \"50\",\n                    \"WindChillC\": \"8\",\n                    \"WindChillF\":
+      \"46\",\n                    \"WindGustKmph\": \"16\",\n                    \"WindGustMiles\":
+      \"10\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"83\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"87\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"11\",\n                    \"humidity\":
+      \"77\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1035\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"10\",\n                    \"tempF\":
+      \"50\",\n                    \"time\": \"1500\",\n                    \"uvIndex\":
+      \"3\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Sunny\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WNW\",\n                    \"winddirDegree\": \"286\",\n                    \"windspeedKmph\":
+      \"14\",\n                    \"windspeedMiles\": \"9\"\n                },\n
+      \               {\n                    \"DewPointC\": \"6\",\n                    \"DewPointF\":
+      \"43\",\n                    \"FeelsLikeC\": \"6\",\n                    \"FeelsLikeF\":
+      \"42\",\n                    \"HeatIndexC\": \"7\",\n                    \"HeatIndexF\":
+      \"45\",\n                    \"WindChillC\": \"6\",\n                    \"WindChillF\":
+      \"42\",\n                    \"WindGustKmph\": \"14\",\n                    \"WindGustMiles\":
+      \"9\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"86\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"94\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"18\",\n                    \"humidity\":
+      \"92\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1035\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"7\",\n                    \"tempF\":
+      \"45\",\n                    \"time\": \"1800\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"280\",\n                    \"windspeedKmph\":
+      \"9\",\n                    \"windspeedMiles\": \"6\"\n                },\n
+      \               {\n                    \"DewPointC\": \"5\",\n                    \"DewPointF\":
+      \"40\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"39\",\n                    \"HeatIndexC\": \"6\",\n                    \"HeatIndexF\":
+      \"42\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"39\",\n                    \"WindGustKmph\": \"14\",\n                    \"WindGustMiles\":
+      \"9\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"93\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"92\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"7\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"12\",\n                    \"humidity\":
+      \"94\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1036\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"6\",\n                    \"tempF\":
+      \"42\",\n                    \"time\": \"2100\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"2\",\n                    \"visibilityMiles\":
+      \"1\",\n                    \"weatherCode\": \"143\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Mist\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"276\",\n                    \"windspeedKmph\":
+      \"7\",\n                    \"windspeedMiles\": \"4\"\n                }\n            ],\n
+      \           \"maxtempC\": \"10\",\n            \"maxtempF\": \"50\",\n            \"mintempC\":
+      \"5\",\n            \"mintempF\": \"42\",\n            \"sunHour\": \"9.0\",\n
+      \           \"totalSnow_cm\": \"0.0\",\n            \"uvIndex\": \"3\"\n        },\n
+      \       {\n            \"astronomy\": [\n                {\n                    \"moon_illumination\":
+      \"67\",\n                    \"moon_phase\": \"Waning Gibbous\",\n                    \"moonrise\":
+      \"12:20 AM\",\n                    \"moonset\": \"10:16 AM\",\n                    \"sunrise\":
+      \"08:03 AM\",\n                    \"sunset\": \"05:47 PM\"\n                }\n
+      \           ],\n            \"avgtempC\": \"7\",\n            \"avgtempF\":
+      \"45\",\n            \"date\": \"2023-02-12\",\n            \"hourly\": [\n
+      \               {\n                    \"DewPointC\": \"4\",\n                    \"DewPointF\":
+      \"40\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"38\",\n                    \"HeatIndexC\": \"5\",\n                    \"HeatIndexF\":
+      \"41\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"38\",\n                    \"WindGustKmph\": \"15\",\n                    \"WindGustMiles\":
+      \"9\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"92\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"92\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"14\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"9\",\n                    \"humidity\":
+      \"94\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1037\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"5\",\n                    \"tempF\":
+      \"41\",\n                    \"time\": \"0\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"2\",\n                    \"visibilityMiles\":
+      \"1\",\n                    \"weatherCode\": \"143\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Mist\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"280\",\n                    \"windspeedKmph\":
+      \"7\",\n                    \"windspeedMiles\": \"4\"\n                },\n
+      \               {\n                    \"DewPointC\": \"4\",\n                    \"DewPointF\":
+      \"39\",\n                    \"FeelsLikeC\": \"3\",\n                    \"FeelsLikeF\":
+      \"38\",\n                    \"HeatIndexC\": \"5\",\n                    \"HeatIndexF\":
+      \"40\",\n                    \"WindChillC\": \"3\",\n                    \"WindChillF\":
+      \"38\",\n                    \"WindGustKmph\": \"13\",\n                    \"WindGustMiles\":
+      \"8\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"94\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"94\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"8\",\n                    \"humidity\":
+      \"93\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1037\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"5\",\n                    \"tempF\":
+      \"40\",\n                    \"time\": \"300\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"W\",\n                    \"winddirDegree\": \"265\",\n                    \"windspeedKmph\":
+      \"6\",\n                    \"windspeedMiles\": \"4\"\n                },\n
+      \               {\n                    \"DewPointC\": \"3\",\n                    \"DewPointF\":
+      \"38\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"38\",\n                    \"HeatIndexC\": \"5\",\n                    \"HeatIndexF\":
+      \"40\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"38\",\n                    \"WindGustKmph\": \"10\",\n                    \"WindGustMiles\":
+      \"6\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"80\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"94\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"5\",\n                    \"humidity\":
+      \"92\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1037\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"5\",\n                    \"tempF\":
+      \"40\",\n                    \"time\": \"600\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"254\",\n                    \"windspeedKmph\":
+      \"5\",\n                    \"windspeedMiles\": \"3\"\n                },\n
+      \               {\n                    \"DewPointC\": \"4\",\n                    \"DewPointF\":
+      \"38\",\n                    \"FeelsLikeC\": \"4\",\n                    \"FeelsLikeF\":
+      \"39\",\n                    \"HeatIndexC\": \"5\",\n                    \"HeatIndexF\":
+      \"41\",\n                    \"WindChillC\": \"4\",\n                    \"WindChillF\":
+      \"39\",\n                    \"WindGustKmph\": \"9\",\n                    \"WindGustMiles\":
+      \"6\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"85\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"92\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"7\",\n                    \"humidity\":
+      \"92\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1038\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"5\",\n                    \"tempF\":
+      \"41\",\n                    \"time\": \"900\",\n                    \"uvIndex\":
+      \"2\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Sunny\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"SSW\",\n                    \"winddirDegree\": \"209\",\n                    \"windspeedKmph\":
+      \"5\",\n                    \"windspeedMiles\": \"3\"\n                },\n
+      \               {\n                    \"DewPointC\": \"6\",\n                    \"DewPointF\":
+      \"43\",\n                    \"FeelsLikeC\": \"10\",\n                    \"FeelsLikeF\":
+      \"50\",\n                    \"HeatIndexC\": \"10\",\n                    \"HeatIndexF\":
+      \"51\",\n                    \"WindChillC\": \"10\",\n                    \"WindChillF\":
+      \"50\",\n                    \"WindGustKmph\": \"6\",\n                    \"WindGustMiles\":
+      \"4\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"92\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"86\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"6\",\n                    \"humidity\":
+      \"75\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1038\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"10\",\n                    \"tempF\":
+      \"51\",\n                    \"time\": \"1200\",\n                    \"uvIndex\":
+      \"4\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Sunny\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"SSW\",\n                    \"winddirDegree\": \"207\",\n                    \"windspeedKmph\":
+      \"5\",\n                    \"windspeedMiles\": \"3\"\n                },\n
+      \               {\n                    \"DewPointC\": \"6\",\n                    \"DewPointF\":
+      \"43\",\n                    \"FeelsLikeC\": \"12\",\n                    \"FeelsLikeF\":
+      \"53\",\n                    \"HeatIndexC\": \"12\",\n                    \"HeatIndexF\":
+      \"53\",\n                    \"WindChillC\": \"12\",\n                    \"WindChillF\":
+      \"53\",\n                    \"WindGustKmph\": \"5\",\n                    \"WindGustMiles\":
+      \"3\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"88\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"91\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"9\",\n                    \"humidity\":
+      \"68\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1037\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"12\",\n                    \"tempF\":
+      \"53\",\n                    \"time\": \"1500\",\n                    \"uvIndex\":
+      \"4\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Sunny\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"WSW\",\n                    \"winddirDegree\": \"248\",\n                    \"windspeedKmph\":
+      \"5\",\n                    \"windspeedMiles\": \"3\"\n                },\n
+      \               {\n                    \"DewPointC\": \"7\",\n                    \"DewPointF\":
+      \"44\",\n                    \"FeelsLikeC\": \"10\",\n                    \"FeelsLikeF\":
+      \"49\",\n                    \"HeatIndexC\": \"10\",\n                    \"HeatIndexF\":
+      \"49\",\n                    \"WindChillC\": \"10\",\n                    \"WindChillF\":
+      \"49\",\n                    \"WindGustKmph\": \"4\",\n                    \"WindGustMiles\":
+      \"2\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"88\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"93\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"6\",\n                    \"humidity\":
+      \"83\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1036\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"10\",\n                    \"tempF\":
+      \"49\",\n                    \"time\": \"1800\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"NW\",\n                    \"winddirDegree\": \"318\",\n                    \"windspeedKmph\":
+      \"3\",\n                    \"windspeedMiles\": \"2\"\n                },\n
+      \               {\n                    \"DewPointC\": \"4\",\n                    \"DewPointF\":
+      \"39\",\n                    \"FeelsLikeC\": \"6\",\n                    \"FeelsLikeF\":
+      \"43\",\n                    \"HeatIndexC\": \"6\",\n                    \"HeatIndexF\":
+      \"43\",\n                    \"WindChillC\": \"6\",\n                    \"WindChillF\":
+      \"43\",\n                    \"WindGustKmph\": \"6\",\n                    \"WindGustMiles\":
+      \"4\",\n                    \"chanceoffog\": \"0\",\n                    \"chanceoffrost\":
+      \"0\",\n                    \"chanceofhightemp\": \"0\",\n                    \"chanceofovercast\":
+      \"0\",\n                    \"chanceofrain\": \"0\",\n                    \"chanceofremdry\":
+      \"94\",\n                    \"chanceofsnow\": \"0\",\n                    \"chanceofsunshine\":
+      \"87\",\n                    \"chanceofthunder\": \"0\",\n                    \"chanceofwindy\":
+      \"0\",\n                    \"cloudcover\": \"4\",\n                    \"humidity\":
+      \"88\",\n                    \"precipInches\": \"0.0\",\n                    \"precipMM\":
+      \"0.0\",\n                    \"pressure\": \"1037\",\n                    \"pressureInches\":
+      \"31\",\n                    \"tempC\": \"6\",\n                    \"tempF\":
+      \"43\",\n                    \"time\": \"2100\",\n                    \"uvIndex\":
+      \"1\",\n                    \"visibility\": \"10\",\n                    \"visibilityMiles\":
+      \"6\",\n                    \"weatherCode\": \"113\",\n                    \"weatherDesc\":
+      [\n                        {\n                            \"value\": \"Clear\"\n
+      \                       }\n                    ],\n                    \"weatherIconUrl\":
+      [\n                        {\n                            \"value\": \"\"\n
+      \                       }\n                    ],\n                    \"winddir16Point\":
+      \"ESE\",\n                    \"winddirDegree\": \"118\",\n                    \"windspeedKmph\":
+      \"3\",\n                    \"windspeedMiles\": \"2\"\n                }\n            ],\n
+      \           \"maxtempC\": \"12\",\n            \"maxtempF\": \"54\",\n            \"mintempC\":
+      \"4\",\n            \"mintempF\": \"40\",\n            \"sunHour\": \"9.0\",\n
+      \           \"totalSnow_cm\": \"0.0\",\n            \"uvIndex\": \"3\"\n        }\n
+      \   ]\n}\n"
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Content-Length:
+      - '48608'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 10 Feb 2023 15:48:30 GMT
+    http_version: HTTP/1.1
+    status_code: 200
+version: 1
