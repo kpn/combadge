@@ -1,11 +1,10 @@
-from typing import Any, Iterable, Mapping, Type, TypeVar, Union
+from typing import Any, Iterable, Mapping, Type, Union
 
-from pydantic import BaseModel, validate_model
+from pydantic import validate_model
 from typing_extensions import NoReturn
 
 from combadge.core.binder import BaseBoundService, Signature
-
-RequestT = TypeVar("RequestT", bound=BaseModel)
+from combadge.core.typevars import RequestT
 
 
 def build_request(
