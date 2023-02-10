@@ -4,6 +4,7 @@ from pydantic import validate_model
 from typing_extensions import NoReturn
 
 from combadge.core.binder import BaseBoundService, Signature
+from combadge.core.errors import CombadgeValidationError
 from combadge.core.typevars import RequestT
 
 
@@ -49,5 +50,5 @@ def build_request(
     # Validate and return the request.
     *_, error = validate_model(request_class, request.__dict__)
     if error:
-        raise error  # TODO: introduce `CombadgeBaseError`.
+        raise CombadgeValidationError from error
     return request
