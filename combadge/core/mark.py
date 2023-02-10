@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Type, TypeVar
 
+from pydantic import BaseModel
 from typing_extensions import Annotated, ParamSpec, get_origin
 from typing_extensions import get_args as get_type_args
 
@@ -17,7 +18,7 @@ class MethodMark(ABC):
 
     # TODO: support positional args.
     @abstractmethod
-    def prepare_request(self, request: Dict[str, Any], arguments: Dict[str, Any]) -> None:
+    def prepare_request(self, request: BaseModel, arguments: Dict[str, Any]) -> None:
         """
         Modify the request according to the mark.
 
@@ -58,7 +59,7 @@ class ParameterMark(ABC):
     __slots__ = ()
 
     @abstractmethod
-    def prepare_request(self, request: Dict[str, Any], value: Any) -> None:
+    def prepare_request(self, request: BaseModel, value: Any) -> None:
         """Update the request according to the mark and the actual argument."""
 
 

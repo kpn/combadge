@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, Dict, TypeVar
+from typing import Any, TypeVar, cast
 
+from pydantic import BaseModel
 from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.mark import ParameterMark
@@ -15,8 +16,8 @@ class BodyParameterMark(ParameterMark):
 
     __slots__ = ()
 
-    def prepare_request(self, request: Dict[str, Any], value: Any) -> None:  # noqa: D102
-        request[RequiresBody.KEY] = value
+    def prepare_request(self, request: BaseModel, value: Any) -> None:  # noqa: D102
+        cast(RequiresBody, request).body = value
 
 
 Body: TypeAlias = Annotated[T, BodyParameterMark()]
@@ -29,8 +30,8 @@ class HeaderParameterMark(ParameterMark):
     name: str
     __slots__ = ("name",)
 
-    def prepare_request(self, request: Dict[str, Any], value: Any) -> None:  # noqa: D102
-        request.setdefault(SupportsHeaders.KEY, []).append((self.name, value))
+    def prepare_request(self, request: BaseModel, value: Any) -> None:  # noqa: D102
+        cast(SupportsHeaders, request).headers.append((self.name, value))
 
 
 Header: TypeAlias = HeaderParameterMark

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, cast
+
+from pydantic import BaseModel
 
 from combadge.core.mark import MethodMark, make_method_mark_decorator
 from combadge.support.soap.abc import RequiresOperationName
@@ -13,8 +15,8 @@ class OperationNameMethodMark(MethodMark):
 
     __slots__ = ("name",)
 
-    def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresOperationName.KEY] = self.name
+    def prepare_request(self, request: BaseModel, _arguments: Dict[str, Any]) -> None:  # noqa: D102
+        cast(RequiresOperationName, request).operation_name = self.name
 
 
 operation_name = make_method_mark_decorator(OperationNameMethodMark)

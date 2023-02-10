@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, TypeVar, Union
+from typing import Any, Callable, Dict, TypeVar, Union, cast
 
+from pydantic import BaseModel
 from typing_extensions import TypeAlias
 
 from combadge.core.mark import MethodMark, ParameterMark, make_method_mark_decorator
@@ -41,8 +42,8 @@ class PathMark(MethodMark):
         else:
             self._factory = path_or_factory.format
 
-    def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresPath.KEY] = self._factory(**_arguments)
+    def prepare_request(self, request: BaseModel, _arguments: Dict[str, Any]) -> None:  # noqa: D102
+        cast(RequiresPath, request).path = self._factory(**_arguments)
 
 
 path = make_method_mark_decorator(PathMark)
@@ -54,8 +55,8 @@ class RestMethodMark(MethodMark):
 
     method: str  # TODO: enum?
 
-    def prepare_request(self, request: Dict[str, Any], _arguments: Dict[str, Any]) -> None:  # noqa: D102
-        request[RequiresMethod.KEY] = self.method
+    def prepare_request(self, request: BaseModel, _arguments: Dict[str, Any]) -> None:  # noqa: D102
+        cast(RequiresMethod, request).method = self.method
 
 
 method = make_method_mark_decorator(RestMethodMark)
@@ -68,8 +69,8 @@ class QueryParameterMark(ParameterMark):
     name: str
     __slots__ = ("name",)
 
-    def prepare_request(self, request: Dict[str, Any], value: Any) -> None:  # noqa: D102
-        request.setdefault(SupportsQueryParams.KEY, []).append((self.name, value))
+    def prepare_request(self, request: BaseModel, value: Any) -> None:  # noqa: D102
+        cast(SupportsQueryParams, request).query_params.append((self.name, value))
 
 
 QueryParam: TypeAlias = QueryParameterMark
