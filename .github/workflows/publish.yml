@@ -1,0 +1,46 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+env:
+  ANSICON: 1
+  FORCE_COLOR: 1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: 📝 Build changelog
+      id: changelog
+      uses: Bullrich/generate-release-changelog@master
+      env:
+        REPO: ${{ github.repository }}
+
+    - name: 📤 Update release
+      uses: tubone24/update_release@v1.3.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_name: ${{ github.ref_name }}
+        body: ${{ steps.changelog.outputs.changelog }}
+
+    - name: "✨ Install Poetry"
+      run: |
+        pipx install poetry
+        pipx inject poetry poetry-dynamic-versioning
+
+    - name: 📦 Build package
+      run: poetry build --ansi
+
+    - name: 📤 Publish package
+      run: poetry publish --ansi
+      env:
+        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
