@@ -26,6 +26,7 @@ jobs:
 
     - name: 📤 Update release
       uses: tubone24/update_release@v1.3.1
+      if: (github.event.release.body == "")
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:

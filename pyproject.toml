@@ -145,6 +145,6 @@ pytest-asyncio = "^0.20.3"
 enable = true
 vcs = "git"
 pattern = "default-unprefixed"
-style = "semver"
+style = "pep440"
 strict = false # TODO
 latest-tag = true
