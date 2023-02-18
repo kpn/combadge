@@ -26,7 +26,7 @@
 
 ## 🚀 Quick example
 
-```python title="quickstart_httpx"
+```python title="quickstart_httpx.py"
 
 from typing import List
 
