@@ -20,7 +20,7 @@ from combadge.core.mark import MethodMark, ParameterMark
 from combadge.core.response import SuccessfulResponse
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
+    from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
     from combadge.core.typevars import ServiceProtocolT
 
 T = TypeVar("T")
@@ -31,7 +31,7 @@ class BaseBoundService:
     """Parent of all bound service instances."""
 
 
-def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindServiceMethod) -> "ServiceProtocolT":
+def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod) -> "ServiceProtocolT":
     """
     Hereinafter «binding» is constructing a callable service instance from the protocol specification.
 
@@ -48,7 +48,7 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindServic
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        resolved_method: SupportsServiceMethodCall = to_backend.bind_method(signature)
+        resolved_method: SupportsServiceCall = to_backend.bind_method(signature)
         resolved_method = _wrap(resolved_method, signature.method_marks)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)

@@ -17,18 +17,18 @@ class SupportsService(Protocol):
     """
 
     @classmethod
-    def bind(cls, to_backend: SupportsBindServiceMethod) -> Self:
-        """Bind the protocol to the specified backend."""
+    def bind(cls, to_backend: SupportsBindMethod) -> Self:
+        """Bind the current protocol to the specified backend."""
         return bind(cls, to_backend)
 
 
-class SupportsBindServiceMethod(Protocol):
-    """Supports binding a method to the current instance."""
+class MethodBinder(Protocol):
+    """Supports binding a method via calling the current instance."""
 
     @abstractmethod
-    def bind_method(self, signature: Signature) -> SupportsServiceMethodCall:
+    def __call__(self, signature: Signature) -> SupportsServiceCall:
         """
-        «Binds» the `method` to the current instance (for example, a backend).
+        «Binds» the method by its signature to the current instance (for example, a backend).
 
         Args:
             signature: extracted method signature
@@ -39,7 +39,13 @@ class SupportsBindServiceMethod(Protocol):
         raise NotImplementedError
 
 
-class SupportsServiceMethodCall(Protocol):
+class SupportsBindMethod(Protocol):
+    """Supports binding a method to the current instance."""
+
+    bind_method: MethodBinder
+
+
+class SupportsServiceCall(Protocol):
     """
     Bound method call specification.
 

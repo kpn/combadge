@@ -5,7 +5,7 @@ from zeep.exceptions import Fault
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 
 from combadge.core.binder import BaseBoundService, Signature
-from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
+from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.request import Request
@@ -13,7 +13,7 @@ from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsBindServiceMethod):
+class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsBindMethod):
     """Asynchronous Zeep service."""
 
     async def __call__(
@@ -37,7 +37,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
 
-    def bind_method(self, signature: Signature) -> SupportsServiceMethodCall:  # noqa: D102
+    def bind_method(self, signature: Signature) -> SupportsServiceCall:  # noqa: D102
         response_type, fault_type = self._split_response_type(signature.return_type)
 
         async def resolved_method(service: BaseBoundService, *args: Any, **kwargs: Any) -> BaseModel:

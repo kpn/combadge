@@ -4,13 +4,13 @@ from httpx import Client, Response
 from pydantic import BaseModel, parse_obj_as
 
 from combadge.core.binder import BaseBoundService, Signature
-from combadge.core.interfaces import SupportsBindServiceMethod, SupportsServiceMethodCall
+from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
 from combadge.support.rest.request import Request
 
 
-class HttpxBackend(SupportsBindServiceMethod):
+class HttpxBackend(SupportsBindMethod):
     """
     Sync HTTPX backend for REST APIs.
 
@@ -35,7 +35,7 @@ class HttpxBackend(SupportsBindServiceMethod):
         response.raise_for_status()
         return parse_obj_as(response_type, response.json())
 
-    def bind_method(self, signature: Signature) -> SupportsServiceMethodCall:  # noqa: D102
+    def bind_method(self, signature: Signature) -> SupportsServiceCall:  # noqa: D102
         def resolved_method(service: BaseBoundService, *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
             return self(request, signature.return_type)
