@@ -4,6 +4,9 @@ site_name: Combadge
 
 nav:
   - index.md
+  - Support:
+    - support/pkgsettings.md
+    - support/di.md
 
 theme:
   icon:

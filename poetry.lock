@@ -1179,6 +1179,22 @@ docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
+name = "pkgsettings"
+version = "1.0.0"
+description = "Python package to ease the configuration of packages"
+category = "main"
+optional = true
+python-versions = "*"
+files = [
+    {file = "pkgsettings-1.0.0-py3-none-any.whl", hash = "sha256:4d0d1b0cd7538be206d7bf6d72f3acb22f2fa185941b9e81a9fd1a519c0485a9"},
+    {file = "pkgsettings-1.0.0.tar.gz", hash = "sha256:912505d03fe15d27a13dac80dc538cf3ee82ae594c742a8b40ee1426e42c369c"},
+]
+
+[package.extras]
+all = ["elasticsearch (>=5.0.0,<7.0.0)"]
+elasticsearch = ["elasticsearch (>=5.0.0,<7.0.0)"]
+
+[[package]]
 name = "platformdirs"
 version = "3.0.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -2073,9 +2089,10 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [extras]
 httpx = ["httpx"]
+pkgsettings = ["pkgsettings"]
 zeep = ["zeep"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "42eef46020655c1b005a6dc4362cb28a5c291e0dcc660ffbb562358729bfee81"
+content-hash = "d68f859d680eac48ea4d16b88858fad5b61322cb0a1bf25dec109a5251a16d74"
