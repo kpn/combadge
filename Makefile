@@ -11,7 +11,7 @@ clean:
 
 .PHONY: install
 install:
-	poetry install --all-extras --with dev
+	poetry install --all-extras --with dev --with docs
 
 .PHONY: check
 check: lint test
