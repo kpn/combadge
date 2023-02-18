@@ -1,3 +1,5 @@
+"""«Binding» is constructing a callable service instance from the protocol specification."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -5,7 +7,7 @@ from functools import update_wrapper
 from inspect import BoundArguments
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Mapping, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Mapping, Optional, Tuple, Type, TypeVar
 
 from typing_extensions import ParamSpec
 
@@ -18,13 +20,19 @@ from pydantic import BaseModel
 
 from combadge.core.mark import MethodMark, ParameterMark
 from combadge.core.response import SuccessfulResponse
-from combadge.core.typevars import BackendT, ServiceProtocolT
+from combadge.core.typevars import BackendT, Identity, ServiceProtocolT
+
+T = TypeVar("T")
+P = ParamSpec("P")
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
 
-T = TypeVar("T")
-P = ParamSpec("P")
+    def lru_cache(maxsize: Optional[int]) -> Identity:
+        ...
+
+else:
+    from functools import lru_cache
 
 
 class BaseBoundService(Generic[BackendT]):
@@ -39,10 +47,7 @@ class BaseBoundService(Generic[BackendT]):
 
 def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
     """
-    Hereinafter «binding» is constructing a callable service instance from the protocol specification.
-
-    This function returns an instance which implements the specified protocol
-    by calling the specified backend.
+    Create a service instance which implements the specified protocol by calling the specified backend.
 
     Args:
         from_protocol: service protocol description, used to extract request and response types etc.
@@ -52,6 +57,7 @@ def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> S
     return bind_class(from_protocol, to_backend.binder)(to_backend)
 
 
+@lru_cache(maxsize=100)
 def bind_class(
     from_protocol: Type[ServiceProtocolT],
     method_binder: MethodBinder[BackendT],
