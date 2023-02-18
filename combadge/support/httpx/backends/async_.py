@@ -6,7 +6,7 @@ from httpx import AsyncClient, Response
 from pydantic import BaseModel, parse_obj_as
 
 from combadge.core.binder import BaseBoundService, Signature
-from combadge.core.interfaces import CallService, ProvidesBinder
+from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
 from combadge.support.rest.request import Request
@@ -38,7 +38,7 @@ class HttpxBackend(ProvidesBinder):
         return parse_obj_as(response_type, response.json())
 
     @staticmethod
-    def bind_method(signature: Signature) -> CallService[HttpxBackend]:  # noqa: D102
+    def bind_method(signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
         async def resolved_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
             return await service.backend(request, signature.return_type)

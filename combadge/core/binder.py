@@ -21,7 +21,7 @@ from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import BackendT, ServiceProtocolT
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import CallService, MethodBinder, ProvidesBinder
+    from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -61,10 +61,10 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        resolved_method: CallService = method_binder(signature)
-        resolved_method = _wrap(resolved_method, signature.method_marks)
-        update_wrapper(resolved_method, method)
-        setattr(BoundService, name, resolved_method)
+        bound_method: CallServiceMethod = method_binder(signature)
+        bound_method = _wrap(bound_method, signature.method_marks)
+        update_wrapper(bound_method, method)
+        setattr(BoundService, name, bound_method)
 
     _update_bound_service(BoundService, from_protocol)
     return BoundService

@@ -26,7 +26,7 @@ class SupportsService(Protocol):
 class MethodBinder(Protocol[BackendT]):  # noqa: D101
     @staticmethod
     @abstractmethod
-    def __call__(__signature: Signature) -> CallService[BackendT]:
+    def __call__(__signature: Signature) -> CallServiceMethod[BackendT]:
         """
         Bind the method by its signature (for example, a backend).
 
@@ -51,7 +51,7 @@ class ProvidesBinder(Protocol):
     binder: MethodBinder[Self]
 
 
-class CallService(Protocol[BackendT]):
+class CallServiceMethod(Protocol[BackendT]):
     """
     Bound method call specification.
 

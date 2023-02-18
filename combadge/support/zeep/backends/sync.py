@@ -7,7 +7,7 @@ from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService, Signature
-from combadge.core.interfaces import CallService, ProvidesBinder
+from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.request import Request
@@ -40,7 +40,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ProvidesBinder)
         return self._parse_response(response, response_type)
 
     @classmethod
-    def bind_method(cls, signature: Signature) -> CallService[ZeepBackend]:  # noqa: D102
+    def bind_method(cls, signature: Signature) -> CallServiceMethod[ZeepBackend]:  # noqa: D102
         response_type, fault_type = cls._split_response_type(signature.return_type)
 
         def resolved_method(service: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
