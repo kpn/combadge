@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Type, Union
 
 from pydantic import BaseModel
@@ -5,7 +7,7 @@ from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService, Signature
-from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
+from combadge.core.interfaces import CallService, ProvidesBinder
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.request import Request
@@ -13,7 +15,7 @@ from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMethod):
+class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ProvidesBinder):
     """Synchronous Zeep service."""
 
     def __call__(
@@ -37,11 +39,14 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsBindMet
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
 
-    def bind_method(self, signature: Signature) -> SupportsServiceCall:  # noqa: D102
-        response_type, fault_type = self._split_response_type(signature.return_type)
+    @classmethod
+    def bind_method(cls, signature: Signature) -> CallService[ZeepBackend]:  # noqa: D102
+        response_type, fault_type = cls._split_response_type(signature.return_type)
 
-        def resolved_method(service: BaseBoundService, *args: Any, **kwargs: Any) -> BaseModel:
+        def resolved_method(service: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
-            return self(request, response_type, fault_type)
+            return service.backend(request, response_type, fault_type)
 
         return resolved_method  # type: ignore[return-value]
+
+    binder = bind_method  # type: ignore[assignment]

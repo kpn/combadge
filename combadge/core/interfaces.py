@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from typing_extensions import Protocol, Self
 
 from combadge.core.binder import BaseBoundService, Signature, bind
+from combadge.core.typevars import BackendT
 
 
 class SupportsService(Protocol):
@@ -17,35 +18,40 @@ class SupportsService(Protocol):
     """
 
     @classmethod
-    def bind(cls, to_backend: SupportsBindMethod) -> Self:
+    def bind(cls, to_backend: ProvidesBinder) -> Self:
         """Bind the current protocol to the specified backend."""
         return bind(cls, to_backend)
 
 
-class MethodBinder(Protocol):
-    """Supports binding a method via calling the current instance."""
-
+class MethodBinder(Protocol[BackendT]):  # noqa: D101
+    @staticmethod
     @abstractmethod
-    def __call__(self, signature: Signature) -> SupportsServiceCall:
+    def __call__(__signature: Signature) -> CallService[BackendT]:
         """
-        «Binds» the method by its signature to the current instance (for example, a backend).
+        Bind the method by its signature (for example, a backend).
 
         Args:
-            signature: extracted method signature
+            __signature: extracted method signature
 
         Returns:
-            Callable service method which is fully capable of sending a request and receiving a response.
+            Callable service method which is then fully capable of sending a request and receiving a response
+            via a corresponding backend instance.
         """
         raise NotImplementedError
 
 
-class SupportsBindMethod(Protocol):
-    """Supports binding a method to the current instance."""
+class ProvidesBinder(Protocol):
+    """
+    Provides a default binder for itself.
 
-    bind_method: MethodBinder
+    This is a convenience protocol that allows implementing a shortcut `bind` method instead of
+    forcing a user to bind the class manually.
+    """
+
+    binder: MethodBinder[Self]
 
 
-class SupportsServiceCall(Protocol):
+class CallService(Protocol[BackendT]):
     """
     Bound method call specification.
 
@@ -53,7 +59,7 @@ class SupportsServiceCall(Protocol):
     """
 
     @abstractmethod
-    def __call__(self, __service: BaseBoundService, *__args: Any, **__kwargs: Any) -> BaseModel:
+    def __call__(self, __service: BaseBoundService[BackendT], *__args: Any, **__kwargs: Any) -> BaseModel:
         """
         Call the service method.
 

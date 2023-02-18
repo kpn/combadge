@@ -5,7 +5,7 @@ from functools import update_wrapper
 from inspect import BoundArguments
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Iterable, List, Mapping, Tuple, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Mapping, Tuple, Type, TypeVar
 
 from typing_extensions import ParamSpec
 
@@ -18,20 +18,26 @@ from pydantic import BaseModel
 
 from combadge.core.mark import MethodMark, ParameterMark
 from combadge.core.response import SuccessfulResponse
+from combadge.core.typevars import BackendT, ServiceProtocolT
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import SupportsBindMethod, SupportsServiceCall
-    from combadge.core.typevars import ServiceProtocolT
+    from combadge.core.interfaces import CallService, MethodBinder, ProvidesBinder
 
 T = TypeVar("T")
 P = ParamSpec("P")
 
 
-class BaseBoundService:
+class BaseBoundService(Generic[BackendT]):
     """Parent of all bound service instances."""
 
+    backend: BackendT
+    __slots__ = ("backend",)
 
-def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod) -> "ServiceProtocolT":
+    def __init__(self, backend: BackendT) -> None:  # noqa: D107
+        self.backend = backend
+
+
+def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
     """
     Hereinafter «binding» is constructing a callable service instance from the protocol specification.
 
@@ -43,18 +49,25 @@ def bind(from_protocol: Type["ServiceProtocolT"], to_backend: SupportsBindMethod
         to_backend: backend which should perform the service requests
     """
 
+    return bind_class(from_protocol, to_backend.binder)(to_backend)
+
+
+def bind_class(
+    from_protocol: Type[ServiceProtocolT],
+    method_binder: MethodBinder[BackendT],
+) -> Callable[[BackendT], ServiceProtocolT]:
     class BoundService(BaseBoundService, from_protocol):  # type: ignore[misc, valid-type]
         """Bound service class that implements the protocol."""
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        resolved_method: SupportsServiceCall = to_backend.bind_method(signature)
+        resolved_method: CallService = method_binder(signature)
         resolved_method = _wrap(resolved_method, signature.method_marks)
         update_wrapper(resolved_method, method)
         setattr(BoundService, name, resolved_method)
 
     _update_bound_service(BoundService, from_protocol)
-    return BoundService()
+    return BoundService
 
 
 def _wrap(method: Callable[P, T], with_marks: Iterable[MethodMark]) -> Callable[P, T]:
