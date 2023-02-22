@@ -42,6 +42,7 @@ theme:
       accent: green
 
 plugins:
+  - autorefs
   - git-revision-date-localized:
       enable_creation_date: false
   - search:

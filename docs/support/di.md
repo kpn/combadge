@@ -35,7 +35,7 @@ response = services[SupportsWttrIn].get_weather(in_="amsterdam")
 assert response.current_condition
 ```
 
-## Usage with [`pkgsettings`](../configuration#with-pkgsettings)
+## Usage with [`pkgsettings`][with-pkgsettings]
 
 Combining the service container with `#!python pkgsettings`, one can easier instantiate a service and register it via specifying just a handful of common client settings:
 
