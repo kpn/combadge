@@ -45,6 +45,12 @@ plugins:
   - autorefs
   - git-revision-date-localized:
       enable_creation_date: false
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
   - search:
       lang: en
   - social
