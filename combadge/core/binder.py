@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Mappin
 
 from typing_extensions import ParamSpec
 
+from combadge.core.mark.response import ResponseMark
+
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
 except ImportError:
@@ -115,26 +117,34 @@ class Signature:
     method_marks: List[MethodMark]
     parameter_marks: List[Tuple[str, ParameterMark]]
     return_type: Type[BaseModel]
+    response_marks: List[Tuple[str, List[ResponseMark]]]
 
     @classmethod
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         type_hints = get_annotations(method, eval_str=True)
+        return_type = cls._extract_return_type(type_hints)
+        return_marks = [
+            (name, ResponseMark.extract(field.annotation))
+            for name, field in (getattr(return_type, "__fields__", None) or {}).items()
+        ]
+
         return Signature(
             bind_arguments=get_signature(method).bind,
             method_marks=MethodMark.ensure_marks(method),
             parameter_marks=list(cls._extract_parameter_marks(type_hints)),
-            return_type=cls._extract_return_type(type_hints),
+            return_type=return_type,
+            response_marks=return_marks,
         )
 
     @staticmethod
-    def _extract_parameter_marks(annotations: Mapping[str, Any]) -> Iterable[Tuple[str, ParameterMark]]:
+    def _extract_parameter_marks(from_annotations: Mapping[str, Any]) -> Iterable[Tuple[str, ParameterMark]]:
         """Extract all parameter marks for all the parameters."""
-        for name, hint in annotations.items():
+        for name, hint in from_annotations.items():
             for mark in ParameterMark.extract(hint):
                 yield name, mark
 
     @staticmethod
-    def _extract_return_type(annotations: Mapping[str, Any]) -> Type[BaseModel]:
+    def _extract_return_type(from_annotations: Mapping[str, Any]) -> Type[BaseModel]:
         """Extract return type from the method."""
-        return annotations.get("return", SuccessfulResponse)
+        return from_annotations.get("return", SuccessfulResponse)

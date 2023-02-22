@@ -1,11 +1,12 @@
 """Marks for HTTP-compatible requests."""
-
+import http
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Tuple, TypeVar, Union
 
 from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.mark import MethodMark, ParameterMark
+from combadge.core.mark.response import ResponseMark
 from combadge.core.typevars import Identity
 from combadge.support.http.abc import (
     RequiresBody,
@@ -16,7 +17,7 @@ from combadge.support.http.abc import (
     SupportsQueryParams,
 )
 
-T = TypeVar("T")
+_T = TypeVar("_T")
 
 
 @dataclass
@@ -29,7 +30,7 @@ class BodyParameterMark(ParameterMark[Union[RequiresBody, SupportsBody]]):
         request.body = value
 
 
-Body: TypeAlias = Annotated[T, BodyParameterMark()]
+Body: TypeAlias = Annotated[_T, BodyParameterMark()]
 
 
 @dataclass
@@ -112,3 +113,9 @@ class QueryParameterMark(ParameterMark[SupportsQueryParams]):
 
 
 QueryParam: TypeAlias = QueryParameterMark
+
+status_code_response_mark = ResponseMark("status_code_response_mark")
+"""Mark an attribute as a response status code."""
+
+StatusCode: TypeAlias = Annotated[http.HTTPStatus, status_code_response_mark]
+"""Mark an attribute as a response status code."""

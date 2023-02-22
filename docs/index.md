@@ -15,6 +15,7 @@
 === "With HTTPX"
 
     ```python title="quickstart_httpx.py"
+    from http import HTTPStatus
     from typing import List
 
     from httpx import Client
@@ -22,7 +23,7 @@
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.binder import bind
-    from combadge.support.http.marks import QueryParam, http_method, path
+    from combadge.support.http.marks import QueryParam, StatusCode, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
 
 
@@ -33,6 +34,7 @@
 
 
     class Weather(BaseModel):
+        status: StatusCode
         current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
 
 
@@ -55,6 +57,7 @@
 
     # 🚀 Call the service:
     response = service.get_weather(in_="amsterdam")
+    assert response.status == HTTPStatus.OK
     assert response.current[0].humidity == 71
     assert response.current[0].temperature == 8.0
     ```
@@ -175,5 +178,7 @@ The aforementioned methods always fail for `#!python FaultyResponse`. Furthermor
 #### Method marks
 
 #### Parameter marks
+
+#### Response marks
 
 ### Backends

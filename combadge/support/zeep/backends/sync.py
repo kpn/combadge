@@ -43,10 +43,10 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ProvidesBinder)
     def bind_method(cls, signature: Signature) -> CallServiceMethod[ZeepBackend]:  # noqa: D102
         response_type, fault_type = cls._split_response_type(signature.return_type)
 
-        def resolved_method(service: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
+        def bound_method(service: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
             return service.backend(request, response_type, fault_type)
 
-        return resolved_method  # type: ignore[return-value]
+        return bound_method  # type: ignore[return-value]
 
     binder = bind_method  # type: ignore[assignment]

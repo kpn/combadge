@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-from typing import Any, Type
+from typing import Any, Callable, Iterable, Tuple, Type
 
 from httpx import Client, Response
-from pydantic import BaseModel, parse_obj_as
+from pydantic import BaseModel
 
 from combadge.core.binder import BaseBoundService, Signature
 from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
 from combadge.core.request import build_request
 from combadge.core.typevars import ResponseT
+from combadge.support.httpx.backends.base import BaseHttpxBackend
 from combadge.support.rest.request import Request
 
 
-class HttpxBackend(ProvidesBinder):
+class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
     """
     Sync HTTPX backend for REST APIs.
 
@@ -20,13 +21,12 @@ class HttpxBackend(ProvidesBinder):
         - https://www.python-httpx.org/
     """
 
-    _client: Client
-    __slots__ = ("_client",)
-
-    def __init__(self, client: Client) -> None:  # noqa: D107
-        self._client = client
-
-    def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
+    def __call__(
+        self,
+        request: Request,
+        response_type: Type[ResponseT],
+        response_marks: Iterable[Tuple[str, Callable[[Response], Any]]],
+    ) -> ResponseT:
         """Call the backend."""
         response: Response = self._client.request(
             request.method,
@@ -35,14 +35,16 @@ class HttpxBackend(ProvidesBinder):
             params=request.query_params,
         )
         response.raise_for_status()
-        return parse_obj_as(response_type, response.json())
+        return self._parse_response(response, response_type, response_marks)
 
-    @staticmethod
-    def bind_method(signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
-        def resolved_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
+    @classmethod
+    def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
+        response_marks = cls._bind_response_marks(signature.response_marks)
+
+        def bound_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
-            return service.backend(request, signature.return_type)
+            return service.backend(request, signature.return_type, response_marks)
 
-        return resolved_method  # type: ignore[return-value]
+        return bound_method  # type: ignore[return-value]
 
-    binder = bind_method
+    binder = bind_method  # type: ignore[assignment]
