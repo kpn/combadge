@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Tuple, Type, TypeVar
-
-from typing_extensions import Annotated, get_origin
-from typing_extensions import get_args as get_type_args
+from abc import ABC
+from typing import Any, Dict, Generic, List, Tuple, TypeVar
 
 from combadge.core.typevars import Identity, RequestT
 
@@ -55,23 +52,6 @@ class MethodMark(ABC, Generic[RequestT]):
         """
         MethodMark.ensure_marks(what).append(self)
         return what
-
-
-class ParameterMark(Generic[RequestT], ABC):
-    """Parameter-specific mark that modifies a request with a call-time argument."""
-
-    __slots__ = ()
-
-    @staticmethod
-    def extract(type_: Type[Any]) -> List[ParameterMark]:
-        """Extract all parameter marks from the type annotation."""
-        if get_origin(type_) is Annotated:
-            return [arg for arg in get_type_args(type_) if isinstance(arg, ParameterMark)]
-        return []
-
-    @abstractmethod
-    def prepare_request(self, request: RequestT, value: Any) -> None:
-        """Update the request according to the mark and the actual argument."""
 
 
 class _DecorateMethodMark(MethodMark[Any]):
