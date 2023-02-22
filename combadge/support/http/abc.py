@@ -23,3 +23,21 @@ class SupportsBody(ABC, BaseModel):
     """Supports an optional request body (for example, a JSON payload or a SOAP body)."""
 
     body: Optional[BaseModel] = None
+
+
+class RequiresPath(ABC, BaseModel):
+    """Requires a request URL path."""
+
+    path: str
+
+
+class RequiresMethod(ABC, BaseModel):
+    """Requires a request HTTP method."""
+
+    method: str
+
+
+class SupportsQueryParams(ABC, BaseModel):
+    """Supports query parameters."""
+
+    query_params: Annotated[List[Tuple[str, Any]], Field(default_factory=list)]

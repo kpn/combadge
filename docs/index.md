@@ -22,8 +22,8 @@
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.binder import bind
+    from combadge.support.http.marks import QueryParam, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
-    from combadge.support.rest.marks import QueryParam, method, path
 
 
     # 1️⃣ Declare the response models:
@@ -38,7 +38,7 @@
 
     # 2️⃣ Declare the protocol:
     class SupportsWttrIn(Protocol):
-        @method("GET")
+        @http_method("GET")
         @path("/{in_}")
         def get_weather(
             self,

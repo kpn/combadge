@@ -6,9 +6,9 @@ from pytest import mark
 from typing_extensions import Annotated, Protocol
 
 from combadge.core.binder import bind
+from combadge.support.http.marks import QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
-from combadge.support.rest.marks import QueryParam, method, path
 
 
 class CurrentCondition(BaseModel):
@@ -23,7 +23,7 @@ class Weather(BaseModel):
 @mark.vcr
 def test_weather_sync() -> None:
     class SupportsWttrIn(Protocol):
-        @method("GET")
+        @http_method("GET")
         @path("/{in_}")
         def get_weather(
             self,
@@ -44,7 +44,7 @@ def test_weather_sync() -> None:
 @mark.vcr
 async def test_weather_async() -> None:
     class SupportsWttrIn(Protocol):
-        @method("GET")
+        @http_method("GET")
         @path("/{in_}")
         async def get_weather(
             self,

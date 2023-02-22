@@ -1,5 +1,5 @@
-from combadge.support.rest.abc import RequiresPath
-from combadge.support.rest.marks import _PathMark
+from combadge.support.http.abc import RequiresPath
+from combadge.support.http.marks import _PathMark
 
 
 def test_path_format() -> None:
