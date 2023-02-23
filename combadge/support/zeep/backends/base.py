@@ -12,7 +12,7 @@ from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.response import BaseSoapFault, SoapFaultT
 
-ServiceProxyT = TypeVar("ServiceProxyT", bound=ServiceProxy)
+_ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
 """
 Specific service proxy type returned by a Zeep client.
 
@@ -20,15 +20,15 @@ See Also:
     - https://docs.python-zeep.org/en/master/client.html#the-serviceproxy-object
 """
 
-OperationProxyT = TypeVar("OperationProxyT", bound=OperationProxy)
+_OperationProxyT = TypeVar("_OperationProxyT", bound=OperationProxy)
 
 
-class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
+class BaseZeepBackend(ABC, Generic[_ServiceProxyT, _OperationProxyT]):
     """Base class for the sync and async backends. Not intended for a direct use."""
 
     __slots__ = ("_service",)
 
-    def __init__(self, service: ServiceProxyT) -> None:
+    def __init__(self, service: _ServiceProxyT) -> None:
         """Instantiate the backend."""
         self._service = service
 
@@ -62,7 +62,7 @@ class BaseZeepBackend(ABC, Generic[ServiceProxyT, OperationProxyT]):
 
         return response_type, fault_type
 
-    def _get_operation(self, name: str) -> OperationProxyT:
+    def _get_operation(self, name: str) -> _OperationProxyT:
         """Get an operation by its name."""
         try:
             return self._service[name]

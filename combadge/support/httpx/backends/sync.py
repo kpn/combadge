@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import AbstractContextManager, nullcontext
 from typing import Any, Callable, Iterable, Tuple, Type
 
 from httpx import Client, Response
@@ -18,8 +19,19 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
     Sync HTTPX backend for REST APIs.
 
     See Also:
-        - https://www.python-httpx.org/
+        - <https://www.python-httpx.org/>
     """
+
+    __slots__ = ("_request_with",)
+
+    def __init__(  # noqa: D107
+        self,
+        client: Client,
+        *,
+        request_with: Callable[[], AbstractContextManager] = nullcontext,
+    ) -> None:
+        super().__init__(client=client)
+        self._request_with = request_with
 
     def __call__(
         self,
@@ -43,7 +55,8 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
 
         def bound_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
-            return service.backend(request, signature.return_type, response_marks)
+            with service.backend._request_with():
+                return service.backend(request, signature.return_type, response_marks)
 
         return bound_method  # type: ignore[return-value]
 

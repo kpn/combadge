@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Iterable, Tuple, Type
+import sys
+from contextlib import AbstractAsyncContextManager, asynccontextmanager
+from typing import Any, Callable, Iterable, Iterator, Tuple, Type
 
 from httpx import AsyncClient, Response
 from pydantic import BaseModel
@@ -12,14 +14,33 @@ from combadge.core.typevars import ResponseT
 from combadge.support.httpx.backends.base import BaseHttpxBackend
 from combadge.support.rest.request import Request
 
+if sys.version_info >= (3, 10):
+    from contextlib import nullcontext as asyncnullcontext
+else:
+
+    @asynccontextmanager
+    def asyncnullcontext() -> Iterator[None]:
+        yield None
+
 
 class HttpxBackend(BaseHttpxBackend[AsyncClient], ProvidesBinder):
     """
     Async HTTPX backend for REST APIs.
 
     See Also:
-        - https://www.python-httpx.org/
+        - <https://www.python-httpx.org/>
     """
+
+    __slots__ = ("_request_with",)
+
+    def __init__(  # noqa: D107
+        self,
+        client: AsyncClient,
+        *,
+        request_with: Callable[[], AbstractAsyncContextManager] = asyncnullcontext,
+    ) -> None:
+        super().__init__(client=client)
+        self._request_with = request_with
 
     async def __call__(
         self,
@@ -43,7 +64,8 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ProvidesBinder):
 
         async def bound_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
-            return await service.backend(request, signature.return_type, response_marks)
+            async with service.backend._request_with():
+                return await service.backend(request, signature.return_type, response_marks)
 
         return bound_method  # type: ignore[return-value]
 

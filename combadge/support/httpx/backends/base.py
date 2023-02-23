@@ -13,14 +13,14 @@ from combadge.core.typevars import ResponseT
 from combadge.core.warnings import ResponseMarkNotSupported
 from combadge.support.http.markers import status_code_response_mark
 
-ClientT = TypeVar("ClientT")
+_ClientT = TypeVar("_ClientT")
 
 
-class BaseHttpxBackend(ProvidesBinder, Generic[ClientT]):  # noqa: D101
-    _client: ClientT
+class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):  # noqa: D101
+    _client: _ClientT
     __slots__ = ("_client",)
 
-    def __init__(self, client: ClientT) -> None:  # noqa: D107
+    def __init__(self, *, client: _ClientT) -> None:  # noqa: D107
         self._client = client
 
     @classmethod
