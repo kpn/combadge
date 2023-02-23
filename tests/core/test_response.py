@@ -1,8 +1,8 @@
-from combadge.core.response import FaultyResponse
+from combadge.core.response import ErrorResponse
 
 
 def test_error_inheritance() -> None:
-    class Foo(FaultyResponse):
+    class Foo(ErrorResponse):
         pass
 
     class Bar(Foo):

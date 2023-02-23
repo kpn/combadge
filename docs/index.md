@@ -74,7 +74,7 @@
     from typing_extensions import Annotated
 
     from combadge.core.interfaces import SupportsService
-    from combadge.core.response import FaultyResponse, SuccessfulResponse
+    from combadge.core.response import ErrorResponse, SuccessfulResponse
     from combadge.support.http.marks import Body
     from combadge.support.soap.marks import operation_name
     from combadge.support.zeep.backends.sync import ZeepBackend
@@ -91,7 +91,7 @@
 
 
     # 3️⃣ Optionally, declare the error response models:
-    class NumberTooLargeResponse(FaultyResponse):
+    class NumberTooLargeResponse(ErrorResponse):
         __root__: Literal["number too large"]
 
 
@@ -149,7 +149,7 @@ Combadge does not restrict user in terms of model classes: as long as they are i
 
 #### Base response
 
-`#!python BaseResponse` is the lower-level API, one should consider inheriting from `#!python SuccessfulResponse` and `#!python FaultyResponse`. However, it is important to note its methods:
+`#!python BaseResponse` is the lower-level API, one should consider inheriting from `#!python SuccessfulResponse` and `#!python ErrorResponse`. However, it is important to note its methods:
 
 - `#!python raise_for_result()`: raises an error, if the response is faulty
 - `#!python expect(exc_type_, *args)`: raises a specified error, if the response is faulty
@@ -167,7 +167,7 @@ The following response classes inherit from the `#!python BaseResponse`, which a
 
 #### Faulty response
 
-The aforementioned methods always fail for `#!python FaultyResponse`. Furthermore, `#!python FaultyResponse` automatically derives distinct exception classes for each error model.
+The aforementioned methods always fail for `#!python ErrorResponse`. Furthermore, `#!python ErrorResponse` automatically derives distinct exception classes for each error model.
 
 !!! tip "Error codes"
 

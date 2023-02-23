@@ -51,7 +51,7 @@ class SuccessfulResponse(BaseResponse):
         return self
 
 
-class FaultyResponse(BaseResponse, ABC):
+class ErrorResponse(BaseResponse, ABC):
     """
     Parent model for faulty responses (errors).
 
@@ -73,7 +73,7 @@ class FaultyResponse(BaseResponse, ABC):
     def __init_subclass__(cls, **kwargs: Any) -> None:
         """Build the derived exception class."""
 
-        error_bases = tuple(base.Error for base in cls.__bases__ if issubclass(base, FaultyResponse))
+        error_bases = tuple(base.Error for base in cls.__bases__ if issubclass(base, ErrorResponse))
 
         class DerivedException(*error_bases):  # type: ignore
             """

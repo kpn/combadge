@@ -8,7 +8,7 @@ from typing_extensions import Annotated, Literal
 from zeep import AsyncClient, Client
 
 from combadge.core.interfaces import SupportsService
-from combadge.core.response import FaultyResponse, SuccessfulResponse
+from combadge.core.response import ErrorResponse, SuccessfulResponse
 from combadge.support.http.marks import Body
 from combadge.support.soap.marks import operation_name
 from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
@@ -23,7 +23,7 @@ class NumberToWordsResponse(SuccessfulResponse):
     __root__: str
 
 
-class NumberTooLargeResponse(FaultyResponse):
+class NumberTooLargeResponse(ErrorResponse):
     __root__: Literal["number too large"]
 
 

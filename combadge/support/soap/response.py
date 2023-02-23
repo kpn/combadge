@@ -2,17 +2,17 @@
 
 from typing import NoReturn, TypeVar
 
-from combadge.core.response import FaultyResponse
+from combadge.core.response import ErrorResponse
 
 
-class BaseSoapFault(FaultyResponse):
+class BaseSoapFault(ErrorResponse):
     """
     SOAP Fault model.
 
     Notes:
         - This class matches the SOAP Fault specification.
           For custom errors returned in a SOAP response body (such as `<error>` tag),
-          subclass the `FaultyResponse`.
+          subclass the `ErrorResponse`.
 
     See Also:
         - https://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383507
