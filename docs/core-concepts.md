@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+---
+
 # Core concepts
 
 ## Service protocol
@@ -55,12 +60,42 @@ The aforementioned methods always fail for `#!python ErrorResponse`. Furthermore
 
     Use [`typing.Literal`](https://docs.python.org/3/library/typing.html#typing.Literal) to define a separate error model for each error code.
 
-## Marks
+## Markers
 
-### Method marks
+**Markers** are named similarly to those from [pytest](https://docs.pytest.org/en/7.1.x/example/markers.html) and serve the same purpose: to «attach» a metadata that is needed to process a request or response.
 
-### Parameter marks
+### Method markers
 
-### Response marks
+**Method markers** are used to attach a metadata that is relevant to a whole request rather than a specific parameter.
+
+Examples:
+
+- HTTP method
+- HTTP endpoint path
+- SOAP operation name
+
+!!! info ""
+
+    Since there's no «native» way to mark a function in Python, the method markers are usually decorators that doesn't change a behaviour of a wrapped function.
+
+### Parameter markers
+
+Examples:
+
+- Header: pass an argument as a specified headers value
+- Query parameter: pass an argument as a specified query parameter
+- Body: pass an argument as a request body
+
+Parameter markers are specified with `#!python Annotated` type hints on corresponding parameters.
+
+### Response markers
+
+Examples:
+
+- Status code: a marked attribute should be filled in from the responses' status code
+
+Response markers are specified with `#!python Annotated` type hints on corresponding response model attributes.
 
 ## Backends
+
+**Backend** is a thin layer between a service instance and an actual client, which knows how to translate a protocol function's signature into an actual request and parse a response.

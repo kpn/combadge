@@ -6,7 +6,7 @@ from typing_extensions import Protocol
 
 from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service, _wrap
 from combadge.core.interfaces import SupportsService
-from combadge.core.mark import MethodMark, decorator
+from combadge.core.markers import MethodMarker, decorator
 
 
 def test_enumerate_bindable_methods() -> None:
@@ -87,4 +87,4 @@ def test_decorator_ordering() -> None:
     def get_expected() -> Tuple[Any, ...]:
         return ()
 
-    assert _wrap(get_actual, MethodMark.ensure_marks(get_actual))() == get_expected()
+    assert _wrap(get_actual, MethodMarker.ensure_marks(get_actual))() == get_expected()

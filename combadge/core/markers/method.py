@@ -8,14 +8,14 @@ from combadge.core.typevars import Identity, RequestT
 T = TypeVar("T")
 
 
-class MethodMark(ABC, Generic[RequestT]):
-    """Method-specific mark that modifies an entire request based on all the call arguments."""
+class MethodMarker(ABC, Generic[RequestT]):
+    """Method-specific marker that modifies an entire request based on all the call arguments."""
 
     __slots__ = ()
 
     def wrap(self, what: T) -> T:
         """
-        Wrap the argument according to the mark.
+        Wrap the argument according to the marker.
 
         Notes:
             - Does nothing by default. Override in a child class.
@@ -36,7 +36,7 @@ class MethodMark(ABC, Generic[RequestT]):
         """
 
     @staticmethod
-    def ensure_marks(in_: Any) -> List[MethodMark]:
+    def ensure_marks(in_: Any) -> List[MethodMarker]:
         """Ensure that the argument contains the mark list attribute, and return the list."""
         try:
             marks = in_.__combadge_marks__
@@ -50,11 +50,11 @@ class MethodMark(ABC, Generic[RequestT]):
 
         This is not a part of the public interface and is used to derive the decorators.
         """
-        MethodMark.ensure_marks(what).append(self)
+        MethodMarker.ensure_marks(what).append(self)
         return what
 
 
-class _DecorateMethodMark(MethodMark[Any]):
+class _DecorateMethodMarker(MethodMarker[Any]):
     _decorator: Identity
     __slots__ = ("_decorator",)
 
@@ -74,4 +74,4 @@ def decorator(decorator: Identity[T]) -> Identity[T]:
         >>> def service_method(self, ...) -> ...:
         >>>     ...
     """
-    return _DecorateMethodMark(decorator).mark
+    return _DecorateMethodMarker(decorator).mark

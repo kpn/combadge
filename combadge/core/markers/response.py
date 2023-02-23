@@ -7,7 +7,7 @@ from typing_extensions import Annotated, get_args, get_origin
 
 
 @dataclass(frozen=True)
-class ResponseMark:
+class ResponseMarker:
     """
     Used to mark response attributes.
 
@@ -21,8 +21,8 @@ class ResponseMark:
     __slots__ = ("name",)
 
     @classmethod
-    def extract(cls, from_type: Type[Any]) -> List[ResponseMark]:
-        """Extract all response marks from the attribute type annotation."""
+    def extract(cls, from_type: Type[Any]) -> List[ResponseMarker]:
+        """Extract all response markers from the attribute type annotation."""
         if get_origin(from_type) is Annotated:
             return [arg for arg in get_args(from_type) if isinstance(arg, cls)]
         return []

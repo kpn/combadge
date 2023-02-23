@@ -1,3 +1,9 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 # Overview
 
 [![Checks](https://img.shields.io/github/checks-status/kpn/combadge/main?logo=github)](https://github.com/kpn/combadge/actions/workflows/check.yaml)
@@ -23,7 +29,7 @@
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.binder import bind
-    from combadge.support.http.marks import QueryParam, StatusCode, http_method, path
+    from combadge.support.http.markers import QueryParam, StatusCode, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
 
 
@@ -75,8 +81,8 @@
 
     from combadge.core.interfaces import SupportsService
     from combadge.core.response import ErrorResponse, SuccessfulResponse
-    from combadge.support.http.marks import Body
-    from combadge.support.soap.marks import operation_name
+    from combadge.support.http.markers import Body
+    from combadge.support.soap.markers import operation_name
     from combadge.support.zeep.backends.sync import ZeepBackend
 
 

@@ -5,8 +5,8 @@ from typing import Any, Callable, Dict, Tuple, TypeVar, Union
 
 from typing_extensions import Annotated, TypeAlias
 
-from combadge.core.mark import MethodMark, ParameterMark
-from combadge.core.mark.response import ResponseMark
+from combadge.core.markers import MethodMarker, ParameterMarker
+from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import Identity
 from combadge.support.http.abc import (
     RequiresBody,
@@ -21,7 +21,7 @@ _T = TypeVar("_T")
 
 
 @dataclass
-class BodyParameterMark(ParameterMark[Union[RequiresBody, SupportsBody]]):
+class BodyParameterMarker(ParameterMarker[Union[RequiresBody, SupportsBody]]):
     """Designates a parameter a service call's request body."""
 
     __slots__ = ()
@@ -30,11 +30,11 @@ class BodyParameterMark(ParameterMark[Union[RequiresBody, SupportsBody]]):
         request.body = value
 
 
-Body: TypeAlias = Annotated[_T, BodyParameterMark()]
+Body: TypeAlias = Annotated[_T, BodyParameterMarker()]
 
 
 @dataclass
-class HeaderParameterMark(ParameterMark[SupportsHeaders]):
+class HeaderParameterMarker(ParameterMarker[SupportsHeaders]):
     """Designates parameter as a service call's additional header."""
 
     name: str
@@ -44,10 +44,10 @@ class HeaderParameterMark(ParameterMark[SupportsHeaders]):
         request.headers.append((self.name, value))
 
 
-Header: TypeAlias = HeaderParameterMark
+Header: TypeAlias = HeaderParameterMarker
 
 
-class _PathMark(MethodMark[RequiresPath]):
+class _PathMarker(MethodMarker[RequiresPath]):
     _factory: Callable[..., str]
     __slots__ = ("_factory",)
 
@@ -80,11 +80,11 @@ def path(path_or_factory: Union[str, Callable[..., str]]) -> Identity:
         >>> @path(lambda name, **_: f"/hello/{name}")
         >>> def call(name: str) -> None: ...
     """
-    return _PathMark(path_or_factory).mark
+    return _PathMarker(path_or_factory).mark
 
 
 @dataclass
-class _HttpMethodMark(MethodMark[RequiresMethod]):
+class _HttpMethodMarker(MethodMarker[RequiresMethod]):
     method: str  # TODO: enum?
 
     def prepare_request(  # noqa: D102
@@ -98,11 +98,11 @@ class _HttpMethodMark(MethodMark[RequiresMethod]):
 
 def http_method(method: str) -> Identity:
     """Specify an HTTP method."""
-    return _HttpMethodMark(method).mark
+    return _HttpMethodMarker(method).mark
 
 
 @dataclass
-class QueryParameterMark(ParameterMark[SupportsQueryParams]):
+class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
     """Designates parameter as a service call's query parameter."""
 
     name: str
@@ -112,9 +112,9 @@ class QueryParameterMark(ParameterMark[SupportsQueryParams]):
         request.query_params.append((self.name, value))
 
 
-QueryParam: TypeAlias = QueryParameterMark
+QueryParam: TypeAlias = QueryParameterMarker
 
-status_code_response_mark = ResponseMark("status_code_response_mark")
+status_code_response_mark = ResponseMarker("status_code_response_mark")
 """Mark an attribute as a response status code."""
 
 StatusCode: TypeAlias = Annotated[http.HTTPStatus, status_code_response_mark]

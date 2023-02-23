@@ -13,7 +13,7 @@ from typing_extensions import Annotated, Protocol
 
 from combadge.core.binder import bind
 from combadge.support.di import services
-from combadge.support.http.marks import QueryParam, http_method, path
+from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
 
