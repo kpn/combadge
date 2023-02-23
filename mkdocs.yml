@@ -4,6 +4,7 @@ site_name: Combadge
 
 nav:
   - index.md
+  - core-concepts.md
   - Support:
     - support/configuration.md
     - support/di.md
