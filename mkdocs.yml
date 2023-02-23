@@ -6,8 +6,16 @@ nav:
   - index.md
   - core-concepts.md
   - Support:
-    - support/configuration.md
-    - support/di.md
+      - support/configuration.md
+      - support/di.md
+      - Protocols:
+          - support/http.md
+          - support/rest.md
+          - support/soap.md
+      - Backends:
+          - support/httpx.md
+          - support/zeep.md
+  - Extending: []
 
 theme:
   icon:
@@ -53,6 +61,12 @@ plugins:
         python:
           options:
             show_source: false
+            show_root_toc_entry: false
+            group_by_category: true
+            show_signature_annotations: true
+            separate_signature: true
+            show_bases: false
+            merge_init_into_class: true
   - search:
       lang: en
   - social
@@ -89,3 +103,6 @@ extra:
 copyright: Copyright &copy; 2023 Koninklijke KPN N.V.
 
 site_url: "https://kpn.github.io/combadge"
+
+watch:
+  - "combadge"

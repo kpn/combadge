@@ -1,1 +1,1 @@
-"""Generic HTTP support."""
+"""Markers for HTTP-based protocols."""

@@ -1,5 +1,3 @@
-"""Mixins for SOAP request classes."""
-
 from dataclasses import dataclass
 from typing import Any, Dict, Tuple
 
@@ -24,5 +22,18 @@ class _OperationNameMethodMarker(MethodMarker[RequiresOperationName]):
 
 
 def operation_name(name: str) -> Identity:
-    """Designates a service call's operation name (for example, SOAP name)."""
+    """
+    Mark a service call's operation name.
+
+    Examples:
+        >>> from combadge.support.soap.markers import operation_name
+        >>>
+        >>> class SupportsNumberConversion(SupportsService):
+        >>>     @operation_name("NumberToWords")
+        >>>     def number_to_words(self) -> ...:
+        >>>         ...
+
+    See Also:
+        - [Structure of a WSDL message](https://www.ibm.com/docs/en/rtw/9.0.0?topic=documents-structure-wsdl-message)
+    """
     return _OperationNameMethodMarker(name).mark

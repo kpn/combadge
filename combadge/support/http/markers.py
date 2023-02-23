@@ -1,4 +1,5 @@
-"""Marks for HTTP-compatible requests."""
+"""Markers for HTTP-compatible protocols."""
+
 import http
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Tuple, TypeVar, Union
@@ -22,7 +23,17 @@ _T = TypeVar("_T")
 
 @dataclass
 class BodyParameterMarker(ParameterMarker[Union[RequiresBody, SupportsBody]]):
-    """Designates a parameter a service call's request body."""
+    """
+    Mark a parameter a request body.
+
+    Used for a more complex annotations, for example:
+
+    ```python
+    Annotated[BodyModel, BodyParameterMarker(), AnotherMarker]
+    ```
+
+    For simple annotations prefer the [Body][combadge.support.http.markers.Body] marker.
+    """
 
     __slots__ = ()
 
@@ -31,6 +42,18 @@ class BodyParameterMarker(ParameterMarker[Union[RequiresBody, SupportsBody]]):
 
 
 Body: TypeAlias = Annotated[_T, BodyParameterMarker()]
+"""
+Mark parameter as a request body. An argument gets converted to a dictionary and passed over to a backend.
+
+Examples:
+    >>> from combadge.support.http import Body
+    >>>
+    >>> class BodyModel(BaseModel):
+    >>>     ...
+    >>>
+    >>> def call(body: Body[BodyModel]) -> ...:
+    >>>     ...
+"""
 
 
 @dataclass
@@ -70,7 +93,7 @@ def path(path_or_factory: Union[str, Callable[..., str]]) -> Identity:
     """
     Specify a URL path.
 
-    Example:
+    Examples:
         >>> @path("/hello/world")
         >>> def call() -> None: ...
 
@@ -115,7 +138,17 @@ class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
 QueryParam: TypeAlias = QueryParameterMarker
 
 status_code_response_mark = ResponseMarker("status_code_response_mark")
-"""Mark an attribute as a response status code."""
+"""
+Mark an attribute as a response status code.
+
+For simple annotations prefer the [`StatusCode`][combadge.support.http.markers.StatusCode] marker.
+"""
 
 StatusCode: TypeAlias = Annotated[http.HTTPStatus, status_code_response_mark]
-"""Mark an attribute as a response status code."""
+"""
+Mark an response model's attribute as a response status code.
+
+Examples:
+    >>> class ResponseModel(BaseModel):
+    >>>     status: StatusCode
+"""

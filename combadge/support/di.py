@@ -5,10 +5,12 @@ from typing import Any, Callable, Dict, Type
 from combadge.core.typevars import ServiceProtocolT
 
 
-class _ServiceContainer:
+class ServiceContainer:
+    """Service protocol instances manager."""
+
     __slots__ = ("_factories",)
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # noqa: D107
         self._factories: Dict[Type, Callable[[], Any]] = {}
 
     def register_singleton(self, protocol_type: Type[ServiceProtocolT], service_instance: ServiceProtocolT) -> None:
@@ -16,7 +18,10 @@ class _ServiceContainer:
         self.register_factory(protocol_type, lambda: service_instance)
 
     def __setitem__(self, protocol_type: Type[ServiceProtocolT], service_instance: ServiceProtocolT) -> None:
-        """Register the service instance (shorthand for `register_singleton`)."""
+        """
+        Register the service instance
+        (shorthand for [`register_singleton()`][combadge.support.di.ServiceContainer.register_singleton]).
+        """  # noqa: D205
         self.register_singleton(protocol_type, service_instance)
 
     def register_factory(
@@ -27,7 +32,8 @@ class _ServiceContainer:
         """
         Register the instance factory for the specified protocol type.
 
-        It's the lowest-level API. Please, consider using `register_singleton()` instead.
+        It's the lowest-level API. Please, consider using
+        [`register_singleton()`][combadge.support.di.ServiceContainer.register_singleton] instead.
         This method is particularly harmful, if you're passing a heavy factory
         (for example, if the factory instantiates a service on each factory's call).
 
@@ -46,5 +52,5 @@ class _ServiceContainer:
             return factory()
 
 
-services = _ServiceContainer()
-"""Manages service protocols."""
+services = ServiceContainer()
+"""Default global service container."""

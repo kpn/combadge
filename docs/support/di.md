@@ -46,3 +46,9 @@ Combining the service container with `#!python pkgsettings`, one can easier inst
 !!! warning "TODO"
 
     Not implemented.
+
+## `ServiceContainer` API
+
+::: combadge.support.di.ServiceContainer
+    options:
+      heading_level: 3
