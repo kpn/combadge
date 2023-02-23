@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
-from typing import Any, Callable, Iterable, Iterator, Tuple, Type
+from typing import Any, AsyncGenerator, Callable, Iterable, Tuple, Type
 
 from httpx import AsyncClient, Response
 from pydantic import BaseModel
@@ -19,7 +19,7 @@ if sys.version_info >= (3, 10):
 else:
 
     @asynccontextmanager
-    async def asyncnullcontext() -> Iterator[None]:
+    async def asyncnullcontext() -> AsyncGenerator[None]:
         yield None
 
 
