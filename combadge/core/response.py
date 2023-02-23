@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Type, Union, Iterable
+from typing import Any, Iterable, Type, Union
 
 from pydantic import BaseModel
 from typing_extensions import NoReturn, Self
@@ -70,12 +70,13 @@ class ErrorResponse(BaseResponse, ABC):
         that is available via the class attribute and raised by `raise_for_result()`.
         """
 
-    def __init_subclass__(cls, exception_bases: Iterable[Type[BaseException]] = (), **kwargs) -> None:
+    def __init_subclass__(cls, exception_bases: Iterable[Type[BaseException]] = (), **kwargs: Any) -> None:
         """
         Build the derived exception class.
 
         Args:
             exception_bases: additional bases for the derived exception class
+            kwargs: forwarded to the superclass
         """
 
         super().__init_subclass__(**kwargs)
