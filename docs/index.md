@@ -165,7 +165,7 @@ The following response classes inherit from the `#!python BaseResponse`, which a
 
 `#!python SuccessfulResponse` implements the methods above so that they never fail.
 
-#### Faulty response
+#### Error response
 
 The aforementioned methods always fail for `#!python ErrorResponse`. Furthermore, `#!python ErrorResponse` automatically derives distinct exception classes for each error model.
 
