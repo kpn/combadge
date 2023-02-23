@@ -19,7 +19,7 @@ if sys.version_info >= (3, 10):
 else:
 
     @asynccontextmanager
-    async def asyncnullcontext() -> AsyncGenerator[None]:
+    async def asyncnullcontext() -> AsyncGenerator[None, None]:
         yield None
 
 
