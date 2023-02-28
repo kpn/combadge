@@ -10,17 +10,17 @@ _T = TypeVar("_T")
 
 
 @dataclass
-class JsonBodyParameterMarker(ParameterMarker[SupportsJson]):
+class JsonParameterMarker(ParameterMarker[SupportsJson]):
     """
     Mark a parameter as a request JSON body.
 
     Used for a more complex annotations, for example:
 
     ```python
-    Annotated[BodyModel, JsonBodyParameterMarker(), AnotherMarker]
+    Annotated[BodyModel, JsonParameterMarker(), AnotherMarker]
     ```
 
-    For simple annotations prefer the [Body][combadge.support.rest.markers.JsonBody] marker.
+    For simple annotations prefer the [Body][combadge.support.rest.markers.Json] marker.
     """
 
     __slots__ = ()
@@ -29,7 +29,7 @@ class JsonBodyParameterMarker(ParameterMarker[SupportsJson]):
         request.json_ = value
 
 
-JsonBody: TypeAlias = Annotated[_T, JsonBodyParameterMarker()]
+Json: TypeAlias = Annotated[_T, JsonParameterMarker()]
 """
 Mark parameter as a request JSON body. An argument gets converted to a dictionary and passed over to a backend.
 
@@ -39,6 +39,6 @@ Examples:
     >>> class BodyModel(BaseModel):
     >>>     ...
     >>>
-    >>> def call(body: JsonBody[BodyModel]) -> ...:
+    >>> def call(body: Json[BodyModel]) -> ...:
     >>>     ...
 """
