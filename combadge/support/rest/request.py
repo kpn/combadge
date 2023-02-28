@@ -11,4 +11,7 @@ class Request(RequiresMethod, RequiresPath, SupportsJson, SupportsQueryParams, B
 
     def json_dict(self) -> Optional[Dict[str, Any]]:
         """Convert the JSON body to a dictionary."""
-        return json.dict(by_alias=True) if (json := self.json_) is not None else None
+        dict_ = self.json_fields
+        if json := self.json_:
+            dict_.update(json.dict(by_alias=True))
+        return dict_
