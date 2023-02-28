@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 from combadge.core.markers import MethodMarker, ParameterMarker
 from combadge.core.response import SuccessfulResponse
-from combadge.core.typevars import BackendT, Identity, ServiceProtocolT
+from combadge.core.typevars import BackendT, Identity, RequestT, ServiceProtocolT
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
@@ -147,7 +147,7 @@ class Signature:
         """Extract all parameter marks for all the parameters."""
         for name, annotation in from_annotations.items():
             for marker in ParameterMarker.extract(annotation):
-                yield BoundParameterMarker(name=name, marker=marker)
+                yield BoundParameterMarker(name=name, prepare_request=marker.prepare_request)
 
     @staticmethod
     def _extract_return_type(from_annotations: Mapping[str, Any]) -> Type[BaseModel]:
@@ -155,19 +155,18 @@ class Signature:
         return from_annotations.get("return", SuccessfulResponse)
 
 
-ParameterMarkerT = TypeVar("ParameterMarkerT", bound=ParameterMarker)
 ResponseMarkerT = TypeVar("ResponseMarkerT", bound=ResponseMarker)
 
 
 @dataclass
-class BoundParameterMarker(Generic[ParameterMarkerT]):  # noqa: D101
-    __slots__ = ("name", "marker")
+class BoundParameterMarker(Generic[RequestT]):  # noqa: D101
+    __slots__ = ("name", "prepare_request")
 
     name: str
     """Parameter name."""
 
-    marker: ParameterMarkerT
-    """Original marker that is applied through `Annotated`."""
+    prepare_request: Callable[[RequestT, Any], None]
+    """Original marker's method to prepare a request."""
 
 
 @dataclass

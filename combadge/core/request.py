@@ -44,7 +44,7 @@ def build_request(
         except KeyError:
             pass
         else:
-            marker.marker.prepare_request(request, value)
+            marker.prepare_request(request, value)
 
     # Validate and return the request.
     *_, error = validate_model(request_class, request.__dict__)

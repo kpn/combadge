@@ -37,7 +37,7 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
         self,
         request: Request,
         response_type: Type[ResponseT],
-        response_marks: Iterable[Tuple[str, Callable[[Response], Any]]],
+        response_extractors: Iterable[Tuple[str, Callable[[Response], Any]]],
     ) -> ResponseT:
         """Call the backend."""
         response: Response = self._client.request(
@@ -47,16 +47,16 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
             params=request.query_params,
         )
         response.raise_for_status()
-        return self._parse_response(response, response_type, response_marks)
+        return self._parse_response(response, response_type, response_extractors)
 
     @classmethod
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
-        response_marks = cls._bind_response_markers(signature.response_markers)
+        response_extractors = cls._build_response_extractors(signature.response_markers)
 
         def bound_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
             with service.backend._request_with():
-                return service.backend(request, signature.return_type, response_marks)
+                return service.backend(request, signature.return_type, response_extractors)
 
         return bound_method  # type: ignore[return-value]
 

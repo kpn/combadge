@@ -10,7 +10,7 @@ from pydantic import parse_obj_as
 from combadge.core.binder import BoundResponseMarkers
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
-from combadge.core.warnings import ResponseMarkNotSupported
+from combadge.core.warnings import ResponseMarkerNotSupported
 from combadge.support.http.markers import status_code_response_mark
 
 _ClientT = TypeVar("_ClientT")
@@ -24,7 +24,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):  # noqa: D101
         self._client = client
 
     @classmethod
-    def _bind_response_markers(
+    def _build_response_extractors(
         cls,
         from_: List[BoundResponseMarkers],
     ) -> List[Tuple[str, Callable[[Response], Any]]]:
@@ -34,7 +34,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):  # noqa: D101
                 if marker is status_code_response_mark:
                     bound_marks.append((markers.name, lambda response: HTTPStatus(response.status_code)))
                     break
-                warn(f"{marker} is not supported by {cls}", ResponseMarkNotSupported)
+                warn(f"{marker} is not supported by {cls}", ResponseMarkerNotSupported)
         return bound_marks
 
     @classmethod
@@ -42,7 +42,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):  # noqa: D101
         cls,
         from_response: Response,
         to_type: Type[ResponseT],
-        with_marks: Iterable[Tuple[str, Callable[[Response], Any]]],
+        with_extractors: Iterable[Tuple[str, Callable[[Response], Any]]],
     ) -> ResponseT:
-        merged = {**from_response.json(), **{name: extract(from_response) for name, extract in with_marks}}
+        merged = {**from_response.json(), **{name: extract(from_response) for name, extract in with_extractors}}
         return parse_obj_as(to_type, merged)

@@ -2,5 +2,5 @@ class CombadgeWarning(RuntimeWarning):
     """Base class for the package's warnings."""
 
 
-class ResponseMarkNotSupported(CombadgeWarning):
+class ResponseMarkerNotSupported(CombadgeWarning):
     """The attribute's mark is unsupported by the backend."""
