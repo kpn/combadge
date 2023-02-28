@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, TypeVar
 
-from typing_extensions import Annotated
+from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.markers import ParameterMarker
 from combadge.support.rest.abc import SupportsJson
