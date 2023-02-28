@@ -36,7 +36,7 @@ class MethodMarker(ABC, Generic[RequestT]):
         """
 
     @staticmethod
-    def ensure_marks(in_: Any) -> List[MethodMarker]:
+    def ensure_markers(in_: Any) -> List[MethodMarker]:
         """Ensure that the argument contains the mark list attribute, and return the list."""
         try:
             marks = in_.__combadge_marks__
@@ -50,7 +50,7 @@ class MethodMarker(ABC, Generic[RequestT]):
 
         This is not a part of the public interface and is used to derive the decorators.
         """
-        MethodMarker.ensure_marks(what).append(self)
+        MethodMarker.ensure_markers(what).append(self)
         return what
 
 

@@ -87,4 +87,4 @@ def test_decorator_ordering() -> None:
     def get_expected() -> Tuple[Any, ...]:
         return ()
 
-    assert _wrap(get_actual, MethodMarker.ensure_marks(get_actual))() == get_expected()
+    assert _wrap(get_actual, MethodMarker.ensure_markers(get_actual))() == get_expected()

@@ -27,27 +27,24 @@ def build_request(
 
     bound_arguments = signature.bind_arguments(service, *call_args, **call_kwargs)
     bound_arguments.apply_defaults()
-
     all_arguments = bound_arguments.arguments
-    call_args = bound_arguments.args
-    call_kwargs = bound_arguments.kwargs
 
     # Construct an initial empty request without validation.
     # See also: https://github.com/pydantic/pydantic/issues/1864#issuecomment-679044432
     request = request_class.construct()
 
-    # Apply the method marks: they receive all the arguments at once.
-    for mark in signature.method_marks:
-        mark.prepare_request(request, call_args, call_kwargs)
+    # Apply the method markers: they receive all the arguments at once.
+    for marker in signature.method_markers:
+        marker.prepare_request(request, bound_arguments.args, bound_arguments.kwargs)
 
-    # Apply the parameter marks: they receive their respective values.
-    for name, mark in signature.parameter_marks:
+    # Apply the parameter markers: they receive their respective values.
+    for marker in signature.parameter_markers:
         try:
-            value = all_arguments[name]
+            value = all_arguments[marker.name]
         except KeyError:
             pass
         else:
-            mark.prepare_request(request, value)
+            marker.marker.prepare_request(request, value)
 
     # Validate and return the request.
     *_, error = validate_model(request_class, request.__dict__)

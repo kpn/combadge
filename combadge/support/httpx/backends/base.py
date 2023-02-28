@@ -7,8 +7,8 @@ from warnings import warn
 from httpx import Response
 from pydantic import parse_obj_as
 
+from combadge.core.binder import BoundResponseMarkers
 from combadge.core.interfaces import ProvidesBinder
-from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import ResponseT
 from combadge.core.warnings import ResponseMarkNotSupported
 from combadge.support.http.markers import status_code_response_mark
@@ -24,17 +24,17 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):  # noqa: D101
         self._client = client
 
     @classmethod
-    def _bind_response_marks(
+    def _bind_response_markers(
         cls,
-        from_: List[Tuple[str, List[ResponseMarker]]],
+        from_: List[BoundResponseMarkers],
     ) -> List[Tuple[str, Callable[[Response], Any]]]:
         bound_marks = []
-        for name, marks in from_:
-            for mark in marks:
-                if mark is status_code_response_mark:
-                    bound_marks.append((name, lambda response: HTTPStatus(response.status_code)))
+        for markers in from_:
+            for marker in markers.markers:
+                if marker is status_code_response_mark:
+                    bound_marks.append((markers.name, lambda response: HTTPStatus(response.status_code)))
                     break
-                warn(f"{mark} is not supported by {cls}", ResponseMarkNotSupported)
+                warn(f"{marker} is not supported by {cls}", ResponseMarkNotSupported)
         return bound_marks
 
     @classmethod

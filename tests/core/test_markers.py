@@ -13,12 +13,12 @@ def test_get_method_marks() -> None:
     def method() -> None:
         pass
 
-    marks = MethodMarker.ensure_marks(method)
+    marks = MethodMarker.ensure_markers(method)
     assert marks == []
 
     mark = _OperationNameMethodMarker("test")
     marks.append(mark)
-    assert MethodMarker.ensure_marks(method) == [mark]
+    assert MethodMarker.ensure_markers(method) == [mark]
 
 
 @pytest.mark.parametrize(
