@@ -2,7 +2,7 @@
 
 import http
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, Tuple, Union
 
 from typing_extensions import Annotated, TypeAlias
 
@@ -10,50 +10,11 @@ from combadge.core.markers import MethodMarker, ParameterMarker
 from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import Identity
 from combadge.support.http.abc import (
-    RequiresBody,
     RequiresMethod,
     RequiresPath,
-    SupportsBody,
     SupportsHeaders,
     SupportsQueryParams,
 )
-
-_T = TypeVar("_T")
-
-
-@dataclass
-class BodyParameterMarker(ParameterMarker[Union[RequiresBody, SupportsBody]]):
-    """
-    Mark a parameter a request body.
-
-    Used for a more complex annotations, for example:
-
-    ```python
-    Annotated[BodyModel, BodyParameterMarker(), AnotherMarker]
-    ```
-
-    For simple annotations prefer the [Body][combadge.support.http.markers.Body] marker.
-    """
-
-    __slots__ = ()
-
-    def prepare_request(self, request: Union[RequiresBody, SupportsBody], value: Any) -> None:  # noqa: D102
-        request.body = value
-
-
-Body: TypeAlias = Annotated[_T, BodyParameterMarker()]
-"""
-Mark parameter as a request body. An argument gets converted to a dictionary and passed over to a backend.
-
-Examples:
-    >>> from combadge.support.http import Body
-    >>>
-    >>> class BodyModel(BaseModel):
-    >>>     ...
-    >>>
-    >>> def call(body: Body[BodyModel]) -> ...:
-    >>>     ...
-"""
 
 
 @dataclass

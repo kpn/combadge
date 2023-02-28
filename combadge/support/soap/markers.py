@@ -1,9 +1,11 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, TypeVar
 
-from combadge.core.markers import MethodMarker
+from typing_extensions import Annotated, TypeAlias
+
+from combadge.core.markers import MethodMarker, ParameterMarker
 from combadge.core.typevars import Identity
-from combadge.support.soap.abc import RequiresOperationName
+from combadge.support.soap.abc import RequiresBody, RequiresOperationName
 
 
 @dataclass
@@ -37,3 +39,41 @@ def operation_name(name: str) -> Identity:
         - [Structure of a WSDL message](https://www.ibm.com/docs/en/rtw/9.0.0?topic=documents-structure-wsdl-message)
     """
     return _OperationNameMethodMarker(name).mark
+
+
+_T = TypeVar("_T")
+
+
+@dataclass
+class BodyParameterMarker(ParameterMarker[RequiresBody]):
+    """
+    Mark a parameter as a request body.
+
+    Used for a more complex annotations, for example:
+
+    ```python
+    Annotated[BodyModel, BodyParameterMarker(), AnotherMarker]
+    ```
+
+    For simple annotations prefer the [Body][combadge.support.soap.markers.Body] marker.
+    """
+
+    __slots__ = ()
+
+    def prepare_request(self, request: RequiresBody, value: Any) -> None:  # noqa: D102
+        request.body = value
+
+
+Body: TypeAlias = Annotated[_T, BodyParameterMarker()]
+"""
+Mark parameter as a request body. An argument gets converted to a dictionary and passed over to a backend.
+
+Examples:
+    >>> from combadge.support.http import Body
+    >>>
+    >>> class BodyModel(BaseModel):
+    >>>     ...
+    >>>
+    >>> def call(body: Body[BodyModel]) -> ...:
+    >>>     ...
+"""

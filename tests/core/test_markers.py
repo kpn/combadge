@@ -5,8 +5,8 @@ from typing_extensions import Annotated
 
 from combadge.core.markers import MethodMarker, ParameterMarker
 from combadge.support.http.headers import AcceptLanguage
-from combadge.support.http.markers import Body, BodyParameterMarker, Header, HeaderParameterMarker
-from combadge.support.soap.markers import _OperationNameMethodMarker
+from combadge.support.http.markers import Header, HeaderParameterMarker
+from combadge.support.soap.markers import Body, BodyParameterMarker, _OperationNameMethodMarker
 
 
 def test_get_method_marks() -> None:

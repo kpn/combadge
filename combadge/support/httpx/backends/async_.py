@@ -52,7 +52,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ProvidesBinder):
         response: Response = await self._client.request(
             request.method,
             request.path,
-            json=request.body_dict(),
+            json=request.json_dict(),
             params=request.query_params,
         )
         response.raise_for_status()

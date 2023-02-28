@@ -9,8 +9,7 @@ from zeep import Client
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import SuccessfulResponse
-from combadge.support.http.markers import Body
-from combadge.support.soap.markers import operation_name
+from combadge.support.soap.markers import Body, operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 
 

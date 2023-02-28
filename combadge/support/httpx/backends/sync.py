@@ -43,7 +43,7 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
         response: Response = self._client.request(
             request.method,
             request.path,
-            json=request.body_dict(),
+            json=request.json_dict(),
             params=request.query_params,
         )
         response.raise_for_status()
