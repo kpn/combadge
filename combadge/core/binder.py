@@ -118,36 +118,36 @@ class Signature:
     method_markers: List[MethodMarker]
     return_type: Type[BaseModel]
 
-    parameter_markers: List[BoundParameterMarker]
-    """Parameter markers: separate list item for each parameter ⨯ marker combination."""
+    parameter_descriptors: List[ParameterDescriptor]
+    """Parameter descriptors: separate list item for each parameter ⨯ marker combination."""
 
-    response_markers: List[BoundResponseMarkers]
-    """Response markers: one item for each response's attribute."""
+    response_descriptors: List[ResponseAttributeDescriptor]
+    """Response descriptors: one item for each response's attribute."""
 
     @classmethod
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         type_hints = get_annotations(method, eval_str=True)
         return_type = cls._extract_return_type(type_hints)
-        response_markers = [
-            BoundResponseMarkers(name=attribute_name, markers=ResponseMarker.extract(field.annotation))
+        response_descriptors = [
+            ResponseAttributeDescriptor(name=attribute_name, markers=ResponseMarker.extract(field.annotation))
             for attribute_name, field in (getattr(return_type, "__fields__", None) or {}).items()
         ]
 
         return Signature(
             bind_arguments=get_signature(method).bind,
             method_markers=MethodMarker.ensure_markers(method),
-            parameter_markers=list(cls._extract_parameter_markers(type_hints)),
+            parameter_descriptors=list(cls._build_parameter_descriptors(type_hints)),
             return_type=return_type,
-            response_markers=response_markers,
+            response_descriptors=response_descriptors,
         )
 
     @staticmethod
-    def _extract_parameter_markers(from_annotations: Mapping[str, Any]) -> Iterable[BoundParameterMarker]:
+    def _build_parameter_descriptors(from_annotations: Mapping[str, Any]) -> Iterable[ParameterDescriptor]:
         """Extract all parameter marks for all the parameters."""
         for name, annotation in from_annotations.items():
             for marker in ParameterMarker.extract(annotation):
-                yield BoundParameterMarker(name=name, prepare_request=marker.prepare_request)
+                yield ParameterDescriptor(name=name, prepare_request=marker.prepare_request, annotation=annotation)
 
     @staticmethod
     def _extract_return_type(from_annotations: Mapping[str, Any]) -> Type[BaseModel]:
@@ -159,8 +159,18 @@ ResponseMarkerT = TypeVar("ResponseMarkerT", bound=ResponseMarker)
 
 
 @dataclass
-class BoundParameterMarker(Generic[RequestT]):  # noqa: D101
-    __slots__ = ("name", "prepare_request")
+class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
+    """
+    Full description of a parameter needed to construct a request.
+
+    Original markers are decoupled instances which can be singletons or reused.
+    In order to construct a request, we need a full parameter description: its name,
+    its marker, and/or its type annotation.
+
+    This structure contains all the relevant data in a convenient form.
+    """
+
+    __slots__ = ("name", "prepare_request", "annotation")
 
     name: str
     """Parameter name."""
@@ -168,13 +178,18 @@ class BoundParameterMarker(Generic[RequestT]):  # noqa: D101
     prepare_request: Callable[[RequestT, Any], None]
     """Original marker's method to prepare a request."""
 
+    annotation: Any
+    """Original parameter's type hint or annotation."""
+
 
 @dataclass
-class BoundResponseMarkers(Generic[ResponseMarkerT]):  # noqa: D101
+class ResponseAttributeDescriptor(Generic[ResponseMarkerT]):  # noqa: D101
+    """Describes a single response model's attribute (additional metadata needed to reconstruct a response)."""
+
     __slots__ = ("name", "markers")
 
     name: str
     """Response attribute's name."""
 
     markers: List[ResponseMarkerT]
-    """All of the original markers that are applied through `Annotated`."""
+    """Markers applied through `Annotated`."""

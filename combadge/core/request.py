@@ -38,7 +38,7 @@ def build_request(
         marker.prepare_request(request, bound_arguments.args, bound_arguments.kwargs)
 
     # Apply the parameter markers: they receive their respective values.
-    for marker in signature.parameter_markers:
+    for marker in signature.parameter_descriptors:
         try:
             value = all_arguments[marker.name]
         except KeyError:

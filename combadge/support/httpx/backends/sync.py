@@ -51,7 +51,7 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
 
     @classmethod
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
-        response_extractors = cls._build_response_extractors(signature.response_markers)
+        response_extractors = cls._build_response_extractors(signature.response_descriptors)
 
         def bound_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, service, args, kwargs)
