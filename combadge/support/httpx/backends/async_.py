@@ -24,21 +24,23 @@ else:
 
 
 class HttpxBackend(BaseHttpxBackend[AsyncClient], ProvidesBinder):
-    """
-    Async HTTPX backend for REST APIs.
-
-    See Also:
-        - <https://www.python-httpx.org/>
-    """
+    """Async HTTPX backend for REST APIs."""
 
     __slots__ = ("_request_with",)
 
-    def __init__(  # noqa: D107
+    def __init__(
         self,
         client: AsyncClient,
         *,
         request_with: Callable[[], AbstractAsyncContextManager] = asyncnullcontext,
     ) -> None:
+        """
+        Instantiate the backend.
+
+        Args:
+            client: [HTTPX client](https://www.python-httpx.org/advanced/#client-instances)
+            request_with: an optional context manager getter to wrap each request into
+        """
         super().__init__(client=client)
         self._request_with = request_with
 
@@ -48,7 +50,11 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ProvidesBinder):
         response_type: Type[ResponseT],
         response_extractors: Iterable[Tuple[str, Callable[[Response], Any]]],
     ) -> ResponseT:
-        """Call the backend."""
+        """
+        Call the backend.
+
+        One does not normally need to call this directly, unless writing a custom binder.
+        """
         response: Response = await self._client.request(
             request.method,
             request.path,

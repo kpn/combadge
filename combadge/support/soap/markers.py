@@ -47,7 +47,7 @@ _T = TypeVar("_T")
 @dataclass
 class BodyParameterMarker(ParameterMarker[RequiresBody]):
     """
-    Mark a parameter as a request body.
+    Marker class for the [Body][combadge.support.soap.markers.Body] marker.
 
     Used for a more complex annotations, for example:
 

@@ -2,7 +2,13 @@
 
 ## Recipes
 
-### Simple requests with `JsonField`
+### Avoiding request models for simple requests
+
+There are cases when having a request model is undesired. For example, when a call takes a handful of simple
+parameters of scalar types.
+
+You can map such parameters with the [JsonField][combadge.support.rest.markers.JsonField] marker,
+which would mark them as separate root fields of a JSON payload:
 
 ```python title="json_field.py"
 from httpx import Client

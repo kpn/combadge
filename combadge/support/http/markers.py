@@ -87,7 +87,7 @@ def http_method(method: str) -> Identity:
 
 @dataclass
 class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
-    """Designates parameter as a service call's query parameter."""
+    """Marker class for the [`QueryParam`][combadge.support.http.markers.QueryParam] alias."""
 
     name: str
     __slots__ = ("name",)
@@ -97,10 +97,11 @@ class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
 
 
 QueryParam: TypeAlias = QueryParameterMarker
+"""Mark a parameter as a query parameter."""
 
 status_code_response_mark = ResponseMarker("status_code_response_mark")
 """
-Mark an attribute as a response status code.
+Singleton to mark an attribute as a response status code.
 
 For simple annotations prefer the [`StatusCode`][combadge.support.http.markers.StatusCode] marker.
 """

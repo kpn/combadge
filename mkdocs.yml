@@ -62,11 +62,11 @@ plugins:
           options:
             show_source: false
             show_root_toc_entry: false
-            group_by_category: true
             show_signature_annotations: true
             separate_signature: true
             show_bases: false
-            merge_init_into_class: true
+            merge_init_into_class: false
+            members_order: "source"
   - search:
       lang: en
   - social

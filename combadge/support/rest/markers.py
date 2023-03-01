@@ -12,15 +12,13 @@ _T = TypeVar("_T")
 @dataclass
 class JsonParameterMarker(ParameterMarker[SupportsJson]):
     """
-    Mark a parameter as a request JSON body.
+    Marker class for the [`Json`][combadge.support.rest.markers.Json] alias.
 
     Used for a more complex annotations, for example:
 
     ```python
     Annotated[BodyModel, JsonParameterMarker(), AnotherMarker]
     ```
-
-    For simple annotations prefer the [Json][combadge.support.rest.markers.Json] marker.
     """
 
     __slots__ = ()
@@ -46,7 +44,14 @@ Examples:
 
 @dataclass
 class JsonFieldParameterMarker(ParameterMarker[SupportsJson]):
-    """Mark a parameter as a separate JSON field value."""
+    """
+    Marker class for the [`JsonField`][combadge.support.rest.markers.JsonField] alias.
+
+    It's recommended that you use the alias, unless you need a complex annotation, such as:
+    ```python
+    parameter: Annotated[int, JsonFieldParameterMarker("param"), AnotherMarker()]
+    ```
+    """
 
     name: str
     __slots__ = ("name",)
@@ -66,6 +71,6 @@ Examples:
     >>>     ...
 
 Notes:
-    - [Json][combadge.support.rest.markers.Json] marker's fields shadow `JsonField` ones (if present)
+    - [`Json`][combadge.support.rest.markers.Json] marker's fields shadow `JsonField` ones (if present)
     - `JsonField` parameters are **not** validated
 """
