@@ -6,8 +6,6 @@ nav:
   - index.md
   - core-concepts.md
   - Support:
-      - support/configuration.md
-      - support/di.md
       - Protocols:
           - support/http.md
           - support/rest.md
