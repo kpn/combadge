@@ -148,7 +148,7 @@ class Signature:
         """Extract all parameter marks for all the parameters."""
         for name, annotation in from_annotations.items():
             for marker in ParameterMarker.extract(annotation):
-                yield ParameterDescriptor(name=name, prepare_request=marker.prepare_request, annotation=annotation)
+                yield ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
 
     @staticmethod
     def _extract_return_type(from_annotations: Mapping[str, Any]) -> Type[BaseModel]:
@@ -171,16 +171,13 @@ class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
     This structure contains all the relevant data in a convenient form.
     """
 
-    __slots__ = ("name", "prepare_request", "annotation")
+    __slots__ = ("name", "prepare_request")
 
     name: str
     """Parameter name."""
 
     prepare_request: Callable[[RequestT, Any], None]
     """Original marker's method to prepare a request."""
-
-    annotation: Any
-    """Original parameter's type hint or annotation."""
 
 
 @dataclass
