@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from functools import update_wrapper
+from functools import cached_property, update_wrapper
 from inspect import BoundArguments
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Mapping, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, Iterable, List, Optional, Type, TypeVar
 
 from typing_extensions import ParamSpec
 
@@ -117,43 +117,43 @@ class Signature:
 
     bind_arguments: Callable[..., BoundArguments]
     method_markers: List[MethodMarker]
-    return_type: Type[BaseModel]
+    annotations: Dict[str, Any]
 
-    parameter_descriptors: List[ParameterDescriptor]
-    """Parameter descriptors: separate list item for each parameter ⨯ marker combination."""
+    __slots__ = ("bind_arguments", "method_markers", "annotations", "__dict__")
 
-    response_descriptors: List[ResponseAttributeDescriptor]
-    """Response descriptors: one item for each response's attribute."""
+    # TODO: cached `create_model` based on `annotations`.
 
     @classmethod
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
-        type_hints = get_annotations(method, eval_str=True)
-        return_type = cls._extract_return_type(type_hints)
-        response_descriptors = [
-            ResponseAttributeDescriptor(name=attribute_name, markers=ResponseMarker.extract(field.annotation))
-            for attribute_name, field in (getattr(return_type, "__fields__", None) or {}).items()
-        ]
-
         return Signature(
             bind_arguments=get_signature(method).bind,
             method_markers=MethodMarker.ensure_markers(method),
-            parameter_descriptors=list(cls._build_parameter_descriptors(type_hints)),
-            return_type=return_type,
-            response_descriptors=response_descriptors,
+            annotations=get_annotations(method, eval_str=True),
         )
 
-    @staticmethod
-    def _build_parameter_descriptors(from_annotations: Mapping[str, Any]) -> Iterable[ParameterDescriptor]:
-        """Extract all parameter marks for all the parameters."""
-        for name, annotation in from_annotations.items():
-            for marker in ParameterMarker.extract(annotation):
-                yield ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
+    @cached_property
+    def parameter_descriptors(self) -> List[ParameterDescriptor]:
+        """Get the parameter descriptors: separate list item for each parameter ⨯ marker combination."""
+        return [
+            ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
+            for name, annotation in self.annotations.items()
+            for marker in ParameterMarker.extract(annotation)
+        ]
 
-    @staticmethod
-    def _extract_return_type(from_annotations: Mapping[str, Any]) -> Type[BaseModel]:
-        """Extract return type from the method."""
-        return from_annotations.get("return", SuccessfulResponse)
+    @cached_property
+    def return_type(self) -> Type[BaseModel]:
+        """Get the method's return type."""
+        return self.annotations.get("return", SuccessfulResponse)
+
+    @cached_property
+    def response_descriptors(self) -> List[ResponseAttributeDescriptor]:
+        """Get the response descriptors: one item for each response's attribute."""
+        # FIXME: this only works for top-level attributes:
+        return [
+            ResponseAttributeDescriptor(name=attribute_name, markers=ResponseMarker.extract(field.annotation))
+            for attribute_name, field in (getattr(self.return_type, "__fields__", None) or {}).items()
+        ]
 
 
 ResponseMarkerT = TypeVar("ResponseMarkerT", bound=ResponseMarker)

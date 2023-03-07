@@ -1,7 +1,6 @@
 from abc import abstractmethod
-from typing import Any, Callable, Mapping, Tuple, Type
+from typing import Any, Callable, Tuple
 
-from pytest import mark
 from typing_extensions import Protocol
 
 from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service, _wrap
@@ -58,14 +57,11 @@ def test_update_bound_service() -> None:
     )
 
 
-@mark.parametrize(
-    ("type_hints", "return_type"),
-    [
-        ({"return": str}, str),
-    ],
-)
-def test_extract_return_type(type_hints: Mapping[str, Any], return_type: Type[Any]) -> None:
-    assert Signature._extract_return_type(type_hints) == return_type
+def test_extract_return_type() -> None:
+    def foo() -> str:
+        return "bar"
+
+    assert Signature.from_method(foo).return_type is str
 
 
 def test_decorator_ordering() -> None:
