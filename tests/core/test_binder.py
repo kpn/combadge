@@ -6,7 +6,7 @@ from typing_extensions import Protocol
 
 from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service, _wrap
 from combadge.core.interfaces import SupportsService
-from combadge.core.markers import MethodMarker, decorator
+from combadge.core.markers.method import MethodMarker, decorator
 
 
 def test_enumerate_bindable_methods() -> None:

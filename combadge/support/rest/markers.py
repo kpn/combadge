@@ -3,7 +3,7 @@ from typing import Any, TypeVar
 
 from typing_extensions import Annotated, TypeAlias
 
-from combadge.core.markers import ParameterMarker
+from combadge.core.markers.parameter import ParameterMarker
 from combadge.support.rest.abc import SupportsJson
 
 _T = TypeVar("_T")
@@ -72,5 +72,4 @@ Examples:
 
 Notes:
     - [`Json`][combadge.support.rest.markers.Json] marker's fields shadow `JsonField` ones (if present)
-    - `JsonField` parameters are **not** validated
 """

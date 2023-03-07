@@ -20,9 +20,9 @@ class ResponseMarker:
     name: str
     __slots__ = ("name",)
 
-    @classmethod
-    def extract(cls, from_type: Type[Any]) -> List[ResponseMarker]:
+    @staticmethod
+    def extract(from_type: Type[Any]) -> List[ResponseMarker]:
         """Extract all response markers from the attribute type annotation."""
         if get_origin(from_type) is Annotated:
-            return [arg for arg in get_args(from_type) if isinstance(arg, cls)]
+            return [arg for arg in get_args(from_type) if isinstance(arg, ResponseMarker)]
         return []

@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Mappin
 
 from typing_extensions import ParamSpec
 
+from combadge.core.markers.method import MethodMarker
+from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.markers.response import ResponseMarker
 
 try:
@@ -20,7 +22,6 @@ except ImportError:
 
 from pydantic import BaseModel
 
-from combadge.core.markers import MethodMarker, ParameterMarker
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import BackendT, Identity, RequestT, ServiceProtocolT
 

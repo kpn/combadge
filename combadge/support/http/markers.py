@@ -6,7 +6,8 @@ from typing import Any, Callable, Dict, Tuple, Union
 
 from typing_extensions import Annotated, TypeAlias
 
-from combadge.core.markers import MethodMarker, ParameterMarker
+from combadge.core.markers.method import MethodMarker
+from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import Identity
 from combadge.support.http.abc import (
