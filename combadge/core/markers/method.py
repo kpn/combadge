@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Dict, Generic, List, Tuple, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Tuple, TypeVar
+
+from typing_extensions import ParamSpec
 
 from combadge.core.typevars import Identity, RequestT
 
-T = TypeVar("T")
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+_T = TypeVar("_T")
 
 
 class MethodMarker(ABC, Generic[RequestT]):
@@ -13,7 +17,7 @@ class MethodMarker(ABC, Generic[RequestT]):
 
     __slots__ = ()
 
-    def wrap(self, what: T) -> T:
+    def wrap(self, what: _T) -> _T:
         """
         Wrap the argument according to the marker.
 
@@ -44,7 +48,7 @@ class MethodMarker(ABC, Generic[RequestT]):
             marks = in_.__combadge_marks__ = []
         return marks
 
-    def mark(self, what: T) -> T:
+    def mark(self, what: _T) -> _T:
         """
         Mark the argument with itself.
 
@@ -61,11 +65,11 @@ class _DecorateMethodMarker(MethodMarker[Any]):
     def __init__(self, decorator: Identity) -> None:
         self._decorator = decorator
 
-    def wrap(self, what: T) -> T:
+    def wrap(self, what: _T) -> _T:
         return self._decorator(what)
 
 
-def decorator(decorator: Identity[T]) -> Identity[T]:
+def decorator(decorator: Identity[Callable[_P, _R]]) -> Identity[Callable[_P, _R]]:
     """
     Put the decorator on top of the generated bound service method.
 
