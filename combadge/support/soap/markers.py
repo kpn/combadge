@@ -10,7 +10,7 @@ from combadge.support.soap.abc import RequiresBody, RequiresOperationName
 
 
 @dataclass
-class _OperationNameMethodMarker(Generic[FunctionT], MethodMarker[RequiresOperationName, FunctionT, FunctionT]):
+class _OperationNameMethodMarker(MethodMarker[RequiresOperationName]):
     name: str
 
     __slots__ = ("name",)
@@ -39,7 +39,7 @@ def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
     See Also:
         - [Structure of a WSDL message](https://www.ibm.com/docs/en/rtw/9.0.0?topic=documents-structure-wsdl-message)
     """
-    return _OperationNameMethodMarker[Any](name).mark
+    return _OperationNameMethodMarker(name).mark
 
 
 _T = TypeVar("_T")

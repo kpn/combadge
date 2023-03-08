@@ -1,26 +1,24 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Callable, Dict, Generic, List, Tuple, TypeVar, cast
+from typing import Any, Callable, Dict, Generic, List, Tuple, cast
 
 from combadge.core.typevars import FunctionT, RequestT
 
-_DecoratedT = TypeVar("_DecoratedT", bound=Callable[..., Any])
 
-
-class MethodMarker(ABC, Generic[RequestT, FunctionT, _DecoratedT]):
+class MethodMarker(ABC, Generic[RequestT]):
     """Method-specific marker that modifies an entire request based on all the call arguments."""
 
     __slots__ = ()
 
-    def wrap(self, what: FunctionT) -> _DecoratedT:
+    def wrap(self, what: FunctionT) -> FunctionT:
         """
         Wrap the argument according to the marker.
 
         Notes:
             - Does nothing by default. Override in a child class.
         """
-        return cast(_DecoratedT, what)  # no way to set `_DecoratedT = FunctionT` by default
+        return what
 
     def prepare_request(self, request: RequestT, args: Tuple[Any, ...], kwargs: Dict[str, Any]) -> None:
         """
@@ -44,27 +42,27 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT, _DecoratedT]):
             marks = in_.__combadge_marks__ = []
         return marks
 
-    def mark(self, what: FunctionT) -> _DecoratedT:
+    def mark(self, what: FunctionT) -> FunctionT:
         """
         Mark the argument with itself.
 
         This is not a part of the public interface and is used to derive the decorators.
         """
         MethodMarker.ensure_markers(what).append(self)
-        return cast(_DecoratedT, what)  # no way to set `_DecoratedT = FunctionT` by default
+        return what
 
 
-class _DecorateMethodMarker(Generic[FunctionT, _DecoratedT], MethodMarker[Any, FunctionT, _DecoratedT]):
+class _DecorateMethodMarker(MethodMarker[Any]):
     __slots__ = ("_decorator",)
 
-    def __init__(self, decorator: Callable[[FunctionT], _DecoratedT]) -> None:
+    def __init__(self, decorator: Callable[[FunctionT], FunctionT]) -> None:
         self._decorator = decorator
 
-    def wrap(self, what: FunctionT) -> _DecoratedT:
+    def wrap(self, what: FunctionT) -> FunctionT:
         return self._decorator(what)
 
 
-def decorator(decorator: Callable[[FunctionT], _DecoratedT]) -> Callable[[FunctionT], _DecoratedT]:
+def decorator(decorator: FunctionT) -> FunctionT:
     """
     Put the decorator on top of the generated bound service method.
 
@@ -72,5 +70,9 @@ def decorator(decorator: Callable[[FunctionT], _DecoratedT]) -> Callable[[Functi
         >>> @decorator(functools.cache())
         >>> def service_method(self, ...) -> ...:
         >>>     ...
+
+    Notes:
+        - At the moment the type hinting is limited to decorators, which do not change
+          a wrapped function's signature – possible Mypy's limitation.
     """
-    return _DecorateMethodMarker[FunctionT, _DecoratedT](decorator).mark
+    return cast(FunctionT, _DecorateMethodMarker(decorator).mark)
