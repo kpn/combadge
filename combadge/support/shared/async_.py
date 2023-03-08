@@ -1,14 +1,5 @@
-from contextlib import AbstractAsyncContextManager, asynccontextmanager
-from sys import version_info
-from typing import AsyncGenerator, Callable
-
-if version_info >= (3, 10):
-    from contextlib import nullcontext as asyncnullcontext
-else:
-
-    @asynccontextmanager  # type: ignore[no-redef]
-    async def asyncnullcontext() -> AsyncGenerator[None, None]:
-        yield None
+from contextlib import AbstractAsyncContextManager
+from typing import Callable
 
 
 class SupportsRequestWith:  # noqa: D101

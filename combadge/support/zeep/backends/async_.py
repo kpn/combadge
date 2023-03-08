@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contextlib import AbstractAsyncContextManager
+from contextlib import AbstractAsyncContextManager, AsyncExitStack
 from typing import Any, Callable, Type
 
 from pydantic import BaseModel
@@ -12,7 +12,7 @@ from combadge.core.interfaces import CallServiceMethod
 from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
-from combadge.support.shared.async_ import SupportsRequestWith, asyncnullcontext
+from combadge.support.shared.async_ import SupportsRequestWith
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
@@ -26,7 +26,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
     def __init__(
         self,
         service: AsyncServiceProxy,
-        request_with: Callable[[], AbstractAsyncContextManager] = asyncnullcontext,
+        request_with: Callable[[], AbstractAsyncContextManager] = AsyncExitStack,
     ) -> None:
         """
         Instantiate the backend.

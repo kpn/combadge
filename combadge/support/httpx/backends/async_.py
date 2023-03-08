@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contextlib import AbstractAsyncContextManager
+from contextlib import AbstractAsyncContextManager, AsyncExitStack
 from typing import Any, Callable, Type
 
 from httpx import AsyncClient, Response
@@ -13,7 +13,7 @@ from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
 from combadge.support.httpx.backends.base import BaseHttpxBackend
 from combadge.support.rest.request import Request
-from combadge.support.shared.async_ import SupportsRequestWith, asyncnullcontext
+from combadge.support.shared.async_ import SupportsRequestWith
 
 
 class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
@@ -25,7 +25,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
         self,
         client: AsyncClient,
         *,
-        request_with: Callable[[], AbstractAsyncContextManager] = asyncnullcontext,
+        request_with: Callable[[], AbstractAsyncContextManager] = AsyncExitStack,
     ) -> None:
         """
         Instantiate the backend.
