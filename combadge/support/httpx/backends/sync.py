@@ -19,13 +19,14 @@ from combadge.support.shared.sync import SupportsRequestWith
 class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
     """Sync HTTPX backend for REST APIs."""
 
-    __slots__ = ("_client", "_request_with")
+    __slots__ = ("_client", "_request_with", "_raise_for_status")
 
     def __init__(
         self,
         client: Client,
         *,
         request_with: Callable[[], AbstractContextManager] = nullcontext,
+        raise_for_status: bool = True,
     ) -> None:
         """
         Instantiate the backend.
@@ -33,8 +34,9 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
         Args:
             client: [HTTPX client](https://www.python-httpx.org/advanced/#client-instances)
             request_with: an optional context manager getter to wrap each request into
+            raise_for_status: automatically call `raise_for_status()`
         """
-        BaseHttpxBackend.__init__(self, client)
+        BaseHttpxBackend.__init__(self, client, raise_for_status=raise_for_status)
         SupportsRequestWith.__init__(self, request_with)
 
     def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
@@ -52,7 +54,8 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
                 data=request.to_form_data(),
                 params=request.query_params,
             )
-        response.raise_for_status()
+        if self._raise_for_status:
+            response.raise_for_status()
         return self._parse_response(response, response_type)
 
     @classmethod

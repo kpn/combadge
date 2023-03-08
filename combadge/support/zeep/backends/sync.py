@@ -26,6 +26,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
     def __init__(
         self,
         service: ServiceProxy,
+        *,
         request_with: Callable[[], AbstractContextManager] = nullcontext,
     ) -> None:
         """

@@ -26,6 +26,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
     def __init__(
         self,
         service: AsyncServiceProxy,
+        *,
         request_with: Callable[[], AbstractAsyncContextManager] = AsyncExitStack,
     ) -> None:
         """

@@ -24,8 +24,9 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
 
     _client: _ClientT
 
-    def __init__(self, client: _ClientT, /) -> None:  # noqa: D107
+    def __init__(self, client: _ClientT, *, raise_for_status: bool = True) -> None:  # noqa: D107
         self._client = client
+        self._raise_for_status = raise_for_status
 
     @classmethod
     def _parse_response(cls, from_response: Response, to_type: Type[ResponseT]) -> ResponseT:
