@@ -20,7 +20,7 @@ try:
 except ImportError:
     from get_annotations import get_annotations  # type: ignore[no-redef]
 
-from pydantic import BaseModel
+from pydantic import BaseModel, create_model
 
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import BackendT, Identity, RequestT, ServiceProtocolT
@@ -107,6 +107,7 @@ def _update_bound_service(service_class: Type[BaseBoundService], with_protocol: 
     service_class.__doc__ = service_class.__doc__
 
 
+# TODO: extract into a separate module, don't forget the tests in `test_binder`.
 @dataclass
 class Signature:
     """
@@ -154,6 +155,12 @@ class Signature:
             ResponseAttributeDescriptor(name=attribute_name, markers=ResponseMarker.extract(field.annotation))
             for attribute_name, field in (getattr(self.return_type, "__fields__", None) or {}).items()
         ]
+
+    @cached_property
+    def model(self) -> Type[BaseModel]:
+        """Get dynamically constructed model for this method."""
+        field_definitions: Dict[str, Any] = {name: (type_, ...) for name, type_ in self.annotations.items()}
+        return create_model("DynamicModel", **field_definitions)  # TODO: better model name.
 
 
 ResponseMarkerT = TypeVar("ResponseMarkerT", bound=ResponseMarker)
