@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Callable, Dict, Generic, List, Tuple, TypeVar
-
-from typing_extensions import ParamSpec
+from typing import Any, Dict, Generic, List, Tuple, TypeVar
 
 from combadge.core.typevars import Identity, RequestT
 
-_P = ParamSpec("_P")
-_R = TypeVar("_R")
 _T = TypeVar("_T")
 
 
@@ -69,7 +65,7 @@ class _DecorateMethodMarker(MethodMarker[Any]):
         return self._decorator(what)
 
 
-def decorator(decorator: Identity[Callable[_P, _R]]) -> Identity[Callable[_P, _R]]:
+def decorator(decorator: Identity[_T]) -> Identity[_T]:
     """
     Put the decorator on top of the generated bound service method.
 
