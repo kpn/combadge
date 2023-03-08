@@ -7,7 +7,7 @@ from pytest import mark
 from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
-from combadge.support.http.markers import http_method, path, QueryParam
+from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.rest.markers import FormData, FormField
 
