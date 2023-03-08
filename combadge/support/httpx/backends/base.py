@@ -7,6 +7,7 @@ from pydantic import parse_obj_as
 
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
+from combadge.support.http.aliases import REASON_ALIAS, STATUS_CODE_ALIAS
 
 _ClientT = TypeVar("_ClientT")
 
@@ -31,8 +32,8 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
         return parse_obj_as(
             to_type,
             {
-                "__status_code__": from_response.status_code,
-                "__reason__": from_response.reason_phrase,
+                STATUS_CODE_ALIAS: from_response.status_code,
+                REASON_ALIAS: from_response.reason_phrase,
                 **from_response.json(),
             },
         )
