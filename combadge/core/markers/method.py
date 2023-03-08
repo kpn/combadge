@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Callable, Dict, Generic, List, Tuple, cast, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Tuple, TypeVar, cast
 
 from combadge.core.typevars import FunctionT, RequestT
 
