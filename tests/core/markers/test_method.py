@@ -11,6 +11,6 @@ def test_ensure_markers() -> None:
     marks = MethodMarker.ensure_markers(method)
     assert marks == []
 
-    mark = _OperationNameMethodMarker("test")
+    mark = _OperationNameMethodMarker[Any]("test")
     marks.append(mark)
     assert MethodMarker.ensure_markers(method) == [mark]

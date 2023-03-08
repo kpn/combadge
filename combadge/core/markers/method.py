@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Callable, Dict, Generic, List, Tuple, cast
+from typing import Any, Callable, Dict, Generic, List, Tuple, cast, TypeVar
 
 from combadge.core.typevars import FunctionT, RequestT
 
+DecoratorT = TypeVar("DecoratorT", bound=Callable[..., Any])
 
-class MethodMarker(ABC, Generic[RequestT]):
+
+class MethodMarker(ABC, Generic[RequestT, FunctionT]):
     """Method-specific marker that modifies an entire request based on all the call arguments."""
 
     __slots__ = ()
@@ -52,7 +54,7 @@ class MethodMarker(ABC, Generic[RequestT]):
         return what
 
 
-class _DecorateMethodMarker(MethodMarker[Any]):
+class _DecorateMethodMarker(Generic[FunctionT], MethodMarker[Any, FunctionT]):
     __slots__ = ("_decorator",)
 
     def __init__(self, decorator: Callable[[FunctionT], FunctionT]) -> None:
@@ -62,7 +64,7 @@ class _DecorateMethodMarker(MethodMarker[Any]):
         return self._decorator(what)
 
 
-def decorator(decorator: FunctionT) -> FunctionT:
+def decorator(decorator: DecoratorT) -> DecoratorT:
     """
     Put the decorator on top of the generated bound service method.
 
@@ -75,4 +77,4 @@ def decorator(decorator: FunctionT) -> FunctionT:
         - At the moment the type hinting is limited to decorators, which do not change
           a wrapped function's signature – possible Mypy's limitation.
     """
-    return cast(FunctionT, _DecorateMethodMarker(decorator).mark)
+    return cast(DecoratorT, _DecorateMethodMarker(decorator).mark)
