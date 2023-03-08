@@ -155,7 +155,7 @@ class Signature:
         ]
 
     @cached_property
-    def model(self) -> Type[BaseModel]:
+    def parameters_model(self) -> Type[BaseModel]:
         """Get dynamically constructed model for this method."""
         field_definitions: Dict[str, Any] = {name: (type_, ...) for name, type_ in self.annotations.items()}
         return create_model("DynamicModel", **field_definitions)  # TODO: better model name.
