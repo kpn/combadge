@@ -1,23 +1,42 @@
 from __future__ import annotations
 
-from typing import Any, Type, Union
+from contextlib import AbstractContextManager, nullcontext
+from typing import Any, Callable, Type, Union
 
 from pydantic import BaseModel
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
 from combadge.core.binder import BaseBoundService
-from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
+from combadge.core.interfaces import CallServiceMethod
 from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
+from combadge.support.shared.sync import SupportsRequestWith
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ProvidesBinder):
+class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequestWith):
     """Synchronous Zeep service."""
+
+    __slots__ = ("_service", "_request_with")
+
+    def __init__(
+        self,
+        service: ServiceProxy,
+        request_with: Callable[[], AbstractContextManager] = nullcontext,
+    ) -> None:
+        """
+        Instantiate the backend.
+
+        Args:
+            service: [service proxy object](https://docs.python-zeep.org/en/master/client.html#the-serviceproxy-object)
+            request_with: an optional context manager getter to wrap each request into
+        """
+        BaseZeepBackend.__init__(self, service)
+        SupportsRequestWith.__init__(self, request_with)
 
     def __call__(
         self,
@@ -35,7 +54,8 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ProvidesBinder)
         """
         operation = self._get_operation(request.operation_name)
         try:
-            response = operation(**request.body.dict(by_alias=True))
+            with self._request_with():
+                response = operation(**request.body.dict(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)

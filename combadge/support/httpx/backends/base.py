@@ -22,9 +22,8 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
     """
 
     _client: _ClientT
-    __slots__ = ("_client",)
 
-    def __init__(self, *, client: _ClientT) -> None:  # noqa: D107
+    def __init__(self, client: _ClientT, /) -> None:  # noqa: D107
         self._client = client
 
     @classmethod

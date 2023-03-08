@@ -9,6 +9,7 @@ from zeep.helpers import serialize_object
 from zeep.proxy import OperationProxy, ServiceProxy
 from zeep.xsd import CompoundValue
 
+from combadge.core.interfaces import ProvidesBinder
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.response import BaseSoapFault, SoapFaultT
@@ -24,10 +25,8 @@ See Also:
 _OperationProxyT = TypeVar("_OperationProxyT", bound=OperationProxy)
 
 
-class BaseZeepBackend(ABC, Generic[_ServiceProxyT, _OperationProxyT]):
+class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationProxyT]):
     """Base class for the sync and async backends. Not intended for a direct use."""
-
-    __slots__ = ("_service",)
 
     def __init__(self, service: _ServiceProxyT) -> None:
         """Instantiate the backend."""

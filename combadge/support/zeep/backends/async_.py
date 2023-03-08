@@ -1,23 +1,42 @@
 from __future__ import annotations
 
-from typing import Any, Type
+from contextlib import AbstractAsyncContextManager
+from typing import Any, Callable, Type
 
 from pydantic import BaseModel
 from zeep.exceptions import Fault
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 
 from combadge.core.binder import BaseBoundService
-from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
+from combadge.core.interfaces import CallServiceMethod
 from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
+from combadge.support.shared.async_ import SupportsRequestWith, asyncnullcontext
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], ProvidesBinder):
+class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsRequestWith):
     """Asynchronous Zeep service."""
+
+    __slots__ = ("_service", "_request_with")
+
+    def __init__(
+        self,
+        service: AsyncServiceProxy,
+        request_with: Callable[[], AbstractAsyncContextManager] = asyncnullcontext,
+    ) -> None:
+        """
+        Instantiate the backend.
+
+        Args:
+            service: [service proxy object](https://docs.python-zeep.org/en/master/client.html#the-serviceproxy-object)
+            request_with: an optional context manager getter to wrap each request into
+        """
+        BaseZeepBackend.__init__(self, service)
+        SupportsRequestWith.__init__(self, request_with)
 
     async def __call__(
         self,
@@ -35,7 +54,8 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Provi
         """
         operation = self._get_operation(request.operation_name)
         try:
-            response = await operation(**request.body.dict(by_alias=True))
+            async with self._request_with():
+                response = await operation(**request.body.dict(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
