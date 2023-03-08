@@ -1,4 +1,4 @@
-"""«Binding» is constructing a callable service instance from the protocol specification."""
+"""Constructs a callable service instance from the protocol specification."""
 
 from __future__ import annotations
 
@@ -72,7 +72,8 @@ def bind_class(
         update_wrapper(bound_method, method)
         setattr(BoundService, name, bound_method)
 
-    _update_bound_service(BoundService, from_protocol)
+    del BoundService.__abstractmethods__  # type: ignore[attr-defined]
+    update_wrapper(BoundService, from_protocol, updated=())
     return BoundService
 
 
@@ -96,15 +97,6 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
         if "self" not in parameters:
             continue
         yield name, method
-
-
-def _update_bound_service(service_class: Type[BaseBoundService], with_protocol: Type[Any]) -> None:
-    """Update the generated service class' magic attributes."""
-
-    del service_class.__abstractmethods__  # type: ignore[attr-defined]
-    service_class.__name__ = f"{service_class.__name__}[{with_protocol.__name__}]"
-    service_class.__qualname__ = f"{service_class.__qualname__}[{with_protocol.__qualname__}]"
-    service_class.__doc__ = service_class.__doc__
 
 
 # TODO: extract into a separate module, don't forget the tests in `test_binder`.

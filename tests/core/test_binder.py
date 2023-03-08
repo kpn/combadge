@@ -1,9 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Callable, Tuple
 
-from typing_extensions import Protocol
-
-from combadge.core.binder import BaseBoundService, Signature, _enumerate_methods, _update_bound_service, _wrap
+from combadge.core.binder import Signature, _enumerate_methods, _wrap
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import MethodMarker, decorator
 
@@ -38,23 +36,6 @@ def test_enumerate_private_methods() -> None:
             raise NotImplementedError
 
     assert list(_enumerate_methods(TestService)) == []
-
-
-def test_update_bound_service() -> None:
-    class TestProtocol(Protocol):
-        def call(self, request: Any) -> None:
-            raise NotImplementedError
-
-    class BoundService(BaseBoundService, TestProtocol):
-        def call(self, request: Any) -> None:
-            raise NotImplementedError
-
-    _update_bound_service(BoundService, TestProtocol)
-
-    assert BoundService.__name__ == "BoundService[TestProtocol]"
-    assert BoundService.__qualname__ == (
-        "test_update_bound_service.<locals>.BoundService[test_update_bound_service.<locals>.TestProtocol]"
-    )
 
 
 def test_extract_return_type() -> None:
