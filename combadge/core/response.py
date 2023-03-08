@@ -43,7 +43,7 @@ class SuccessfulResponse(BaseResponse):
         This call is a no-op since the response is successful.
         """
 
-    def expect(self, _exception_type: Type[BaseException], *_args: Any) -> Union[None, NoReturn]:
+    def expect(self, _exception_type: Type[BaseException], *_args: Any) -> None:
         """Do nothing."""
 
     def unwrap(self) -> Self:
@@ -103,7 +103,7 @@ class ErrorResponse(BaseResponse, ABC):
         """Raise the derived exception."""
         raise self.Error
 
-    def expect(self, exception_type: Type[BaseException], *args: Any) -> Union[None, NoReturn]:
+    def expect(self, exception_type: Type[BaseException], *args: Any) -> NoReturn:
         """Raise the specified exception with the derived exception context."""
         raise exception_type(*args) from self.Error
 
