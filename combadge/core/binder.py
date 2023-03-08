@@ -69,9 +69,9 @@ def bind_class(
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
         bound_method: CallServiceMethod = method_binder(signature)
-        bound_method = _wrap(bound_method, signature.method_markers)
         update_wrapper(bound_method, method)
         bound_method = validate_arguments(bound_method)
+        bound_method = _wrap(bound_method, signature.method_markers)
         setattr(BoundService, name, bound_method)
 
     del BoundService.__abstractmethods__  # type: ignore[attr-defined]
@@ -83,9 +83,9 @@ WrappedR = TypeVar("WrappedR")
 WrappedP = ParamSpec("WrappedP")
 
 
-def _wrap(method: Callable[WrappedP, WrappedR], with_marks: Iterable[MethodMarker]) -> Callable[WrappedP, WrappedR]:
-    for mark in with_marks:
-        method = mark.wrap(method)
+def _wrap(method: Callable[WrappedP, WrappedR], with_markers: Iterable[MethodMarker]) -> Callable[WrappedP, WrappedR]:
+    for marker in with_markers:
+        method = marker.wrap(method)
     return method
 
 
