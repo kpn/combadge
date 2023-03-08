@@ -13,7 +13,7 @@ from combadge.support.http.abc import RequiresMethod, RequiresPath, SupportsHead
 
 @dataclass
 class HeaderParameterMarker(ParameterMarker[SupportsHeaders]):
-    """Designates parameter as a service call's additional header."""
+    """Marker class for the [`Header`][combadge.support.http.markers.Header] alias."""
 
     name: str
     __slots__ = ("name",)
@@ -23,6 +23,7 @@ class HeaderParameterMarker(ParameterMarker[SupportsHeaders]):
 
 
 Header: TypeAlias = HeaderParameterMarker
+"""Mark a parameter as a header value."""
 
 
 class _PathMarker(MethodMarker[RequiresPath]):
@@ -91,4 +92,10 @@ class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
 
 
 QueryParam: TypeAlias = QueryParameterMarker
-"""Mark a parameter as a query parameter."""
+"""
+Mark a parameter as a query parameter.
+
+Notes:
+
+    - Multiple arguments with the same query parameter name are allowed
+"""
