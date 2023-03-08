@@ -19,7 +19,7 @@ class SupportsService(Protocol):
     """
 
     @classmethod
-    def bind(cls, to_backend: ProvidesBinder) -> Self:
+    def bind(cls, to_backend: ProvidesBinder, /) -> Self:
         """Bind the current protocol to the specified backend."""
         return bind(cls, to_backend)
 

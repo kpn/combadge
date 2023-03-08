@@ -69,10 +69,10 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ProvidesBinder):
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
         response_extractors = cls._build_response_extractors(signature.response_descriptors)
 
-        async def bound_method(service: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = build_request(Request, signature, service, args, kwargs)
-            async with service.backend._request_with():
-                return await service.backend(request, signature.return_type, response_extractors)
+        async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
+            request = build_request(Request, signature, self, args, kwargs)
+            async with self.backend._request_with():
+                return await self.backend(request, signature.return_type, response_extractors)
 
         return bound_method  # type: ignore[return-value]
 

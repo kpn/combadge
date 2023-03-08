@@ -44,9 +44,9 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Provi
     def bind_method(cls, signature: Signature) -> CallServiceMethod[ZeepBackend]:  # noqa: D102
         response_type, fault_type = cls._split_response_type(signature.return_type)
 
-        async def bound_method(service: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = build_request(Request, signature, service, args, kwargs)
-            return await service.backend(request, response_type, fault_type)
+        async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
+            request = build_request(Request, signature, self, args, kwargs)
+            return await self.backend(request, response_type, fault_type)
 
         return bound_method  # type: ignore[return-value]
 

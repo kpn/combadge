@@ -8,6 +8,7 @@ from inspect import getmembers as get_members
 from inspect import signature as get_signature
 from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Optional, Type, TypeVar
 
+from pydantic import validate_arguments
 from typing_extensions import ParamSpec
 
 from combadge.core.markers.method import MethodMarker
@@ -32,6 +33,16 @@ class BaseBoundService(Generic[BackendT]):
 
     def __init__(self, backend: BackendT) -> None:  # noqa: D107
         self.backend = backend
+
+    @classmethod
+    def __get_validators__(cls) -> Iterable[Callable[[Any], None]]:
+        """
+        Get validators for pydantic.
+
+        Returns:
+            No validators, this method only exists for compatibility with `@validate_arguments`.
+        """
+        return ()
 
 
 def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
@@ -61,6 +72,7 @@ def bind_class(
         bound_method: CallServiceMethod = method_binder(signature)
         bound_method = _wrap(bound_method, signature.method_markers)
         update_wrapper(bound_method, method)
+        bound_method = validate_arguments(bound_method)
         setattr(BoundService, name, bound_method)
 
     del BoundService.__abstractmethods__  # type: ignore[attr-defined]

@@ -51,8 +51,8 @@ hide:
         def get_weather(
             self,
             *,
-            in_: str,
-            format_: Annotated[str, QueryParam("format")] = "j1",
+            in_: Annotated[str, Field(min_length=1)],
+            format_: Annotated[str, Field(min_length=1), QueryParam("format")] = "j1",
         ) -> Weather:
             raise NotImplementedError
 

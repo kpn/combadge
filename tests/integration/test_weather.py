@@ -1,8 +1,8 @@
 from typing import List
 
 from httpx import AsyncClient, Client
-from pydantic import BaseModel, Field
-from pytest import mark
+from pydantic import BaseModel, Field, ValidationError
+from pytest import mark, raises
 from typing_extensions import Annotated, Protocol
 
 from combadge.core.binder import bind
@@ -28,8 +28,8 @@ def test_weather_sync() -> None:
         def get_weather(
             self,
             *,
-            in_: str,
-            format_: Annotated[str, QueryParam("format")] = "j1",
+            in_: Annotated[str, Field(min_length=1)],
+            format_: Annotated[str, Field(min_length=1), QueryParam("format")] = "j1",
         ) -> Weather:
             raise NotImplementedError
 
@@ -40,6 +40,9 @@ def test_weather_sync() -> None:
     assert response.current[0].humidity == 93
     assert response.current[0].temperature == 2
 
+    with raises(ValidationError):
+        service.get_weather(in_="")
+
 
 @mark.vcr
 async def test_weather_async() -> None:
@@ -49,8 +52,8 @@ async def test_weather_async() -> None:
         async def get_weather(
             self,
             *,
-            in_: str,
-            format_: Annotated[str, QueryParam("format")] = "j1",
+            in_: Annotated[str, Field(min_length=1)],
+            format_: Annotated[str, Field(min_length=1), QueryParam("format")] = "j1",
         ) -> Weather:
             raise NotImplementedError
 
@@ -60,3 +63,6 @@ async def test_weather_async() -> None:
 
     assert response.current[0].humidity == 71
     assert response.current[0].temperature == 8.0
+
+    with raises(ValidationError):
+        await service.get_weather(in_="")
