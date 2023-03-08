@@ -16,7 +16,7 @@ from combadge.core.response import SuccessfulResponse
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
 except ImportError:
-    from get_annotations import get_annotations  # type: ignore[no-redef]
+    from get_annotations import get_annotations  # type: ignore[no-redef, import]
 
 
 @dataclass
