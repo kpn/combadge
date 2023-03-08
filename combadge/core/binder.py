@@ -6,13 +6,12 @@ from dataclasses import dataclass
 from functools import update_wrapper
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, List, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, Optional, Type, TypeVar
 
 from pydantic import validate_arguments
 from typing_extensions import ParamSpec
 
 from combadge.core.markers.method import MethodMarker
-from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import BackendT, Identity, RequestT, ServiceProtocolT
 
 if TYPE_CHECKING:
@@ -102,9 +101,6 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
         yield name, method
 
 
-ResponseMarkerT = TypeVar("ResponseMarkerT", bound=ResponseMarker)
-
-
 @dataclass
 class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
     """
@@ -124,16 +120,3 @@ class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
 
     prepare_request: Callable[[RequestT, Any], None]
     """Original marker's method to prepare a request."""
-
-
-@dataclass
-class ResponseAttributeDescriptor(Generic[ResponseMarkerT]):  # noqa: D101
-    """Describes a single response model's attribute (additional metadata needed to reconstruct a response)."""
-
-    __slots__ = ("name", "markers")
-
-    name: str
-    """Response attribute's name."""
-
-    markers: List[ResponseMarkerT]
-    """Markers applied through `Annotated`."""

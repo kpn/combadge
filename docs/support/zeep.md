@@ -1,5 +1,14 @@
 # Zeep
 
-!!! warning "TODO"
+## Sync
 
-    Implemented, documentation is not ready.
+::: combadge.support.zeep.backends.sync.ZeepBackend
+    options:
+      heading_level: 3
+
+## Async
+
+::: combadge.support.zeep.backends.async_.ZeepBackend
+    options:
+      heading_level: 3
+      show_submodules: true

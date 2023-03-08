@@ -29,7 +29,7 @@ hide:
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.binder import bind
-    from combadge.support.http.markers import QueryParam, StatusCode, http_method, path
+    from combadge.support.http.markers import QueryParam, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
 
 
@@ -40,7 +40,7 @@ hide:
 
 
     class Weather(BaseModel):
-        status: StatusCode
+        status: Annotated[HTTPStatus, Field(alias="__status_code__")]
         current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
 
 

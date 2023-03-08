@@ -7,6 +7,7 @@ from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
 from zeep.helpers import serialize_object
 from zeep.proxy import OperationProxy, ServiceProxy
+from zeep.xsd import CompoundValue
 
 from combadge.core.response import SuccessfulResponse
 from combadge.core.typevars import ResponseT
@@ -70,7 +71,7 @@ class BaseZeepBackend(ABC, Generic[_ServiceProxyT, _OperationProxyT]):
             raise RuntimeError(f"available operations are: {dir(self._service)}") from e
 
     @staticmethod
-    def _parse_response(value: Any, response_type: Type[ResponseT]) -> ResponseT:
+    def _parse_response(value: CompoundValue, response_type: Type[ResponseT]) -> ResponseT:
         """Parse the response value using the generic response types."""
         return parse_obj_as(response_type, serialize_object(value, dict))
 

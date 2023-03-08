@@ -8,10 +8,9 @@ from typing import Any, Callable, Dict, List, Type
 
 from pydantic import BaseModel, create_model
 
-from combadge.core.binder import ParameterDescriptor, ResponseAttributeDescriptor
+from combadge.core.binder import ParameterDescriptor
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.markers.response import ResponseMarker
 from combadge.core.response import SuccessfulResponse
 
 try:
@@ -56,15 +55,6 @@ class Signature:
     def return_type(self) -> Type[BaseModel]:
         """Get the method's return type."""
         return self.annotations.get("return", SuccessfulResponse)
-
-    @cached_property
-    def response_descriptors(self) -> List[ResponseAttributeDescriptor]:
-        """Get the response descriptors: one item for each response's attribute."""
-        # FIXME: this only works for top-level attributes:
-        return [
-            ResponseAttributeDescriptor(name=attribute_name, markers=ResponseMarker.extract(field.annotation))
-            for attribute_name, field in (getattr(self.return_type, "__fields__", None) or {}).items()
-        ]
 
     @cached_property
     def parameters_model(self) -> Type[BaseModel]:

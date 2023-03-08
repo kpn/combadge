@@ -88,14 +88,6 @@ Examples:
 
 Parameter markers are specified with `#!python Annotated` type hints on corresponding parameters.
 
-### Response markers
-
-Examples:
-
-- Status code: a marked attribute should be filled in from the responses' status code
-
-Response markers are specified with `#!python Annotated` type hints on corresponding response model attributes.
-
 ## Backends
 
 **Backend** is a thin layer between a service instance and an actual client, which knows how to translate a protocol function's signature into an actual request and parse a response.

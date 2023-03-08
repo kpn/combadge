@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
-from typing import Any, Callable, Iterable, Tuple, Type
+from typing import Any, Callable, Type
 
 from httpx import Client, Response
 from pydantic import BaseModel
@@ -36,16 +36,12 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
         super().__init__(client=client)
         self._request_with = request_with
 
-    def __call__(
-        self,
-        request: Request,
-        response_type: Type[ResponseT],
-        response_extractors: Iterable[Tuple[str, Callable[[Response], Any]]],
-    ) -> ResponseT:
+    def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
         """
-        Call the backend.
+        Call the backend and parse a response.
 
-        One does not normally need to call this directly, unless writing a custom binder.
+        !!! info ""
+            One does not normally need to call this directly, unless writing a custom binder.
         """
         response: Response = self._client.request(
             request.method,
@@ -54,16 +50,14 @@ class HttpxBackend(BaseHttpxBackend[Client], ProvidesBinder):
             params=request.query_params,
         )
         response.raise_for_status()
-        return self._parse_response(response, response_type, response_extractors)
+        return self._parse_response(response, response_type)
 
     @classmethod
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
-        response_extractors = cls._build_response_extractors(signature.response_descriptors)
-
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
             with self.backend._request_with():
-                return self.backend(request, signature.return_type, response_extractors)
+                return self.backend(request, signature.return_type)
 
         return bound_method  # type: ignore[return-value]
 

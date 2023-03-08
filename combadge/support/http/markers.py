@@ -1,21 +1,14 @@
 """Markers for HTTP-compatible protocols."""
 
-import http
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Tuple, Union
 
-from typing_extensions import Annotated, TypeAlias
+from typing_extensions import TypeAlias
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import Identity
-from combadge.support.http.abc import (
-    RequiresMethod,
-    RequiresPath,
-    SupportsHeaders,
-    SupportsQueryParams,
-)
+from combadge.support.http.abc import RequiresMethod, RequiresPath, SupportsHeaders, SupportsQueryParams
 
 
 @dataclass
@@ -99,19 +92,3 @@ class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
 
 QueryParam: TypeAlias = QueryParameterMarker
 """Mark a parameter as a query parameter."""
-
-status_code_response_mark = ResponseMarker("status_code_response_mark")
-"""
-Singleton to mark an attribute as a response status code.
-
-For simple annotations prefer the [`StatusCode`][combadge.support.http.markers.StatusCode] marker.
-"""
-
-StatusCode: TypeAlias = Annotated[http.HTTPStatus, status_code_response_mark]
-"""
-Mark an response model's attribute as a response status code.
-
-Examples:
-    >>> class ResponseModel(BaseModel):
-    >>>     status: StatusCode
-"""
