@@ -6,10 +6,9 @@ from dataclasses import dataclass
 from functools import update_wrapper
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, Optional, Type
 
 from pydantic import validate_arguments
-from typing_extensions import ParamSpec
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.typevars import BackendT, FunctionT, RequestT, ServiceProtocolT
@@ -79,11 +78,7 @@ def bind_class(
     return BoundService
 
 
-WrappedR = TypeVar("WrappedR")
-WrappedP = ParamSpec("WrappedP")
-
-
-def _wrap(method: Callable[WrappedP, WrappedR], with_markers: Iterable[MethodMarker]) -> Callable[WrappedP, WrappedR]:
+def _wrap(method: Callable[..., Any], with_markers: Iterable[MethodMarker]) -> Callable[..., Any]:
     for marker in with_markers:
         method = marker.wrap(method)
     return method

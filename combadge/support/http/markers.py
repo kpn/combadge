@@ -1,7 +1,7 @@
 """Markers for HTTP-compatible protocols."""
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable, Dict, Generic, Tuple, Union
 
 from typing_extensions import TypeAlias
 
@@ -26,7 +26,7 @@ Header: TypeAlias = HeaderParameterMarker
 """Mark a parameter as a header value."""
 
 
-class _PathMarker(MethodMarker[RequiresPath]):
+class _PathMarker(Generic[FunctionT], MethodMarker[RequiresPath, FunctionT, FunctionT]):
     _factory: Callable[..., str]
     __slots__ = ("_factory",)
 
@@ -59,12 +59,12 @@ def path(path_or_factory: Union[str, Callable[..., str]]) -> Callable[[FunctionT
         >>> @path(lambda name, **_: f"/hello/{name}")
         >>> def call(name: str) -> None: ...
     """
-    return _PathMarker(path_or_factory).mark
+    return _PathMarker[Any](path_or_factory).mark
 
 
 @dataclass
-class _HttpMethodMarker(MethodMarker[RequiresMethod]):
-    method: str  # TODO: enum?
+class _HttpMethodMarker(Generic[FunctionT], MethodMarker[RequiresMethod, FunctionT, FunctionT]):
+    method: str
 
     def prepare_request(  # noqa: D102
         self,
@@ -77,7 +77,7 @@ class _HttpMethodMarker(MethodMarker[RequiresMethod]):
 
 def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
     """Specify an HTTP method."""
-    return _HttpMethodMarker(method).mark
+    return _HttpMethodMarker[Any](method).mark
 
 
 @dataclass
