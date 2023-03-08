@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple, TypeVar
+from typing import Any, Callable, Dict, Tuple, TypeVar
 
 from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.typevars import Identity
+from combadge.core.typevars import FunctionT
 from combadge.support.soap.abc import RequiresBody, RequiresOperationName
 
 
@@ -24,7 +24,7 @@ class _OperationNameMethodMarker(MethodMarker[RequiresOperationName]):
         request.operation_name = self.name
 
 
-def operation_name(name: str) -> Identity:
+def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
     """
     Mark a service call's operation name.
 

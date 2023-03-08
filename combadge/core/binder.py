@@ -12,12 +12,12 @@ from pydantic import validate_arguments
 from typing_extensions import ParamSpec
 
 from combadge.core.markers.method import MethodMarker
-from combadge.core.typevars import BackendT, Identity, RequestT, ServiceProtocolT
+from combadge.core.typevars import BackendT, FunctionT, RequestT, ServiceProtocolT
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
 
-    def lru_cache(maxsize: Optional[int]) -> Identity:
+    def lru_cache(maxsize: Optional[int]) -> Callable[[FunctionT], FunctionT]:
         ...
 
 else:

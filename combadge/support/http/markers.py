@@ -7,7 +7,7 @@ from typing_extensions import TypeAlias
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.typevars import Identity
+from combadge.core.typevars import FunctionT
 from combadge.support.http.abc import RequiresMethod, RequiresPath, SupportsHeaders, SupportsQueryParams
 
 
@@ -45,7 +45,7 @@ class _PathMarker(MethodMarker[RequiresPath]):
         request.path = self._factory(*args, **kwargs)
 
 
-def path(path_or_factory: Union[str, Callable[..., str]]) -> Identity:
+def path(path_or_factory: Union[str, Callable[..., str]]) -> Callable[[FunctionT], FunctionT]:
     """
     Specify a URL path.
 
@@ -75,7 +75,7 @@ class _HttpMethodMarker(MethodMarker[RequiresMethod]):
         request.method = self.method
 
 
-def http_method(method: str) -> Identity:
+def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
     """Specify an HTTP method."""
     return _HttpMethodMarker(method).mark
 
