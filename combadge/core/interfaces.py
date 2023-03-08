@@ -6,7 +6,8 @@ from typing import Any
 from pydantic import BaseModel
 from typing_extensions import Protocol, Self
 
-from combadge.core.binder import BaseBoundService, Signature, bind
+from combadge.core.binder import BaseBoundService, bind
+from combadge.core.signature import Signature
 from combadge.core.typevars import BackendT
 
 

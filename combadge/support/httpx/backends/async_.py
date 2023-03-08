@@ -7,9 +7,10 @@ from typing import Any, AsyncGenerator, Callable, Iterable, Tuple, Type
 from httpx import AsyncClient, Response
 from pydantic import BaseModel
 
-from combadge.core.binder import BaseBoundService, Signature
+from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
 from combadge.core.request import build_request
+from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
 from combadge.support.httpx.backends.base import BaseHttpxBackend
 from combadge.support.rest.request import Request

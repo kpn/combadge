@@ -6,9 +6,10 @@ from pydantic import BaseModel
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
-from combadge.core.binder import BaseBoundService, Signature
+from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import CallServiceMethod, ProvidesBinder
 from combadge.core.request import build_request
+from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Callable, Tuple
 
-from combadge.core.binder import Signature, _enumerate_methods, _wrap
+from combadge.core.binder import _enumerate_methods, _wrap
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import MethodMarker, decorator
 
@@ -36,13 +36,6 @@ def test_enumerate_private_methods() -> None:
             raise NotImplementedError
 
     assert list(_enumerate_methods(TestService)) == []
-
-
-def test_extract_return_type() -> None:
-    def foo() -> str:
-        return "bar"
-
-    assert Signature.from_method(foo).return_type is str
 
 
 def test_decorator_ordering() -> None:
