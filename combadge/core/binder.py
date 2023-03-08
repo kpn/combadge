@@ -122,8 +122,6 @@ class Signature:
 
     __slots__ = ("bind_arguments", "method_markers", "annotations", "__dict__")
 
-    # TODO: cached `create_model` based on `annotations`.
-
     @classmethod
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
