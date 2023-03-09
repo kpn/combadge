@@ -62,7 +62,7 @@ class _DecorateMethodMarker(Generic[FunctionT], MethodMarker[Any, FunctionT]):
         return self._decorator(what)
 
 
-def decorator(decorator: Callable[..., Any]) -> Callable[[FunctionT], FunctionT]:
+def decorator(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], FunctionT]:
     """
     Put the decorator on top of the generated bound service method.
 
@@ -75,4 +75,4 @@ def decorator(decorator: Callable[..., Any]) -> Callable[[FunctionT], FunctionT]
         - At the moment the type hinting is limited to decorators, which do not change
           a wrapped function's signature – possible Mypy's limitation.
     """
-    return _DecorateMethodMarker[Any](decorator).mark
+    return _DecorateMethodMarker(decorator).mark
