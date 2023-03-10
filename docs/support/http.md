@@ -7,9 +7,9 @@
       heading_level: 3
       show_submodules: true
 
-## Headers
+## Aliases
 
-::: combadge.support.http.headers
+::: combadge.support.http.aliases
     options:
       heading_level: 3
       show_submodules: true

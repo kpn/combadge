@@ -18,8 +18,8 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
 
     # Available response aliases
 
-    - `__reason__`: HTTP reason phrase
-    - `__status_code__`: HTTP response status code
+    - [`StatusCode`][combadge.support.http.aliases.StatusCode]: HTTP response status code
+    - [`Reason`][combadge.support.http.aliases.Reason]: HTTP reason phrase
     """
 
     _client: _ClientT
