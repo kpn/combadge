@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contextlib import AbstractAsyncContextManager, AsyncExitStack
+from contextlib import AbstractAsyncContextManager
 from typing import Any, Callable, Type
 
 from pydantic import BaseModel
@@ -13,6 +13,7 @@ from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
 from combadge.support.shared.async_ import SupportsRequestWith
+from combadge.support.shared.contextlib import asyncnullcontext
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
@@ -27,7 +28,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
         self,
         service: AsyncServiceProxy,
         *,
-        request_with: Callable[[], AbstractAsyncContextManager] = AsyncExitStack,
+        request_with: Callable[[Any], AbstractAsyncContextManager] = asyncnullcontext,
     ) -> None:
         """
         Instantiate the backend.
@@ -55,8 +56,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
         """
         operation = self._get_operation(request.operation_name)
         try:
-            async with self._request_with():
-                response = await operation(**request.body.dict(by_alias=True))
+            response = await operation(**request.body.dict(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
@@ -67,7 +67,8 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
 
         async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            return await self.backend(request, response_type, fault_type)
+            async with self.backend._request_with(signature.method):
+                return await self.backend(request, response_type, fault_type)
 
         return bound_method  # type: ignore[return-value]
 

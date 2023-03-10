@@ -25,7 +25,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
         self,
         client: Client,
         *,
-        request_with: Callable[[], AbstractContextManager] = nullcontext,
+        request_with: Callable[[Any], AbstractContextManager] = nullcontext,
         raise_for_status: bool = True,
     ) -> None:
         """
@@ -46,14 +46,13 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
         !!! info ""
             One does not normally need to call this directly, unless writing a custom binder.
         """
-        with self._request_with():
-            response: Response = self._client.request(
-                request.method,
-                request.path,
-                json=request.to_json_dict(),
-                data=request.to_form_data(),
-                params=request.query_params,
-            )
+        response: Response = self._client.request(
+            request.method,
+            request.path,
+            json=request.to_json_dict(),
+            data=request.to_form_data(),
+            params=request.query_params,
+        )
         if self._raise_for_status:
             response.raise_for_status()
         return self._parse_response(response, response_type)
@@ -62,7 +61,8 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            return self.backend(request, signature.return_type)
+            with self.backend._request_with(signature.method):
+                return self.backend(request, signature.return_type)
 
         return bound_method  # type: ignore[return-value]
 

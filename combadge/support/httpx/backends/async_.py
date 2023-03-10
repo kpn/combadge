@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contextlib import AbstractAsyncContextManager, AsyncExitStack
+from contextlib import AbstractAsyncContextManager
 from typing import Any, Callable, Type
 
 from httpx import AsyncClient, Response
@@ -14,6 +14,7 @@ from combadge.core.typevars import ResponseT
 from combadge.support.httpx.backends.base import BaseHttpxBackend
 from combadge.support.rest.request import Request
 from combadge.support.shared.async_ import SupportsRequestWith
+from combadge.support.shared.contextlib import asyncnullcontext
 
 
 class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
@@ -25,7 +26,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
         self,
         client: AsyncClient,
         *,
-        request_with: Callable[[], AbstractAsyncContextManager] = AsyncExitStack,
+        request_with: Callable[[Any], AbstractAsyncContextManager] = asyncnullcontext,
         raise_for_status: bool = True,
     ) -> None:
         """
@@ -46,14 +47,13 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
         !!! info ""
             One does not normally need to call this directly, unless writing a custom binder.
         """
-        async with self._request_with():
-            response: Response = await self._client.request(
-                request.method,
-                request.path,
-                json=request.to_json_dict(),
-                data=request.to_form_data(),
-                params=request.query_params,
-            )
+        response: Response = await self._client.request(
+            request.method,
+            request.path,
+            json=request.to_json_dict(),
+            data=request.to_form_data(),
+            params=request.query_params,
+        )
         if self._raise_for_status:
             response.raise_for_status()
         return self._parse_response(response, response_type)
@@ -62,7 +62,8 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            return await self.backend(request, signature.return_type)
+            async with self.backend._request_with(signature.method):
+                return await self.backend(request, signature.return_type)
 
         return bound_method  # type: ignore[return-value]
 

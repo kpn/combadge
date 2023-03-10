@@ -27,7 +27,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         self,
         service: ServiceProxy,
         *,
-        request_with: Callable[[], AbstractContextManager] = nullcontext,
+        request_with: Callable[[Any], AbstractContextManager] = nullcontext,
     ) -> None:
         """
         Instantiate the backend.
@@ -55,8 +55,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         """
         operation = self._get_operation(request.operation_name)
         try:
-            with self._request_with():
-                response = operation(**request.body.dict(by_alias=True))
+            response = operation(**request.body.dict(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
@@ -67,7 +66,8 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
 
         def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            return self.backend(request, response_type, fault_type)
+            with self.backend._request_with(signature.method):
+                return self.backend(request, response_type, fault_type)
 
         return bound_method  # type: ignore[return-value]
 
