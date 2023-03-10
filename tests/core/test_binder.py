@@ -3,7 +3,7 @@ from typing import Any, Callable, Tuple
 
 from combadge.core.binder import _enumerate_methods, _wrap
 from combadge.core.interfaces import SupportsService
-from combadge.core.markers.method import MethodMarker, decorator
+from combadge.core.markers.method import MethodMarker, wrap_with
 
 
 def test_enumerate_bindable_methods() -> None:
@@ -47,8 +47,8 @@ def test_decorator_ordering() -> None:
     def decorate_2(what: Callable[[], Tuple[Any, ...]]) -> Callable[[], Tuple[Any, ...]]:
         return lambda: (2, *what())
 
-    @decorator(decorate_1)
-    @decorator(decorate_2)
+    @wrap_with(decorate_1)
+    @wrap_with(decorate_2)
     def get_actual() -> Tuple[Any, ...]:
         return ()
 
