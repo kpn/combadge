@@ -19,7 +19,7 @@ from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsRequestWith):
+class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsRequestWith[Request]):
     """Asynchronous Zeep service."""
 
     __slots__ = ("_service", "_request_with")
@@ -67,7 +67,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
 
         async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            async with self.backend._request_with(signature.method):
+            async with self.backend._request_with(request):
                 return await self.backend(request, response_type, fault_type)
 
         return bound_method  # type: ignore[return-value]

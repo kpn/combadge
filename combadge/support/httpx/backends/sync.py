@@ -16,7 +16,7 @@ from combadge.support.rest.request import Request
 from combadge.support.shared.sync import SupportsRequestWith
 
 
-class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
+class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request]):
     """Sync HTTPX backend for REST APIs."""
 
     __slots__ = ("_client", "_request_with", "_raise_for_status")
@@ -61,7 +61,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith):
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            with self.backend._request_with(signature.method):
+            with self.backend._request_with(request):
                 return self.backend(request, signature.return_type)
 
         return bound_method  # type: ignore[return-value]

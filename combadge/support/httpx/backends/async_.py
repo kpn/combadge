@@ -17,7 +17,7 @@ from combadge.support.shared.async_ import SupportsRequestWith
 from combadge.support.shared.contextlib import asyncnullcontext
 
 
-class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
+class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request]):
     """Async HTTPX backend for REST APIs."""
 
     __slots__ = ("_client", "_request_with", "_raise_for_status")
@@ -62,7 +62,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith):
     def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            async with self.backend._request_with(signature.method):
+            async with self.backend._request_with(request):
                 return await self.backend(request, signature.return_type)
 
         return bound_method  # type: ignore[return-value]

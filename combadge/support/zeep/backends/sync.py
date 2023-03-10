@@ -18,7 +18,7 @@ from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequestWith):
+class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequestWith[Request]):
     """Synchronous Zeep service."""
 
     __slots__ = ("_service", "_request_with")
@@ -66,7 +66,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
 
         def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
-            with self.backend._request_with(signature.method):
+            with self.backend._request_with(request):
                 return self.backend(request, response_type, fault_type)
 
         return bound_method  # type: ignore[return-value]

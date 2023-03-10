@@ -27,7 +27,6 @@ class Signature:
     Why? Because passing all these parameters into `bind_method` would be messy.
     """
 
-    method: Any
     bind_arguments: Callable[..., BoundArguments]
     method_markers: List[MethodMarker]
     annotations: Dict[str, Any]
@@ -38,7 +37,6 @@ class Signature:
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         return Signature(
-            method=method,
             bind_arguments=get_signature(method).bind,
             method_markers=MethodMarker.ensure_markers(method),
             annotations=get_annotations(method, eval_str=True),
