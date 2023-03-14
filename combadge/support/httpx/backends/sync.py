@@ -11,8 +11,8 @@ from combadge.core.interfaces import CallServiceMethod
 from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
+from combadge.support.http.request import Request
 from combadge.support.httpx.backends.base import BaseHttpxBackend
-from combadge.support.rest.request import Request
 from combadge.support.shared.sync import SupportsRequestWith
 
 

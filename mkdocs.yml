@@ -8,7 +8,6 @@ nav:
   - Support:
       - Protocols:
           - support/http.md
-          - support/rest.md
           - support/soap.md
       - Backends:
           - support/httpx.md
