@@ -1,6 +1,7 @@
 """Markers for HTTP-compatible protocols."""
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Callable, Dict, Generic, Tuple, TypeVar, Union
 
 from typing_extensions import Annotated, TypeAlias
@@ -149,16 +150,20 @@ class JsonFieldParameterMarker(ParameterMarker[SupportsJson]):
     Marker class for the [`JsonField`][combadge.support.http.markers.JsonField] alias.
 
     It's recommended that you use the alias, unless you need a complex annotation, such as:
+
     ```python
     parameter: Annotated[int, JsonFieldParameterMarker("param"), AnotherMarker()]
     ```
+
+    Notes:
+        - Enum values are passed by value
     """
 
     name: str
     __slots__ = ("name",)
 
     def prepare_request(self, request: SupportsJson, value: Any) -> None:  # noqa: D102
-        request.json_fields[self.name] = value
+        request.json_fields[self.name] = value.value if isinstance(value, Enum) else value
 
 
 JsonField: TypeAlias = JsonFieldParameterMarker
@@ -215,16 +220,20 @@ class FormFieldParameterMarker(ParameterMarker[SupportsFormData]):
     Marker class for the [`FormField`][combadge.support.http.markers.FormField] alias.
 
     It's recommended that you use the alias, unless you need a complex annotation, such as:
+
     ```python
     parameter: Annotated[int, FormFieldParameterMarker("param"), AnotherMarker()]
     ```
+
+    Notes:
+        - Enum values are passed by value
     """
 
     name: str
     __slots__ = ("name",)
 
     def prepare_request(self, request: SupportsFormData, value: Any) -> None:  # noqa: D102
-        request.append_form_field(self.name, value)
+        request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)
 
 
 FormField: TypeAlias = FormFieldParameterMarker
