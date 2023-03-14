@@ -51,6 +51,10 @@ class SuccessfulResponse(BaseResponse):
         return self
 
 
+class BaseError(Exception):
+    """Default base for all Combadge-based exception classes."""
+
+
 class ErrorResponse(BaseResponse, ABC):
     """
     Parent model for faulty responses (errors).
@@ -61,7 +65,7 @@ class ErrorResponse(BaseResponse, ABC):
         - For SOAP Fault use or subclass the specialized `GenericSoapFault`.
     """
 
-    class Error(Exception):
+    class Error(BaseError):
         """
         Dynamically derived exception class.
 
@@ -84,6 +88,7 @@ class ErrorResponse(BaseResponse, ABC):
         exception_bases = (
             *(base.Error for base in cls.__bases__ if issubclass(base, ErrorResponse)),
             *exception_bases,
+            BaseError,
         )
 
         class DerivedException(*exception_bases):  # type: ignore
