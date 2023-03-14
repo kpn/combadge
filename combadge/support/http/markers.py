@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Dict, Generic, Tuple, TypeVar, Union
 
+from pydantic import BaseModel
 from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.markers.method import MethodMarker
@@ -98,7 +99,7 @@ class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
     __slots__ = ("name",)
 
     def prepare_request(self, request: SupportsQueryParams, value: Any) -> None:  # noqa: D102
-        request.query_params.append((self.name, value))
+        request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 
 QueryParam: TypeAlias = QueryParameterMarker
@@ -125,8 +126,8 @@ class JsonParameterMarker(ParameterMarker[SupportsJson]):
 
     __slots__ = ()
 
-    def prepare_request(self, request: SupportsJson, value: Any) -> None:  # noqa: D102
-        request.json_ = value
+    def prepare_request(self, request: SupportsJson, value: BaseModel) -> None:  # noqa: D102
+        request.json_.update(value.dict(by_alias=True))
 
 
 Json: TypeAlias = Annotated[_T, JsonParameterMarker()]
@@ -163,7 +164,7 @@ class JsonFieldParameterMarker(ParameterMarker[SupportsJson]):
     __slots__ = ("name",)
 
     def prepare_request(self, request: SupportsJson, value: Any) -> None:  # noqa: D102
-        request.json_fields[self.name] = value.value if isinstance(value, Enum) else value
+        request.json_[self.name] = value.value if isinstance(value, Enum) else value
 
 
 JsonField: TypeAlias = JsonFieldParameterMarker
@@ -175,9 +176,6 @@ Examples:
     >>>
     >>> def call(param: Annotated[int, JsonField("param")]) -> ...:
     >>>     ...
-
-Notes:
-    - [`Json`][combadge.support.http.markers.Json] marker's fields shadow `JsonField` ones (if present)
 """
 
 
@@ -195,8 +193,9 @@ class FormDataParameterMarker(ParameterMarker[SupportsFormData]):
 
     __slots__ = ()
 
-    def prepare_request(self, request: SupportsFormData, value: Any) -> None:  # noqa: D102
-        request.form_data = value
+    def prepare_request(self, request: SupportsFormData, value: BaseModel) -> None:  # noqa: D102
+        for item_name, item_value in value.dict(by_alias=True).items():
+            request.append_form_field(item_name, item_value)
 
 
 FormData: TypeAlias = Annotated[_T, FormDataParameterMarker()]
@@ -247,6 +246,6 @@ Examples:
     >>>     ...
 
 Notes:
-    - Multiple arguments with the same form field name are allowed
+    - Multiple arguments with the same field name are allowed
     - [`FormData`][combadge.support.http.markers.FormData] marker's fields get merged with `FormField` ones (if present)
 """

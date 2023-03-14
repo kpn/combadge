@@ -50,8 +50,8 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request]):
         response: Response = await self._client.request(
             request.method,
             request.path,
-            json=request.to_json_dict(),
-            data=request.to_form_data(),
+            json=request.json_,
+            data=request.form_data,
             params=request.query_params,
         )
         if self._raise_for_status:
