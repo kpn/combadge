@@ -10,7 +10,7 @@ from combadge.support.soap.abc import RequiresBody, RequiresOperationName
 
 
 @dataclass
-class _OperationNameMethodMarker(Generic[FunctionT], MethodMarker[RequiresOperationName, FunctionT]):
+class _OperationNameMarker(Generic[FunctionT], MethodMarker[RequiresOperationName, FunctionT]):
     name: str
 
     __slots__ = ("name",)
@@ -39,14 +39,14 @@ def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
     See Also:
         - [Structure of a WSDL message](https://www.ibm.com/docs/en/rtw/9.0.0?topic=documents-structure-wsdl-message)
     """
-    return _OperationNameMethodMarker[Any](name).mark
+    return _OperationNameMarker[Any](name).mark
 
 
 _T = TypeVar("_T")
 
 
 @dataclass
-class BodyParameterMarker(ParameterMarker[RequiresBody]):
+class BodyMarker(ParameterMarker[RequiresBody]):
     """
     Marker class for the [Body][combadge.support.soap.markers.Body] marker.
 
@@ -65,7 +65,7 @@ class BodyParameterMarker(ParameterMarker[RequiresBody]):
         request.body = value
 
 
-Body: TypeAlias = Annotated[_T, BodyParameterMarker()]
+Body: TypeAlias = Annotated[_T, BodyMarker()]
 """
 Mark parameter as a request body. An argument gets converted to a dictionary and passed over to a backend.
 

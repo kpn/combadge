@@ -23,7 +23,7 @@ _T = TypeVar("_T")
 
 
 @dataclass
-class HeaderParameterMarker(ParameterMarker[SupportsHeaders]):
+class HeaderMarker(ParameterMarker[SupportsHeaders]):
     """Marker class for the [`Header`][combadge.support.http.markers.Header] alias."""
 
     name: str
@@ -33,7 +33,7 @@ class HeaderParameterMarker(ParameterMarker[SupportsHeaders]):
         request.headers.append((self.name, value))
 
 
-Header: TypeAlias = HeaderParameterMarker
+Header: TypeAlias = HeaderMarker
 """Mark a parameter as a header value."""
 
 
@@ -92,7 +92,7 @@ def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
 
 
 @dataclass
-class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
+class QueryMarker(ParameterMarker[SupportsQueryParams]):
     """Marker class for the [`QueryParam`][combadge.support.http.markers.QueryParam] alias."""
 
     name: str
@@ -102,7 +102,7 @@ class QueryParameterMarker(ParameterMarker[SupportsQueryParams]):
         request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 
-QueryParam: TypeAlias = QueryParameterMarker
+QueryParam: TypeAlias = QueryMarker
 """
 Mark a parameter as a query parameter.
 
@@ -113,7 +113,7 @@ Notes:
 
 
 @dataclass
-class JsonParameterMarker(ParameterMarker[SupportsJson]):
+class JsonMarker(ParameterMarker[SupportsJson]):
     """
     Marker class for the [`Json`][combadge.support.http.markers.Json] alias.
 
@@ -124,13 +124,14 @@ class JsonParameterMarker(ParameterMarker[SupportsJson]):
     ```
     """
 
-    __slots__ = ()
+    exclude_unset: bool = False
+    by_alias: bool = False
 
     def prepare_request(self, request: SupportsJson, value: BaseModel) -> None:  # noqa: D102
-        request.json_.update(value.dict(by_alias=True))
+        request.json_.update(value.dict(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
 
 
-Json: TypeAlias = Annotated[_T, JsonParameterMarker()]
+Json: TypeAlias = Annotated[_T, JsonMarker()]
 """
 Mark parameter as a request JSON body. An argument gets converted to a dictionary and passed over to a backend.
 
@@ -146,7 +147,7 @@ Examples:
 
 
 @dataclass
-class JsonFieldParameterMarker(ParameterMarker[SupportsJson]):
+class JsonFieldMarker(ParameterMarker[SupportsJson]):
     """
     Marker class for the [`JsonField`][combadge.support.http.markers.JsonField] alias.
 
@@ -167,7 +168,7 @@ class JsonFieldParameterMarker(ParameterMarker[SupportsJson]):
         request.json_[self.name] = value.value if isinstance(value, Enum) else value
 
 
-JsonField: TypeAlias = JsonFieldParameterMarker
+JsonField: TypeAlias = JsonFieldMarker
 """
 Mark a parameter as a separate JSON field value.
 
@@ -180,7 +181,7 @@ Examples:
 
 
 @dataclass
-class FormDataParameterMarker(ParameterMarker[SupportsFormData]):
+class FormDataMarker(ParameterMarker[SupportsFormData]):
     """
     Marker class for the [`FormData`][combadge.support.http.markers.FormData] alias.
 
@@ -198,7 +199,7 @@ class FormDataParameterMarker(ParameterMarker[SupportsFormData]):
             request.append_form_field(item_name, item_value)
 
 
-FormData: TypeAlias = Annotated[_T, FormDataParameterMarker()]
+FormData: TypeAlias = Annotated[_T, FormDataMarker()]
 """
 Mark parameter as a request form data. An argument gets converted to a dictionary and passed over to a backend.
 
@@ -214,7 +215,7 @@ Examples:
 
 
 @dataclass
-class FormFieldParameterMarker(ParameterMarker[SupportsFormData]):
+class FormFieldMarker(ParameterMarker[SupportsFormData]):
     """
     Marker class for the [`FormField`][combadge.support.http.markers.FormField] alias.
 
@@ -235,7 +236,7 @@ class FormFieldParameterMarker(ParameterMarker[SupportsFormData]):
         request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)
 
 
-FormField: TypeAlias = FormFieldParameterMarker
+FormField: TypeAlias = FormFieldMarker
 """
 Mark a parameter as a separate form field value.
 
