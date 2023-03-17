@@ -14,7 +14,7 @@ hide:
 
 !!! warning "This package is in active development"
 
-    The documentatation is not good and complete as it should be, and the implementation may change drastically.
+    The documentation is not good and complete as it should be, and the implementation may change drastically.
 
 ## Quick examples
 
