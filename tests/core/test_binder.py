@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing import Any, Callable, Tuple
 
+from typing_extensions import Protocol
+
 from combadge.core.binder import _enumerate_methods, _wrap
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import MethodMarker, wrap_with
@@ -9,7 +11,7 @@ from combadge.core.markers.method import MethodMarker, wrap_with
 def test_enumerate_bindable_methods() -> None:
     """Test that bindable methods are returned."""
 
-    class TestService(SupportsService):
+    class TestService(SupportsService, Protocol):
         @abstractmethod
         def invoke(self) -> None:
             raise NotImplementedError
@@ -20,7 +22,7 @@ def test_enumerate_bindable_methods() -> None:
 def test_enumerate_class_methods() -> None:
     """Test that class methods are ignored."""
 
-    class TestService(SupportsService):
+    class TestService(SupportsService, Protocol):
         @classmethod
         def ignored(cls) -> None:
             raise NotImplementedError
@@ -31,7 +33,7 @@ def test_enumerate_class_methods() -> None:
 def test_enumerate_private_methods() -> None:
     """Test that «private» methods are ignored."""
 
-    class TestService(SupportsService):
+    class TestService(SupportsService, Protocol):
         def _ignored(self) -> None:
             raise NotImplementedError
 

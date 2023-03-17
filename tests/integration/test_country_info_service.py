@@ -4,7 +4,7 @@ from typing import Iterable, List
 
 from pydantic import BaseModel, Field
 from pytest import fixture, mark
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Protocol
 from zeep import Client
 
 from combadge.core.interfaces import SupportsService
@@ -26,7 +26,7 @@ class CountryInfoResponse(SuccessfulResponse):
     __root__: List[Continent]
 
 
-class SupportsCountryInfo(SupportsService):
+class SupportsCountryInfo(SupportsService, Protocol):
     @operation_name("ListOfContinentsByName")
     @abstractmethod
     def list_of_continents_by_name(self, request: Body[CountryInfoRequest]) -> CountryInfoResponse:

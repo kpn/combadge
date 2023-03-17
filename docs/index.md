@@ -78,7 +78,7 @@ hide:
     import zeep
     from pydantic import BaseModel, Field
     from pytest import raises
-    from typing_extensions import Annotated
+    from typing_extensions import Annotated, Protocol
 
     from combadge.core.interfaces import SupportsService
     from combadge.core.response import ErrorResponse, SuccessfulResponse
@@ -102,7 +102,7 @@ hide:
 
 
     # 4️⃣ Declare the interface:
-    class SupportsNumberConversion(SupportsService):
+    class SupportsNumberConversion(SupportsService, Protocol):
         @operation_name("NumberToWords")
         def number_to_words(self, request: Body[NumberToWordsRequest]) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
             ...

@@ -4,7 +4,7 @@ from typing import Iterable, Union
 
 from pydantic import BaseModel, Field
 from pytest import fixture, mark, raises
-from typing_extensions import Annotated, Literal
+from typing_extensions import Annotated, Literal, Protocol
 from zeep import AsyncClient, Client
 
 from combadge.core.interfaces import SupportsService
@@ -26,7 +26,7 @@ class NumberTooLargeResponse(ErrorResponse):
     __root__: Literal["number too large"]
 
 
-class SupportsNumberConversion(SupportsService):
+class SupportsNumberConversion(SupportsService, Protocol):
     @operation_name("NumberToWords")
     @abstractmethod
     def number_to_words(
@@ -36,7 +36,7 @@ class SupportsNumberConversion(SupportsService):
         raise NotImplementedError
 
 
-class SupportsNumberConversionAsync(SupportsService):
+class SupportsNumberConversionAsync(SupportsService, Protocol):
     @operation_name("NumberToWords")
     @abstractmethod
     async def number_to_words(

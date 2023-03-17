@@ -4,7 +4,7 @@ from typing import Any, Dict
 from httpx import Client
 from pydantic import BaseModel
 from pytest import mark
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Protocol
 
 from combadge.core.interfaces import SupportsService
 from combadge.support.http.markers import FormData, FormField, QueryParam, http_method, path
@@ -19,7 +19,7 @@ def test_form_data() -> None:
     class Response(BaseModel):
         form: Dict[str, Any]
 
-    class SupportsHttpbin(SupportsService):
+    class SupportsHttpbin(SupportsService, Protocol):
         @http_method("POST")
         @path("/anything")
         @abstractmethod
@@ -42,7 +42,7 @@ def test_query_params() -> None:
     class Response(BaseModel):
         args: Dict[str, Any]
 
-    class SupportsHttpbin(SupportsService):
+    class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")
         @path("/anything")
         @abstractmethod
