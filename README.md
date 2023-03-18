@@ -1,22 +1,22 @@
 # Combadge
 
+Combadge generates a service client implementation from a user service interface
+declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract base class.
+
 [![Checks](https://img.shields.io/github/checks-status/kpn/combadge/main?logo=github)](https://github.com/kpn/combadge/actions/workflows/check.yaml)
 [![Coverage](https://codecov.io/gh/kpn/combadge/branch/main/graph/badge.svg?token=ZAqYAaTXwE)](https://codecov.io/gh/kpn/combadge)
 ![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)
 [![Python Version](https://img.shields.io/pypi/pyversions/combadge?logo=python&logoColor=yellow)](https://pypi.org/project/combadge/)
 [![License](https://img.shields.io/github/license/kpn/combadge)](LICENSE)
 
-**📻 Application to the service, please respond!**
-
 ## Features
 
-- [**Pydantic**](https://docs.pydantic.dev/)-based request and response models
-- Automatically derived exception classes
-- Using [**Protocol**](https://peps.python.org/pep-0544/)s to define service classes
+- Request and response models based on [**pydantic**](https://docs.pydantic.dev/)
+- Declarative services using [`Protocol`](https://peps.python.org/pep-0544/)
+- Exception classes automatically derived from error models
 - Built-in backends:
-  - [HTTPX](https://www.python-httpx.org/), sync and async
-  - [Zeep](https://docs.python-zeep.org/en/master/), sync and async
-- Pluggable backends
+    - [HTTPX](https://www.python-httpx.org/) – sync and async
+    - [Zeep](https://docs.python-zeep.org/en/master/) – sync and async
 
 ## Documentation
 

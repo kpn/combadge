@@ -6,6 +6,9 @@ hide:
 
 # Overview
 
+Combadge generates a service client implementation from a user service interface
+declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract base class.
+
 [![Checks](https://img.shields.io/github/checks-status/kpn/combadge/main?logo=github)](https://github.com/kpn/combadge/actions/workflows/check.yaml)
 [![Coverage](https://codecov.io/gh/kpn/combadge/branch/main/graph/badge.svg?token=ZAqYAaTXwE)](https://codecov.io/gh/kpn/combadge)
 ![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)
@@ -16,6 +19,15 @@ hide:
 
     The documentation is not good and complete as it should be, and the implementation may change drastically.
 
+## Features
+
+- Request and response models based on [**pydantic**](https://docs.pydantic.dev/)
+- Declarative services using [`Protocol`](https://peps.python.org/pep-0544/)
+- Exception classes automatically derived from error models
+- Built-in backends:
+    - [HTTPX](https://www.python-httpx.org/) – sync and async
+    - [Zeep](https://docs.python-zeep.org/en/master/) – sync and async
+
 ## Quick examples
 
 === "With HTTPX"
@@ -25,10 +37,11 @@ hide:
     from typing import List
 
     from httpx import Client
-    from pydantic import BaseModel, Field
+    from pydantic import BaseModel, Field, validate_arguments
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.binder import bind
+    from combadge.core.markers.method import wrap_with
     from combadge.support.http.aliases import StatusCode
     from combadge.support.http.markers import QueryParam, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
@@ -49,6 +62,7 @@ hide:
     class SupportsWttrIn(Protocol):
         @http_method("GET")
         @path("/{in_}")
+        @wrap_with(validate_arguments)
         def get_weather(
             self,
             *,

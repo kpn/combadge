@@ -4,15 +4,18 @@ site_name: Combadge
 
 nav:
   - index.md
-  - core-concepts.md
+  - getting-started.md
   - Support:
+      - support/core.md
+      - support/pydantic.md
       - Protocols:
           - support/http.md
           - support/soap.md
       - Backends:
           - support/httpx.md
           - support/zeep.md
-  - Extending: []
+  - core-concepts.md
+  - extending.md
 
 theme:
   icon:

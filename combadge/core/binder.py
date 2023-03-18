@@ -8,8 +8,6 @@ from inspect import getmembers as get_members
 from inspect import signature as get_signature
 from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, Optional, Type
 
-from pydantic import validate_arguments
-
 from combadge.core.markers.method import MethodMarker
 from combadge.core.typevars import BackendT, FunctionT, RequestT, ServiceProtocolT
 
@@ -69,7 +67,6 @@ def bind_class(
         signature = Signature.from_method(method)
         bound_method: CallServiceMethod = method_binder(signature)
         update_wrapper(bound_method, method)
-        bound_method = validate_arguments(bound_method)
         bound_method = _wrap(bound_method, signature.method_markers)
         setattr(BoundService, name, bound_method)
 

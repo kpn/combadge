@@ -66,8 +66,8 @@ def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], Function
     """
     Put the decorator on top of the generated bound service method.
 
-    Example:
-        >>> @wrap_with(functools.cache())
+    Examples:
+        >>> @wrap_with(functools.cache)
         >>> def service_method(self, ...) -> ...:
         >>>     ...
 
