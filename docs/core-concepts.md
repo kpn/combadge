@@ -25,40 +25,10 @@ Result of binding is a service class which encapsulates request and response han
 
 Combadge models are based on [pydantic](https://docs.pydantic.dev/):
 
-- A request is built and validated before it gets sent. The request's model is defined by the backend.
+- A request model is built and validated before it gets sent. Specific request model is defined by the backend.
 - A response is parsed based on the method's signature: what you annotate is what you get.
 
-!!! tip "But what about errors?"
-
-    In **pydantic** you can define a model as a `#!python typing.Union` of possible models: whichever validates first – that one gets returned. For us, it means that you can simply `#!python Union[...]` all possible successful and faulty models – and use the `#!python Union` as a return type.
-
-Combadge does not restrict user in terms of model classes: as long as they are inherited from the `#!python BaseModel`, you are good to go. However, it may be easier to inherit from the predefined classes:
-
-### Base response
-
-`#!python BaseResponse` is the lower-level API, one should consider inheriting from `#!python SuccessfulResponse` and `#!python ErrorResponse`. However, it is important to note its methods:
-
-- `#!python raise_for_result()`: raises an error, if the response is faulty
-- `#!python expect(exc_type_, *args)`: raises a specified error, if the response is faulty
-- `#!python unwrap()`: combines everything in one handy method: returns a successful response, or raises an error if the response is faulty
-
-!!! tip "That looks rusty, huh"
-
-    The resemblance with Rust is not concidential: the author was inspired by [`std::result::Result`](https://doc.rust-lang.org/std/result/enum.Result.html).
-
-The following response classes inherit from the `#!python BaseResponse`, which allows a user to use the methods above without any explicit error checks:
-
-### Successful response
-
-`#!python SuccessfulResponse` implements the methods above so that they never fail.
-
-### Error response
-
-The aforementioned methods always fail for `#!python ErrorResponse`. Furthermore, `#!python ErrorResponse` automatically derives distinct exception classes for each error model.
-
-!!! tip "Error codes"
-
-    Use [`typing.Literal`](https://docs.python.org/3/library/typing.html#typing.Literal) to define a separate error model for each error code.
+Combadge does not restrict user in terms of response model classes: as long as they are inherited from the `#!python BaseModel`, you are good to go.
 
 ## Markers
 

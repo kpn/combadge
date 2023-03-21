@@ -76,7 +76,7 @@ def test_sad_path_scalar_response(number_conversion_service: SupportsNumberConve
 
     with raises(NumberTooLargeResponse.Error) as exception:
         response.raise_for_result()
-    assert exception.value.args == (response,)
+    assert exception.value.response == response
 
 
 @mark.vcr

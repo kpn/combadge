@@ -12,21 +12,83 @@ from combadge.core.typevars import ResponseT
 
 
 class BaseResponse(ABC, BaseModel):
-    """Base model representing any possible service response."""
+    """
+    Base model representing any possible service response.
+
+    It's got a few abstract methods, which are then implemented by `SuccessfulResponse` and `ErrorResponse`.
+
+    Notes:
+        - `#!python BaseResponse` is the lower-level API,
+          users should consider inheriting from `#!python SuccessfulResponse` and `#!python ErrorResponse`.
+    """
 
     @abstractmethod
     def raise_for_result(self) -> Union[None, NoReturn]:
-        """Raise an exception if the service call has failed."""
+        """
+        Raise an exception if the service call has failed.
+
+        Raises:
+            ErrorResponse.Error: an error derived from `ErrorResponse`
+
+        Returns:
+            always `None`
+
+        Warning: Mypy does not recognize `NoReturn` here
+            As of the time of writing, Mypy does not infer response type correctly
+            after calling `response.raise_for_result()`.
+            The `NoReturn` should suggest that `response` can only be a successful response
+            (otherwise, the next line would be unreachable).
+
+            The advice is to use [`unwrap()`][combadge.core.response.BaseResponse.unwrap]
+            for the time being.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def expect(self, exception_type: Type[BaseException], *args: Any) -> Union[None, NoReturn]:
-        """Raise the specified exception if the service call has failed."""
+        """
+        Raise the specified exception if the service call has failed.
+
+        This method is similar to the [`unwrap()`][combadge.core.response.BaseResponse.unwrap],
+        but allows raising a custom exception instead.
+
+        Args:
+            exception_type: exception class to be raised
+            args: exception positional arguments
+        """
         raise NotImplementedError
 
     @abstractmethod
     def unwrap(self) -> Union[Self, NoReturn]:
-        """Return itself if the call was successful, raises an exception otherwise."""
+        """
+        Return itself if the call was successful, raises an exception otherwise.
+
+        This method allows «unpacking» a response with proper type hinting.
+        The trick here is that all error responses' `unwrap()` are annotated with `NoReturn`,
+        which suggests a type linter, that `unwrap()` may never return an error.
+
+        Examples:
+            >>> class MyResponse(SuccessfulResponse): ...
+            >>>
+            >>> class MyErrorResponse(ErrorResponse): ...
+            >>>
+            >>> class Service(Protocol):
+            >>>     def call(self) -> MyResponse | MyErrorResponse: ...
+            >>>
+            >>> service: Service
+            >>>
+            >>> # Revealed type is "Union[MyResponse, MyErrorResponse]":
+            >>> reveal_type(service.call())
+            >>>
+            >>> # Revealed type is "MyResponse":
+            >>> reveal_type(service.call().unwrap())
+
+        Raises:
+            ErrorResponse.Error: an error derived from `ErrorResponse`
+
+        Returns:
+            always returns `Self`
+        """
         raise NotImplementedError
 
 
@@ -34,8 +96,7 @@ class SuccessfulResponse(BaseResponse):
     """
     Parent model for successful responses.
 
-    Note:
-        - May be used directly when no payload is expected.
+    Users should not use it directly, but inherit their response models from it.
     """
 
     def raise_for_result(self) -> None:
@@ -55,12 +116,9 @@ class SuccessfulResponse(BaseResponse):
 
 class ErrorResponse(BaseResponse, ABC):
     """
-    Parent model for faulty responses (errors).
+    Parent model for error responses.
 
-    Notes:
-        - Useful when server returns errors in a free from (for example, an `<error>` tag).
-        - Must be subclassed.
-        - For SOAP Fault use or subclass the specialized `GenericSoapFault`.
+    Users should not use it directly, but inherit their response models from it.
     """
 
     class Error(Generic[ResponseT], Exception):
@@ -79,10 +137,10 @@ class ErrorResponse(BaseResponse, ABC):
             >>> except InvalidInput.Error:
             >>>     ...
 
-        Notes:
-            - The problem with `pydantic` is that you can't inherit from `BaseModel` and `Exception`
-              at the same time. Thus, Combadge dynamically constructs a derived exception class,
-              which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
+        Note: Why dynamically constructed class?
+            The problem with `pydantic` is that you can't inherit from `BaseModel` and `Exception`
+            at the same time. Thus, Combadge dynamically constructs a derived exception class,
+            which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
         """
 
         def __init__(self, response: ResponseT) -> None:
@@ -90,9 +148,14 @@ class ErrorResponse(BaseResponse, ABC):
             Instantiate the error.
 
             Args:
-                response: original response that caused the exception.
+                response: original response that caused the exception
             """
             super().__init__(response)
+
+        @property
+        def response(self) -> ResponseT:
+            """Get the response that caused the exception."""
+            return self.args[0]
 
     def __init_subclass__(cls, exception_bases: Iterable[Type[BaseException]] = (), **kwargs: Any) -> None:
         """

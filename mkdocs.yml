@@ -4,7 +4,8 @@ site_name: Combadge
 
 nav:
   - index.md
-  - getting-started.md
+  - Getting started:
+      - getting-started/handling-errors.md
   - Support:
       - support/core.md
       - support/pydantic.md
@@ -74,7 +75,6 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
-  - pymdownx.details
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg

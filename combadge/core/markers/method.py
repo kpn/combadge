@@ -71,8 +71,10 @@ def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], Function
         >>> def service_method(self, ...) -> ...:
         >>>     ...
 
-    Notes:
-        - At the moment the type hinting is limited to decorators, which do not change
-          a wrapped function's signature – possible Mypy's limitation.
+    Note: Decorator cannot change function signature
+        At the moment the type hinting is limited to decorators, which do not change
+        a wrapped function's signature – possible Mypy's limitation.
+
+        It will still work at runtime, but Mypy will very likely complain if you do so.
     """
     return _WrapWithMethodMarker(decorator).mark
