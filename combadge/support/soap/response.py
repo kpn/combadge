@@ -22,8 +22,8 @@ class BaseSoapFault(ErrorResponse):
     message: str
 
     def raise_for_result(self) -> NoReturn:
-        """Raise itself always."""
-        raise self.Error(f"{self.code}: {self.message}")
+        """Raise the derived error for this fault."""
+        raise self.Error(self)
 
 
 SoapFaultT = TypeVar("SoapFaultT", bound=BaseSoapFault)

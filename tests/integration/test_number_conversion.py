@@ -74,8 +74,9 @@ def test_happy_path_scalar_response(number_conversion_service: SupportsNumberCon
 def test_sad_path_scalar_response(number_conversion_service: SupportsNumberConversion) -> None:
     response = number_conversion_service.number_to_words(NumberToWordsRequest(number=-1))
 
-    with raises(NumberTooLargeResponse.Error):
+    with raises(NumberTooLargeResponse.Error) as exception:
         response.raise_for_result()
+    assert exception.value.args == (response,)
 
 
 @mark.vcr
