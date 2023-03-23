@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Generic, Tuple, TypeVar
+from inspect import BoundArguments
+from typing import Any, Callable, Generic, TypeVar
 
 from typing_extensions import Annotated, TypeAlias
 
@@ -15,12 +16,7 @@ class _OperationNameMarker(Generic[FunctionT], MethodMarker[RequiresOperationNam
 
     __slots__ = ("name",)
 
-    def prepare_request(  # noqa: D102
-        self,
-        request: RequiresOperationName,
-        _args: Tuple[Any, ...],
-        _kwargs: Dict[str, Any],
-    ) -> None:
+    def prepare_request(self, request: RequiresOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
         request.operation_name = self.name
 
 

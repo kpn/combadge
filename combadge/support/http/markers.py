@@ -2,7 +2,8 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Dict, Generic, Tuple, TypeVar, Union
+from inspect import BoundArguments
+from typing import Any, Callable, Generic, TypeVar, Union
 
 from pydantic import BaseModel
 from typing_extensions import Annotated, TypeAlias
@@ -38,22 +39,23 @@ Header: TypeAlias = HeaderMarker
 
 
 class _PathMarker(Generic[FunctionT], MethodMarker[RequiresPath, FunctionT]):
-    _factory: Callable[..., str]
+    _factory: Callable[[BoundArguments], str]
     __slots__ = ("_factory",)
 
-    def __init__(self, path_or_factory: Union[str, Callable[..., str]]) -> None:  # noqa: D107
+    def __init__(self, path_or_factory: Union[str, Callable[[BoundArguments], str]]) -> None:  # noqa: D107
         if callable(path_or_factory):
             self._factory = path_or_factory
         else:
-            self._factory = path_or_factory.format
 
-    def prepare_request(  # noqa: D102
-        self,
-        request: RequiresPath,
-        args: Tuple[Any, ...],
-        kwargs: Dict[str, Any],
-    ) -> None:
-        request.path = self._factory(*args, **kwargs)
+            def factory(arguments: BoundArguments) -> str:
+                # The `arguments.arguments` will contain the positional arguments too.
+                # This is intentional to allow referring to positional arguments by their indexes and names.
+                return path_or_factory.format(*arguments.args, **arguments.arguments)  # type: ignore[union-attr]
+
+            self._factory = factory
+
+    def prepare_request(self, request: RequiresPath, arguments: BoundArguments) -> None:  # noqa: D102
+        request.path = self._factory(arguments)
 
 
 def path(path_or_factory: Union[str, Callable[..., str]]) -> Callable[[FunctionT], FunctionT]:
@@ -67,6 +69,9 @@ def path(path_or_factory: Union[str, Callable[..., str]]) -> Callable[[FunctionT
         >>> @path("/hello/{name}")
         >>> def call(name: str) -> None: ...
 
+        >>> @path("/hello/{0}")
+        >>> def call(name: str) -> None: ...
+
         >>> @path(lambda name, **_: f"/hello/{name}")
         >>> def call(name: str) -> None: ...
     """
@@ -77,12 +82,7 @@ def path(path_or_factory: Union[str, Callable[..., str]]) -> Callable[[FunctionT
 class _HttpMethodMarker(Generic[FunctionT], MethodMarker[RequiresMethod, FunctionT]):
     method: str
 
-    def prepare_request(  # noqa: D102
-        self,
-        request: RequiresMethod,
-        _args: Tuple[Any, ...],
-        _kwargs: Dict[str, Any],
-    ) -> None:
+    def prepare_request(self, request: RequiresMethod, _arguments: BoundArguments) -> None:  # noqa: D102
         request.method = self.method
 
 

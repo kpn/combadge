@@ -36,7 +36,7 @@ def build_request(
 
     # Apply the method markers: they receive all the arguments at once.
     for marker in signature.method_markers:
-        marker.prepare_request(request, bound_arguments.args, bound_arguments.kwargs)
+        marker.prepare_request(request, bound_arguments)
 
     # Apply the parameter markers: they receive their respective values.
     for marker in signature.parameter_descriptors:
