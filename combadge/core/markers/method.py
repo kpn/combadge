@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Callable, Dict, Generic, List, Tuple
+from inspect import BoundArguments
+from typing import Any, Callable, Generic, List
 
 from combadge.core.typevars import FunctionT, RequestT
 
@@ -20,7 +21,7 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
         """
         return what
 
-    def prepare_request(self, request: RequestT, args: Tuple[Any, ...], kwargs: Dict[str, Any]) -> None:
+    def prepare_request(self, request: RequestT, arguments: BoundArguments) -> None:
         """
         Modify the request according to the mark.
 
@@ -29,8 +30,7 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
 
         Args:
             request: request that is being constructed, please refer to the ABCs for relevant keys
-            args: service call positional arguments
-            kwargs: service call keyword arguments
+            arguments: bound service call arguments
         """
 
     @staticmethod
