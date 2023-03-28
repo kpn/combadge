@@ -1,5 +1,15 @@
 changelog:
   categories:
-    - title: "🍻 All changes"
+    - title: 💥 Breaking changes
+      labels:
+        - breaking-change
+    - title: ✨ New features
+      labels:
+        - enhancement
+    - title: ⚡️Improvements
+      labels:
+        - improvement
+        - documentation
+    - title: 🎨 Other changes
       labels:
         - "*"
