@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from zeep.exceptions import Fault
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 
+from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import CallServiceMethod
 from combadge.core.request import build_request
@@ -19,10 +20,14 @@ from combadge.support.soap.response import SoapFaultT
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], SupportsRequestWith[Request]):
+class ZeepBackend(
+    BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy],
+    SupportsRequestWith[Request],
+    ServiceContainer,
+):
     """Asynchronous Zeep service."""
 
-    __slots__ = ("_service", "_request_with")
+    __slots__ = ("_service", "_request_with", "_service_cache")
 
     def __init__(
         self,
@@ -39,6 +44,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy], Suppo
         """
         BaseZeepBackend.__init__(self, service)
         SupportsRequestWith.__init__(self, request_with)
+        ServiceContainer.__init__(self)
 
     async def __call__(
         self,
