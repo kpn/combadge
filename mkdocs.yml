@@ -6,6 +6,7 @@ site_description: "Generic API client based on Pydantic"
 nav:
   - index.md
   - Getting started:
+      - getting-started/binding.md
       - getting-started/handling-errors.md
   - Support:
       - support/core.md

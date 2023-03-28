@@ -6,6 +6,7 @@ from typing import Any, Callable, Type
 from httpx import AsyncClient, Response
 from pydantic import BaseModel
 
+from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import CallServiceMethod
 from combadge.core.request import build_request
@@ -17,10 +18,10 @@ from combadge.support.shared.async_ import SupportsRequestWith
 from combadge.support.shared.contextlib import asyncnullcontext
 
 
-class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request]):
+class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], ServiceContainer):
     """Async HTTPX backend for REST APIs."""
 
-    __slots__ = ("_client", "_request_with", "_raise_for_status")
+    __slots__ = ("_client", "_request_with", "_service_cache", "_raise_for_status")
 
     def __init__(
         self,
@@ -39,6 +40,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request]):
         """
         BaseHttpxBackend.__init__(self, client, raise_for_status=raise_for_status)
         SupportsRequestWith.__init__(self, request_with)
+        ServiceContainer.__init__(self)
 
     async def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
         """

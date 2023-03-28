@@ -24,7 +24,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     <img alt="Documentation" height="30em" src="https://img.shields.io/github/actions/workflow/status/kpn/combadge/docs.yml?label=documentation&logo=github">
 </a>
 
-## 🚀 Quick example
+## Sneak peek
 
 ```python title="quickstart_httpx.py"
 from http import HTTPStatus
@@ -65,8 +65,7 @@ class SupportsWttrIn(Protocol):
 
 
 # 3️⃣ Bind the service:
-backend = HttpxBackend(Client(base_url="https://wttr.in"))
-service = bind(SupportsWttrIn, backend)
+service = HttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn]
 
 # 🚀 Call the service:
 response = service.get_weather(in_="amsterdam")

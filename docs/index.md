@@ -28,7 +28,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     - [HTTPX](https://www.python-httpx.org/) – sync and async
     - [Zeep](https://docs.python-zeep.org/en/master/) – sync and async
 
-## Quick examples
+## Sneak peek
 
 === "With HTTPX"
 
@@ -73,8 +73,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
 
     # 3️⃣ Bind the service:
-    backend = HttpxBackend(Client(base_url="https://wttr.in"))
-    service = bind(SupportsWttrIn, backend)
+    service = HttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn]
 
     # 🚀 Call the service:
     response = service.get_weather(in_="amsterdam")
@@ -124,7 +123,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
     # 5️⃣ Bind the service:
     client = zeep.Client(wsdl="tests/integration/wsdl/NumberConversion.wsdl")
-    service = SupportsNumberConversion.bind(ZeepBackend(client.service))
+    service = ZeepBackend(client.service)[SupportsNumberConversion]
 
     # 🚀 Call the service:
     response = service.number_to_words(NumberToWordsRequest(number=42))
