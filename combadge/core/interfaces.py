@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any
+from types import TracebackType
+from typing import Any, Optional, Type
 
 from pydantic import BaseModel
 from typing_extensions import Protocol, Self
@@ -13,15 +14,43 @@ from combadge.core.typevars import BackendT
 
 class SupportsService(Protocol):
     """
-    Convenience protocol that forwards the `bind` call.
+    Convenience base for service protocols.
 
-    You can still inherit from `Protocol` directly and call `bind` manually.
+    You can still inherit from `Protocol` directly and call the `bind()` manually.
+    There are a few reasons why you might want to use `SupportsService`:
+
+    - To call the `ServiceProtocol.bind(backend)` method instead of the standalone `bind()` function
+      avoid importing the `bind()` altogether.
+    - To use a service instance as a context manager because `SupportsService.__enter__()`
+      and `__exit__()` provide the proper type hinting.
     """
 
     @classmethod
     def bind(cls, to_backend: ProvidesBinder, /) -> Self:
         """Bind the current protocol to the specified backend."""
         return bind(cls, to_backend)
+
+    def __enter__(self) -> Self:
+        return self
+
+    async def __aenter__(self) -> Self:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Any:
+        return None
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Any:
+        return None
 
 
 class MethodBinder(Protocol[BackendT]):  # noqa: D101

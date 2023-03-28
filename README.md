@@ -34,7 +34,6 @@ from httpx import Client
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated, Protocol
 
-from combadge.core.binder import bind
 from combadge.support.http.aliases import StatusCode
 from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
@@ -65,10 +64,10 @@ class SupportsWttrIn(Protocol):
 
 
 # 3️⃣ Bind the service:
-service = HttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn]
+with HttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn] as service:
+    # 🚀 Call the service:
+    response = service.get_weather(in_="amsterdam")
 
-# 🚀 Call the service:
-response = service.get_weather(in_="amsterdam")
 assert response.status == HTTPStatus.OK
 assert response.current[0].humidity == 71
 assert response.current[0].temperature == 8.0

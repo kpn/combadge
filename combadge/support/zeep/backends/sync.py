@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
-from typing import Any, Callable, Type, Union
+from types import TracebackType
+from typing import Any, Callable, Optional, Type, Union
 
 from pydantic import BaseModel
+from typing_extensions import Self
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
@@ -74,3 +76,15 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         return bound_method  # type: ignore[return-value]
 
     binder = bind_method  # type: ignore[assignment]
+
+    def __enter__(self) -> Self:
+        self._service = self._service.__enter__()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Any:
+        return self._service.__exit__(exc_type, exc_value, traceback)

@@ -1,11 +1,13 @@
 from abc import abstractmethod
 from typing import Any, Callable, Tuple
+from unittest.mock import Mock
 
 from typing_extensions import Protocol
 
-from combadge.core.binder import _enumerate_methods, _wrap
+from combadge.core.binder import _enumerate_methods, _wrap, bind
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import MethodMarker, wrap_with
+from combadge.core.service import BaseBoundService
 
 
 def test_enumerate_bindable_methods() -> None:
@@ -60,3 +62,12 @@ def test_decorator_ordering() -> None:
         return ()
 
     assert _wrap(get_actual, MethodMarker.ensure_markers(get_actual))() == get_expected()
+
+
+def test_protocol_class_var() -> None:
+    class ServiceProtocol(Protocol):
+        ...
+
+    service = bind(ServiceProtocol, Mock())  # type: ignore[type-abstract]
+    assert isinstance(service, BaseBoundService)
+    assert service._protocol is ServiceProtocol
