@@ -9,6 +9,7 @@ from inspect import signature as get_signature
 from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, Optional, Type
 
 from combadge.core.markers.method import MethodMarker
+from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, RequestT, ServiceProtocolT
 
 if TYPE_CHECKING:
@@ -19,26 +20,6 @@ if TYPE_CHECKING:
 
 else:
     from functools import lru_cache
-
-
-class BaseBoundService(Generic[BackendT]):
-    """Parent of all bound service instances."""
-
-    backend: BackendT
-    __slots__ = ("backend",)
-
-    def __init__(self, backend: BackendT) -> None:  # noqa: D107
-        self.backend = backend
-
-    @classmethod
-    def __get_validators__(cls) -> Iterable[Callable[[Any], None]]:
-        """
-        Get validators for pydantic.
-
-        Returns:
-            No validators, this method only exists for compatibility with `@validate_arguments`.
-        """
-        return ()
 
 
 def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
