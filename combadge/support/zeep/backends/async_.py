@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Callable, Type
+from types import TracebackType
+from typing import Any, Callable, Optional, Type
 
 from pydantic import BaseModel
+from typing_extensions import Self
 from zeep.exceptions import Fault
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 
@@ -79,3 +81,15 @@ class ZeepBackend(
         return bound_method  # type: ignore[return-value]
 
     binder = bind_method  # type: ignore[assignment]
+
+    async def __aenter__(self) -> Self:
+        self._service = await self._service.__aenter__()
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Any:
+        return await self._service.__aexit__(exc_type, exc_value, traceback)

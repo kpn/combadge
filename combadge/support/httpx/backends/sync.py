@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
-from typing import Any, Callable, Type
+from types import TracebackType
+from typing import Any, Callable, Optional, Type
 
 from httpx import Client, Response
 from pydantic import BaseModel
+from typing_extensions import Self
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
@@ -69,3 +71,15 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
         return bound_method  # type: ignore[return-value]
 
     binder = bind_method  # type: ignore[assignment]
+
+    def __enter__(self) -> Self:
+        self._client = self._client.__enter__()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Any:
+        return self._client.__exit__(exc_type, exc_value, traceback)

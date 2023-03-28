@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import Generic, Type, TypeVar
 
-from httpx import Response
+from httpx import AsyncClient, Client, Response
 from pydantic import parse_obj_as
 
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
 from combadge.support.http.aliases import REASON_ALIAS, STATUS_CODE_ALIAS
 
-_ClientT = TypeVar("_ClientT")
+_ClientT = TypeVar("_ClientT", Client, AsyncClient)
 
 
 class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):

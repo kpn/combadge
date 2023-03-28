@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Callable, Type
+from types import TracebackType
+from typing import Any, Callable, Optional, Type
 
 from httpx import AsyncClient, Response
 from pydantic import BaseModel
+from typing_extensions import Self
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
@@ -70,3 +72,15 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
         return bound_method  # type: ignore[return-value]
 
     binder = bind_method  # type: ignore[assignment]
+
+    async def __aenter__(self) -> Self:
+        self._client = await self._client.__aenter__()
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> Any:
+        return await self._client.__aexit__(exc_type, exc_value, traceback)
