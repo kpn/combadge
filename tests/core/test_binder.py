@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Any, Callable, Tuple
 from unittest.mock import Mock
 
-from typing_extensions import Protocol
+from typing_extensions import Protocol, assert_type
 
 from combadge.core.binder import _enumerate_methods, _wrap, bind
 from combadge.core.interfaces import SupportsService
@@ -71,3 +71,11 @@ def test_protocol_class_var() -> None:
     service = bind(ServiceProtocol, Mock())  # type: ignore[type-abstract]
     assert isinstance(service, BaseBoundService)
     assert service._protocol is ServiceProtocol
+
+
+def test_service_type() -> None:
+    class ServiceProtocol(SupportsService):
+        ...
+
+    service = ServiceProtocol.bind(Mock())
+    assert_type(service, ServiceProtocol)

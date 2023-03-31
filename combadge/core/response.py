@@ -77,11 +77,8 @@ class BaseResponse(ABC, BaseModel):
             >>>
             >>> service: Service
             >>>
-            >>> # Revealed type is "Union[MyResponse, MyErrorResponse]":
-            >>> reveal_type(service.call())
-            >>>
-            >>> # Revealed type is "MyResponse":
-            >>> reveal_type(service.call().unwrap())
+            >>> assert_type(service.call(), Union[MyResponse, MyErrorResponse])
+            >>> assert_type(service.call().unwrap(), MyResponse)
 
         Raises:
             ErrorResponse.Error: an error derived from `ErrorResponse`

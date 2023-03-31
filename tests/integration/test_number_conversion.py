@@ -4,7 +4,7 @@ from typing import Iterable, Union
 
 from pydantic import BaseModel, Field
 from pytest import fixture, mark, raises
-from typing_extensions import Annotated, Literal, Protocol
+from typing_extensions import Annotated, Literal, Protocol, assert_type
 from zeep import AsyncClient, Client
 
 from combadge.core.interfaces import SupportsService
@@ -82,4 +82,9 @@ def test_sad_path_scalar_response(number_conversion_service: SupportsNumberConve
 @mark.vcr
 async def test_happy_path_scalar_response_async(number_conversion_service_async: SupportsNumberConversionAsync) -> None:
     response = await number_conversion_service_async.number_to_words(NumberToWordsRequest(number=42))
-    assert response.unwrap().__root__ == "forty two "
+    assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse])
+
+    response = response.unwrap()
+    assert_type(response, NumberToWordsResponse)
+
+    assert response.__root__ == "forty two "

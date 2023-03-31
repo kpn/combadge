@@ -43,7 +43,7 @@ def country_info_service() -> Iterable[SupportsCountryInfo]:
 def test_happy_path(country_info_service: SupportsCountryInfo) -> None:
     response = country_info_service.list_of_continents_by_name(CountryInfoRequest())
 
-    continents = response.unwrap().__root__
+    continents = response.__root__
     assert isinstance(continents, list)
     assert len(continents) == 6
     assert continents[0].code == "AF"
