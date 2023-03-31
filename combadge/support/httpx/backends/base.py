@@ -7,7 +7,7 @@ from pydantic import parse_obj_as
 
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
-from combadge.support.http.aliases import REASON_ALIAS, STATUS_CODE_ALIAS
+from combadge.support.http.aliases import CONTENT_ALIAS, REASON_ALIAS, STATUS_CODE_ALIAS
 
 _ClientT = TypeVar("_ClientT", Client, AsyncClient)
 
@@ -18,6 +18,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
 
     # Available response aliases
 
+    - [`Content`][combadge.support.http.aliases.Content]: HTTP response content
     - [`StatusCode`][combadge.support.http.aliases.StatusCode]: HTTP response status code
     - [`Reason`][combadge.support.http.aliases.Reason]: HTTP reason phrase
     """
@@ -30,11 +31,16 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
 
     @classmethod
     def _parse_response(cls, from_response: Response, to_type: Type[ResponseT]) -> ResponseT:
+        try:
+            json_fields = from_response.json()
+        except ValueError:
+            json_fields = {}
         return parse_obj_as(
             to_type,
             {
                 STATUS_CODE_ALIAS: from_response.status_code,
                 REASON_ALIAS: from_response.reason_phrase,
-                **from_response.json(),
+                CONTENT_ALIAS: from_response.content,
+                **json_fields,
             },
         )
