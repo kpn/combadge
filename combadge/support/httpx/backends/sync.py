@@ -56,6 +56,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
             json=request.json_,
             data=request.form_data,
             params=request.query_params,
+            headers=request.headers,
         )
         if self._raise_for_status:
             response.raise_for_status()
