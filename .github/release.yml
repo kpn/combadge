@@ -7,6 +7,9 @@ changelog:
       labels:
         - enhancement
         - documentation
+    - title: 🐛 Fixes
+      labels:
+        - bug
     - title: 🎨 Other changes
       labels:
         - "*"
