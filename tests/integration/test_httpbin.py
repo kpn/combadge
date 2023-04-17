@@ -1,14 +1,15 @@
 from abc import abstractmethod
 from typing import Any, Dict
 
-from httpx import Client
+from httpx import AsyncClient, Client
 from pydantic import BaseModel
 from pytest import mark
 from typing_extensions import Annotated, Protocol
 
 from combadge.core.interfaces import SupportsService
 from combadge.support.http.markers import FormData, FormField, Header, QueryParam, http_method, path
-from combadge.support.httpx.backends.sync import HttpxBackend
+from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
+from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
 
 @mark.vcr
@@ -31,7 +32,7 @@ def test_form_data() -> None:
         ) -> Response:
             ...
 
-    service = SupportsHttpbin.bind(HttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     response = service.post_anything(data=Data(foo=42), bar=100500, qux=100501)
 
     assert response == Response(form={"foo": "42", "barqux": ["100500", "100501"]})
@@ -53,14 +54,14 @@ def test_query_params() -> None:
         ) -> Response:
             ...
 
-    service = SupportsHttpbin.bind(HttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     response = service.get_anything(foo=100500, bar=100501)
 
     assert response == Response(args={"foobar": ["100500", "100501"]})
 
 
 @mark.vcr
-def test_headers() -> None:
+def test_headers_sync() -> None:
     class Response(BaseModel):
         headers: Dict[str, Any]
 
@@ -75,7 +76,29 @@ def test_headers() -> None:
         ) -> Response:
             ...
 
-    service = SupportsHttpbin.bind(HttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     response = service.get_headers(foo="fooval")
+    assert response.headers["X-Foo"] == "fooval"
+    assert response.headers["X-Bar"] == "barval"
+
+
+@mark.vcr
+async def test_headers_async() -> None:
+    class Response(BaseModel):
+        headers: Dict[str, Any]
+
+    class SupportsHttpbin(SupportsService, Protocol):
+        @http_method("GET")
+        @path("/headers")
+        @abstractmethod
+        async def get_headers(
+            self,
+            foo: Annotated[str, Header("x-foo")],
+            bar: Annotated[str, Header("x-bar")] = "barval",
+        ) -> Response:
+            ...
+
+    service = SupportsHttpbin.bind(AsyncHttpxBackend(AsyncClient(base_url="https://httpbin.org")))
+    response = await service.get_headers(foo="fooval")
     assert response.headers["X-Foo"] == "fooval"
     assert response.headers["X-Bar"] == "barval"
