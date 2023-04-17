@@ -45,6 +45,9 @@ def build_request(
         except KeyError:
             pass
         else:
+            # allow for lazy loaded default parameters
+            if callable(value):
+                value = value()
             marker.prepare_request(request, value)
 
     # Validate and return the request.
