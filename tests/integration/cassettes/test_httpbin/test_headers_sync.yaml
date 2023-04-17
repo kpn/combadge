@@ -18,6 +18,8 @@ interactions:
       - python-httpx/0.23.3
       x-bar:
       - barval
+      x-baz:
+      - bazval
       x-foo:
       - fooval
     method: GET
@@ -26,8 +28,9 @@ interactions:
     content: "{\n  \"headers\": {\n    \"Accept\": \"*/*\", \n    \"Accept-Encoding\":
       \"gzip, deflate\", \n    \"Content-Length\": \"2\", \n    \"Content-Type\":
       \"application/json\", \n    \"Host\": \"httpbin.org\", \n    \"User-Agent\":
-      \"python-httpx/0.23.3\", \n    \"X-Amzn-Trace-Id\": \"Root=1-64396832-4d7d2c31342b06257ae681ec\",
-      \n    \"X-Bar\": \"barval\", \n    \"X-Foo\": \"fooval\"\n  }\n}\n"
+      \"python-httpx/0.23.3\", \n    \"X-Amzn-Trace-Id\": \"Root=1-643d1b44-37172fe20eb4793848a2d302\",
+      \n    \"X-Bar\": \"barval\", \n    \"X-Baz\": \"bazval\", \n    \"X-Foo\": \"fooval\"\n
+      \ }\n}\n"
     headers:
       Access-Control-Allow-Credentials:
       - 'true'
@@ -36,11 +39,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '339'
+      - '363'
       Content-Type:
       - application/json
       Date:
-      - Fri, 14 Apr 2023 14:50:28 GMT
+      - Mon, 17 Apr 2023 10:11:17 GMT
       Server:
       - gunicorn/19.9.0
     http_version: HTTP/1.1

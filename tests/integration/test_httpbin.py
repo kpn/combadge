@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict
+from typing import Any, Callable, Dict, Union
 
 from httpx import AsyncClient, Client
 from pydantic import BaseModel
@@ -73,6 +73,7 @@ def test_headers_sync() -> None:
             self,
             foo: Annotated[str, Header("x-foo")],
             bar: Annotated[str, Header("x-bar")] = "barval",
+            baz: Annotated[Union[str, Callable[[], str]], Header("x-baz")] = lambda: "bazval",
         ) -> Response:
             ...
 
@@ -80,6 +81,7 @@ def test_headers_sync() -> None:
     response = service.get_headers(foo="fooval")
     assert response.headers["X-Foo"] == "fooval"
     assert response.headers["X-Bar"] == "barval"
+    assert response.headers["X-Baz"] == "bazval"
 
 
 @mark.vcr
@@ -95,6 +97,7 @@ async def test_headers_async() -> None:
             self,
             foo: Annotated[str, Header("x-foo")],
             bar: Annotated[str, Header("x-bar")] = "barval",
+            baz: Annotated[Union[str, Callable[[], str]], Header("x-baz")] = lambda: "bazval",
         ) -> Response:
             ...
 
@@ -102,3 +105,4 @@ async def test_headers_async() -> None:
     response = await service.get_headers(foo="fooval")
     assert response.headers["X-Foo"] == "fooval"
     assert response.headers["X-Bar"] == "barval"
+    assert response.headers["X-Baz"] == "bazval"
