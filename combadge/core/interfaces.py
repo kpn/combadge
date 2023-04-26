@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from types import TracebackType
-from typing import Any, Optional, Type
+from typing import Any, Optional, Protocol, Type
 
 from pydantic import BaseModel
-from typing_extensions import Protocol, Self
+from typing_extensions import Self
 
 from combadge.core.binder import BaseBoundService, bind
 from combadge.core.signature import Signature

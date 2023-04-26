@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from pathlib import Path
-from typing import Iterable, List
+from typing import Iterable, List, Protocol
 
 from pydantic import BaseModel, Field
 from pytest import fixture, mark
-from typing_extensions import Annotated, Protocol
+from typing_extensions import Annotated
 from zeep import Client
 
 from combadge.core.interfaces import SupportsService
