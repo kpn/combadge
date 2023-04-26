@@ -1,7 +1,6 @@
-from typing import Any, Iterable, Mapping, Type, Union
+from typing import Any, Iterable, Mapping, NoReturn, Type, Union
 
 from pydantic import validate_model
-from typing_extensions import NoReturn
 
 from combadge.core.binder import BaseBoundService
 from combadge.core.signature import Signature

@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterable, Type, Union
+from typing import Any, Generic, Iterable, NoReturn, Optional, Type, Union
 
 from pydantic import BaseModel
-from typing_extensions import NoReturn, Self, TypeAlias
+from typing_extensions import Self, TypeAlias
 
 from combadge.core.typevars import ResponseT
 
@@ -23,7 +23,7 @@ class BaseResponse(ABC, BaseModel):
     """
 
     @abstractmethod
-    def raise_for_result(self) -> Union[None, NoReturn]:
+    def raise_for_result(self, exception: Optional[BaseException] = None) -> Union[None, NoReturn]:
         """
         Raise an exception if the service call has failed.
 
@@ -41,20 +41,6 @@ class BaseResponse(ABC, BaseModel):
 
             The advice is to use [`unwrap()`][combadge.core.response.BaseResponse.unwrap]
             for the time being.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def expect(self, exception_type: Type[BaseException], *args: Any) -> Union[None, NoReturn]:
-        """
-        Raise the specified exception if the service call has failed.
-
-        This method is similar to the [`unwrap()`][combadge.core.response.BaseResponse.unwrap],
-        but allows raising a custom exception instead.
-
-        Args:
-            exception_type: exception class to be raised
-            args: exception positional arguments
         """
         raise NotImplementedError
 
@@ -96,15 +82,12 @@ class SuccessfulResponse(BaseResponse):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    def raise_for_result(self) -> None:
+    def raise_for_result(self, exception: Optional[BaseException] = None) -> None:
         """
         Do nothing.
 
         This call is a no-op since the response is successful.
         """
-
-    def expect(self, _exception_type: Type[BaseException], *_args: Any) -> None:
-        """Do nothing."""
 
     def unwrap(self) -> Self:
         """Return itself since there's no error."""
@@ -185,13 +168,16 @@ class ErrorResponse(BaseResponse, ABC):
         DerivedException.__doc__ = cls.__doc__ or DerivedException.__doc__
         cls.Error = DerivedException  # type: ignore
 
-    def raise_for_result(self) -> NoReturn:
-        """Raise the derived exception."""
-        raise self.Error(self)
+    def raise_for_result(self, exception: Optional[BaseException] = None) -> NoReturn:
+        """
+        Raise the derived exception.
 
-    def expect(self, exception_type: Type[BaseException], *args: Any) -> NoReturn:
-        """Raise the specified exception with the derived exception context."""
-        raise exception_type(*args) from self.Error(self)
+        Args:
+            exception: if set, raise the specified exception instead of the derived one.
+        """
+        if not exception:
+            raise self.Error(self)
+        raise exception from self.Error(self)
 
     def unwrap(self) -> NoReturn:
         """Raise the derived exception."""

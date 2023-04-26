@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from typing import Any, Callable, Tuple
+from typing import Any, Callable, Protocol, Tuple
 from unittest.mock import Mock
 
-from typing_extensions import Protocol, assert_type
+from typing_extensions import assert_type
 
 from combadge.core.binder import _enumerate_methods, _wrap, bind
 from combadge.core.interfaces import SupportsService

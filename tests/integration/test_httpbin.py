@@ -1,10 +1,10 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Protocol, Union
 
 from httpx import AsyncClient, Client
 from pydantic import BaseModel
 from pytest import mark
-from typing_extensions import Annotated, Protocol
+from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
 from combadge.support.http.markers import FormData, FormField, Header, QueryParam, http_method, path
