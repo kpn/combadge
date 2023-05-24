@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import AbstractAsyncContextManager
 from types import TracebackType
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable
 
 from pydantic import BaseModel
 from typing_extensions import Self
@@ -51,8 +51,8 @@ class ZeepBackend(
     async def __call__(
         self,
         request: Request,
-        response_type: Type[ResponseT],
-        fault_type: Type[SoapFaultT],
+        response_type: type[ResponseT],
+        fault_type: type[SoapFaultT],
     ) -> BaseModel:
         """
         Call the specified service method.
@@ -88,8 +88,8 @@ class ZeepBackend(
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         return await self._service.__aexit__(exc_type, exc_value, traceback)

@@ -86,12 +86,12 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
     ```python title="quickstart_zeep.py"
 
-    from typing import Literal, Union
+    from typing import Literal, Protocol, Union
 
     import zeep
     from pydantic import BaseModel, Field
     from pytest import raises
-    from typing_extensions import Annotated, Protocol
+    from typing_extensions import Annotated
 
     from combadge.core.interfaces import SupportsService
     from combadge.core.response import ErrorResponse, SuccessfulResponse

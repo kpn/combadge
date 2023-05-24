@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import AbstractAsyncContextManager
 from types import TracebackType
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable
 
 from httpx import AsyncClient, Response
 from pydantic import BaseModel
@@ -44,7 +44,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
         SupportsRequestWith.__init__(self, request_with)
         ServiceContainer.__init__(self)
 
-    async def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
+    async def __call__(self, request: Request, response_type: type[ResponseT]) -> ResponseT:
         """
         Call the backend and parse a response.
 
@@ -80,8 +80,8 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         return await self._client.__aexit__(exc_type, exc_value, traceback)

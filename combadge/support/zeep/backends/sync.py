@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
 from types import TracebackType
-from typing import Any, Callable, Optional, Type, Union
+from typing import Any, Callable
 
 from pydantic import BaseModel
 from typing_extensions import Self
@@ -46,9 +46,9 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
     def __call__(
         self,
         request: Request,
-        response_type: Type[ResponseT],
-        fault_type: Type[SoapFaultT],
-    ) -> Union[ResponseT, SoapFaultT]:
+        response_type: type[ResponseT],
+        fault_type: type[SoapFaultT],
+    ) -> ResponseT | SoapFaultT:
         """
         Call the specified service method.
 
@@ -83,8 +83,8 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         return self._service.__exit__(exc_type, exc_value, traceback)

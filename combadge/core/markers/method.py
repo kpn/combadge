@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, List
+from typing import Any, Callable, Generic
 
 from combadge.core.typevars import FunctionT, RequestT
 
@@ -34,7 +34,7 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
         """
 
     @staticmethod
-    def ensure_markers(in_: Any) -> List[MethodMarker]:
+    def ensure_markers(in_: Any) -> list[MethodMarker]:
         """Ensure that the argument contains the mark list attribute, and return the list."""
         try:
             marks = in_.__combadge_marks__

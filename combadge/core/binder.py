@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from functools import update_wrapper
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable, Optional, Type
+from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.service import BaseBoundService
@@ -15,14 +15,14 @@ from combadge.core.typevars import BackendT, FunctionT, RequestT, ServiceProtoco
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
 
-    def lru_cache(maxsize: Optional[int]) -> Callable[[FunctionT], FunctionT]:
+    def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]:
         ...
 
 else:
     from functools import lru_cache
 
 
-def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
+def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
     """
     Create a service instance which implements the specified protocol by calling the specified backend.
 
@@ -36,7 +36,7 @@ def bind(from_protocol: Type[ServiceProtocolT], to_backend: ProvidesBinder) -> S
 
 @lru_cache(maxsize=100)
 def bind_class(
-    from_protocol: Type[ServiceProtocolT],
+    from_protocol: type[ServiceProtocolT],
     method_binder: MethodBinder[BackendT],
 ) -> Callable[[BackendT], ServiceProtocolT]:
     from combadge.core.signature import Signature

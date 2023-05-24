@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, List, Type
+from typing import Any, Generic
 
 from typing_extensions import Annotated, get_origin
 from typing_extensions import get_args as get_type_args
@@ -15,7 +15,7 @@ class ParameterMarker(Generic[RequestT], ABC):
     __slots__ = ()
 
     @staticmethod
-    def extract(type_: Type[Any]) -> List[ParameterMarker]:
+    def extract(type_: type[Any]) -> list[ParameterMarker]:
         """Extract all parameter markers from the type annotation."""
         if get_origin(type_) is Annotated:
             return [arg for arg in get_type_args(type_) if isinstance(arg, ParameterMarker)]
