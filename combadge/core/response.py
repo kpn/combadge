@@ -163,6 +163,7 @@ class ErrorResponse(BaseResponse, ABC):
                 - This docstring is overridden by the corresponding model docstring.
             """
 
+        DerivedException.__module__ = cls.__module__
         DerivedException.__name__ = f"{cls.__name__}.Error"
         DerivedException.__qualname__ = f"{cls.__qualname__}.Error"
         DerivedException.__doc__ = cls.__doc__ or DerivedException.__doc__
