@@ -44,3 +44,12 @@ def test_custom_raise_for_result() -> None:
 
     assert isinstance(e.value.__cause__, Error.Error)
     assert e.value.__cause__.response is response
+
+
+def test_derived_error_magic_attributes() -> None:
+    class CustomError(ErrorResponse):
+        pass
+
+    assert CustomError.Error.__module__ == "tests.core.test_response"
+    assert CustomError.Error.__name__ == "CustomError.Error"
+    assert CustomError.Error.__qualname__ == "test_derived_error_magic_attributes.<locals>.CustomError.Error"
