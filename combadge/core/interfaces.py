@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from types import TracebackType
-from typing import Any, Optional, Protocol, Type
+from typing import Any, Protocol
 
 from pydantic import BaseModel
 from typing_extensions import Self
@@ -38,17 +38,17 @@ class SupportsService(Protocol):
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         return None
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         return None
 

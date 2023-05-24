@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generic, Type, TypeVar
+from typing import Generic, TypeVar
 
 from httpx import AsyncClient, Client, Response
 from pydantic import parse_obj_as
@@ -30,7 +30,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
         self._raise_for_status = raise_for_status
 
     @classmethod
-    def _parse_response(cls, from_response: Response, to_type: Type[ResponseT]) -> ResponseT:
+    def _parse_response(cls, from_response: Response, to_type: type[ResponseT]) -> ResponseT:
         try:
             json_fields = from_response.json()
         except ValueError:

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from inspect import BoundArguments
 from inspect import signature as get_signature
-from typing import Any, Callable, Dict, List, Type
+from typing import Any, Callable
 
 from pydantic import BaseModel, create_model
 
@@ -28,8 +28,8 @@ class Signature:
     """
 
     bind_arguments: Callable[..., BoundArguments]
-    method_markers: List[MethodMarker]
-    annotations: Dict[str, Any]
+    method_markers: list[MethodMarker]
+    annotations: dict[str, Any]
 
     __slots__ = ("bind_arguments", "method_markers", "annotations", "__dict__")
 
@@ -43,7 +43,7 @@ class Signature:
         )
 
     @cached_property
-    def parameter_descriptors(self) -> List[ParameterDescriptor]:
+    def parameter_descriptors(self) -> list[ParameterDescriptor]:
         """Get the parameter descriptors: separate list item for each parameter ⨯ marker combination."""
         return [
             ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
@@ -52,12 +52,12 @@ class Signature:
         ]
 
     @cached_property
-    def return_type(self) -> Type[BaseModel]:
+    def return_type(self) -> type[BaseModel]:
         """Get the method's return type."""
         return self.annotations.get("return", SuccessfulResponse)
 
     @cached_property
-    def parameters_model(self) -> Type[BaseModel]:
+    def parameters_model(self) -> type[BaseModel]:
         """Get dynamically constructed model for this method."""
-        field_definitions: Dict[str, Any] = {name: (type_, ...) for name, type_ in self.annotations.items()}
+        field_definitions: dict[str, Any] = {name: (type_, ...) for name, type_ in self.annotations.items()}
         return create_model("DynamicModel", **field_definitions)  # TODO: better model name.

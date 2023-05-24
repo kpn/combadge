@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
 from types import TracebackType
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable
 
 from httpx import Client, Response
 from pydantic import BaseModel
@@ -43,7 +43,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
         SupportsRequestWith.__init__(self, request_with)
         ServiceContainer.__init__(self)
 
-    def __call__(self, request: Request, response_type: Type[ResponseT]) -> ResponseT:
+    def __call__(self, request: Request, response_type: type[ResponseT]) -> ResponseT:
         """
         Call the backend and parse a response.
 
@@ -79,8 +79,8 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         return self._client.__exit__(exc_type, exc_value, traceback)

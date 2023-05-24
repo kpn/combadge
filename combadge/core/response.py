@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterable, NoReturn, Optional, Type, Union
+from typing import Any, Generic, Iterable, NoReturn
 
 from pydantic import BaseModel
 from typing_extensions import Self, TypeAlias
@@ -23,7 +23,7 @@ class BaseResponse(ABC, BaseModel):
     """
 
     @abstractmethod
-    def raise_for_result(self, exception: Optional[BaseException] = None) -> Union[None, NoReturn]:
+    def raise_for_result(self, exception: BaseException | None = None) -> None | NoReturn:
         """
         Raise an exception if the service call has failed.
 
@@ -45,7 +45,7 @@ class BaseResponse(ABC, BaseModel):
         raise NotImplementedError
 
     @abstractmethod
-    def unwrap(self) -> Union[Self, NoReturn]:
+    def unwrap(self) -> Self | NoReturn:
         """
         Return itself if the call was successful, raises an exception otherwise.
 
@@ -82,7 +82,7 @@ class SuccessfulResponse(BaseResponse):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    def raise_for_result(self, exception: Optional[BaseException] = None) -> None:
+    def raise_for_result(self, exception: BaseException | None = None) -> None:
         """
         Do nothing.
 
@@ -137,7 +137,7 @@ class ErrorResponse(BaseResponse, ABC):
             """Get the response that caused the exception."""
             return self.args[0]
 
-    def __init_subclass__(cls, exception_bases: Iterable[Type[BaseException]] = (), **kwargs: Any) -> None:
+    def __init_subclass__(cls, exception_bases: Iterable[type[BaseException]] = (), **kwargs: Any) -> None:
         """
         Build the derived exception class.
 
@@ -168,7 +168,7 @@ class ErrorResponse(BaseResponse, ABC):
         DerivedException.__doc__ = cls.__doc__ or DerivedException.__doc__
         cls.Error = DerivedException  # type: ignore
 
-    def raise_for_result(self, exception: Optional[BaseException] = None) -> NoReturn:
+    def raise_for_result(self, exception: BaseException | None = None) -> NoReturn:
         """
         Raise the derived exception.
 
