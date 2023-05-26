@@ -38,7 +38,7 @@ jobs:
       - name: "📥 Install Material for MkDocs"
         run: |
           python -m venv .venv
-          .venv/bin/pip install --upgrade 'mkdocs-material~=9.0' 'mkdocs-autorefs~=0.4' 'mkdocstrings[python]~=0.20' 'mkdocs-git-revision-date-localized-plugin~=1.1' pillow cairosvg 'black~=22.12'
+          .venv/bin/pip install --upgrade 'mkdocs-material>=9.0.0,<10.0.0' 'mkdocs-autorefs>=0.4.1,<1.0.0' 'mkdocstrings[python]>=0.20.0,<1.0.0' 'mkdocs-git-revision-date-localized-plugin>=1.1.0,<2.0.0' pillow cairosvg 'black>=22.12.0,<23.0.0'
 
       - run: ".venv/bin/mkdocs build --site-dir _site"
         name: "📦 Build"

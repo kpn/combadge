@@ -25,6 +25,7 @@ However, Combadge provides some base response classes, which come in handy:
 ::: combadge.core.response.ErrorResponse
     options:
       heading_level: 3
+      members: ["Error", "raise_for_result", "unwrap"]
 
 !!! tip "Discriminated unions"
 
