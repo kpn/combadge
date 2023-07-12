@@ -158,5 +158,5 @@ enable = true
 vcs = "git"
 pattern = "default-unprefixed"
 style = "pep440"
-strict = false # TODO
+strict = true
 latest-tag = true
