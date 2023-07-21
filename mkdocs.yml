@@ -92,6 +92,7 @@ markdown_extensions:
       permalink: true
 
 repo_url: https://github.com/kpn/combadge
+edit_uri: edit/main/docs/
 
 extra:
   social:
