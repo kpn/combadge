@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+from collections.abc import Collection
 from contextlib import AbstractAsyncContextManager
+from os import PathLike, fspath
+from ssl import SSLContext
 from types import TracebackType
 from typing import Any, Callable
 
+import httpx
 from pydantic import BaseModel
 from typing_extensions import Self
+from zeep import AsyncClient, Plugin
 from zeep.exceptions import Fault
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
+from zeep.transports import AsyncTransport
+from zeep.wsse import UsernameToken
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
@@ -19,7 +26,7 @@ from combadge.support.shared.async_ import SupportsRequestWith
 from combadge.support.shared.contextlib import asyncnullcontext
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT
-from combadge.support.zeep.backends.base import BaseZeepBackend
+from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
 
 
 class ZeepBackend(
@@ -30,6 +37,58 @@ class ZeepBackend(
     """Asynchronous Zeep service."""
 
     __slots__ = ("_service", "_request_with", "_service_cache")
+
+    @classmethod
+    def with_params(
+        cls,
+        wsdl_path: PathLike,
+        *,
+        service: ByBindingName | ByServiceName | None = None,
+        plugins: Collection[Plugin] | None = None,
+        load_timeout: float | None = None,
+        operation_timeout: float | None = None,
+        wsse: UsernameToken | None = None,
+        verify_ssl: PathLike | bool | SSLContext = True,
+        cert: PathLike | tuple[PathLike, PathLike | None] | tuple[PathLike, PathLike | None, str | None] | None = None,
+    ) -> ZeepBackend:
+        """
+        Instantiate the backend using a set of the most common parameters.
+
+        Using the `__init__()` may become quite wordy, so this method simplifies typical use cases.
+        """
+        verify = verify_ssl if isinstance(verify_ssl, (bool, SSLContext)) else fspath(verify_ssl)
+
+        if isinstance(cert, tuple):
+            cert_file = cert[0]
+            key_file = cert[1]
+            password = cert[2] if len(cert) == 3 else None  # type: ignore[misc]
+            cert_ = (fspath(cert_file), fspath(key_file) if key_file else None, password)
+        elif cert is not None:
+            cert_ = fspath(cert)
+        else:
+            cert_ = None
+
+        transport = AsyncTransport(
+            timeout=None,  # overloaded
+            client=httpx.AsyncClient(timeout=operation_timeout, verify=verify, cert=cert_),
+            wsdl_client=httpx.Client(timeout=load_timeout, verify=verify, cert=cert_),
+        )
+
+        client = AsyncClient(fspath(wsdl_path), wsse=wsse, plugins=plugins, transport=transport)
+        if service is None:
+            service_proxy = client.service
+        elif isinstance(service, ByServiceName):
+            service_proxy = client.bind(service.service_name, service.port_name)
+        elif isinstance(service, ByBindingName):
+            # `create_service()` creates a sync service proxy, work around:
+            service_proxy = AsyncServiceProxy(
+                client,
+                client.wsdl.bindings[service.binding_name],
+                address=service.address,
+            )
+        else:
+            raise TypeError(type(service))
+        return cls(service_proxy)
 
     def __init__(
         self,

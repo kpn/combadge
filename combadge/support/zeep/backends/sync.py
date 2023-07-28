@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from contextlib import AbstractContextManager, nullcontext
+from os import PathLike, fspath
 from types import TracebackType
-from typing import Any, Callable
+from typing import Any, Callable, Collection
 
 from pydantic import BaseModel
 from typing_extensions import Self
+from zeep import Client, Plugin, Transport
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
+from zeep.wsse import UsernameToken
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
@@ -18,13 +21,53 @@ from combadge.core.typevars import ResponseT
 from combadge.support.shared.sync import SupportsRequestWith
 from combadge.support.soap.request import Request
 from combadge.support.soap.response import SoapFaultT
-from combadge.support.zeep.backends.base import BaseZeepBackend
+from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
 
 
 class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequestWith[Request], ServiceContainer):
     """Synchronous Zeep service."""
 
     __slots__ = ("_service", "_request_with", "_service_cache")
+
+    @classmethod
+    def with_params(
+        cls,
+        wsdl_path: PathLike,
+        *,
+        service: ByBindingName | ByServiceName | None = None,
+        plugins: Collection[Plugin] | None = None,
+        load_timeout: float | None = None,
+        operation_timeout: float | None = None,
+        wsse: UsernameToken | None = None,
+        verify_ssl: bool | PathLike = True,
+        cert_file: PathLike | None = None,
+        key_file: PathLike | None = None,
+    ) -> ZeepBackend:
+        """
+        Instantiate the backend using a set of the most common parameters.
+
+        Using the `__init__()` may become quite wordy, so this method simplifies typical use cases.
+        """
+        client = Client(
+            fspath(wsdl_path),
+            wsse=wsse,
+            transport=Transport(timeout=load_timeout, operation_timeout=operation_timeout),
+            plugins=plugins,
+        )
+        client.transport.session.verify = verify_ssl if isinstance(verify_ssl, bool) else fspath(verify_ssl)
+        client.transport.session.cert = (
+            fspath(cert_file) if cert_file is not None else None,
+            fspath(key_file) if key_file is not None else None,
+        )
+        if service is None:
+            service_proxy = client.service
+        elif isinstance(service, ByServiceName):
+            service_proxy = client.bind(service.service_name, service.port_name)
+        elif isinstance(service, ByBindingName):
+            service_proxy = client.create_service(service.binding_name, service.address)
+        else:
+            raise TypeError(type(service))
+        return cls(service_proxy)
 
     def __init__(
         self,
