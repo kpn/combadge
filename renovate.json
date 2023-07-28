@@ -1,0 +1,10 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "commitMessagePrefix": "OPT: ",
+  "commitMessageSuffix": null,
+  "extends": [
+    "group:allNonMajor",
+    "schedule:earlyMondays"
+  ],
+  "rangeStrategy": "widen"
+}
