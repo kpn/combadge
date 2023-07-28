@@ -11,6 +11,7 @@ from combadge.core.interfaces import SupportsService
 from combadge.core.response import ErrorResponse, SuccessfulResponse
 from combadge.support.soap.markers import Body, operation_name
 from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
+from combadge.support.zeep.backends.base import ByServiceName
 from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
 
 
@@ -87,4 +88,28 @@ async def test_happy_path_scalar_response_async(number_conversion_service_async:
     response = response.unwrap()
     assert_type(response, NumberToWordsResponse)
 
+    assert response.__root__ == "forty two "
+
+
+@mark.vcr
+def test_happy_path_with_params() -> None:
+    backend = SyncZeepBackend.with_params(
+        Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
+        service=ByServiceName(port_name="NumberConversionSoap"),
+        operation_timeout=1,
+    )
+    service = SupportsNumberConversion.bind(backend)
+    response = service.number_to_words(NumberToWordsRequest(number=42)).unwrap()
+    assert response.__root__ == "forty two "
+
+
+@mark.vcr
+async def test_happy_path_with_params_async() -> None:
+    backend = AsyncZeepBackend.with_params(
+        Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
+        service=ByServiceName(port_name="NumberConversionSoap"),
+        operation_timeout=1,
+    )
+    service = SupportsNumberConversionAsync.bind(backend)
+    response = (await service.number_to_words(NumberToWordsRequest(number=42))).unwrap()
     assert response.__root__ == "forty two "

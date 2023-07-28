@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from abc import ABC
-from typing import Any, Generic, Tuple, Type, TypeVar, Union
+from dataclasses import dataclass
+from typing import Any, Generic, TypeVar, Union
 
 from pydantic import BaseModel, parse_obj_as
 from typing_extensions import get_args as get_type_args
@@ -33,7 +36,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         self._service = service
 
     @staticmethod
-    def _split_response_type(response_type: Type[Any]) -> Tuple[Type[BaseModel], Type[BaseSoapFault]]:
+    def _split_response_type(response_type: type[Any]) -> tuple[type[BaseModel], type[BaseSoapFault]]:
         """
         Split the response type into non-faults and faults.
 
@@ -70,11 +73,27 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
             raise RuntimeError(f"available operations are: {dir(self._service)}") from e
 
     @staticmethod
-    def _parse_response(value: CompoundValue, response_type: Type[ResponseT]) -> ResponseT:
+    def _parse_response(value: CompoundValue, response_type: type[ResponseT]) -> ResponseT:
         """Parse the response value using the generic response types."""
         return parse_obj_as(response_type, serialize_object(value, dict))
 
     @staticmethod
-    def _parse_soap_fault(exception: Fault, fault_type: Type[SoapFaultT]) -> SoapFaultT:
+    def _parse_soap_fault(exception: Fault, fault_type: type[SoapFaultT]) -> SoapFaultT:
         """Parse the SOAP fault."""
         return parse_obj_as(fault_type, exception.__dict__)
+
+
+@dataclass
+class ByBindingName:
+    """Create service by binding name and address."""
+
+    binding_name: str
+    address: str
+
+
+@dataclass
+class ByServiceName:
+    """Create service by service and port names."""
+
+    service_name: str | None = None
+    port_name: str | None = None
