@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterable, NoReturn
+from typing import Any, ClassVar, Generic, Iterable, NoReturn, Type
 
 from pydantic import BaseModel
-from typing_extensions import Self, TypeAlias
+from typing_extensions import Self
 
 from combadge.core.typevars import ResponseT
 
@@ -94,6 +94,24 @@ class SuccessfulResponse(BaseResponse):
         return self
 
 
+class BaseError(Generic[ResponseT], Exception):
+    """Base exception class for all errors derived from `ErrorResponse`."""
+
+    def __init__(self, response: ResponseT) -> None:
+        """
+        Instantiate the error.
+
+        Args:
+            response: original response that caused the exception
+        """
+        super().__init__(response)
+
+    @property
+    def response(self) -> ResponseT:
+        """Get the response that caused the exception."""
+        return self.args[0]
+
+
 class ErrorResponse(BaseResponse, ABC):
     """
     Parent model for error responses.
@@ -101,41 +119,27 @@ class ErrorResponse(BaseResponse, ABC):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    class Error(Generic[ResponseT], Exception):
-        """
-        Dynamically derived exception class.
+    Error: ClassVar[Type[BaseError]] = BaseError
+    """
+    Dynamically derived exception class.
 
-        For each model inherited from `ErrorResponse` Combadge generates an exception
-        class, which is accessible through the `<ModelClass>.Error` attribute.
+    For each model inherited from `ErrorResponse` Combadge generates an exception
+    class, which is accessible through the `<ModelClass>.Error` attribute.
 
-        Examples:
-            >>> class InvalidInput(ErrorResponse):
-            >>>     code: Literal["INVALID_INPUT"]
-            >>>
-            >>> try:
-            >>>     service.call(...)
-            >>> except InvalidInput.Error:
-            >>>     ...
+    Examples:
+        >>> class InvalidInput(ErrorResponse):
+        >>>     code: Literal["INVALID_INPUT"]
+        >>>
+        >>> try:
+        >>>     service.call(...)
+        >>> except InvalidInput.Error:
+        >>>     ...
 
-        Note: Why dynamically constructed class?
-            The problem with `pydantic` is that you can't inherit from `BaseModel` and `Exception`
-            at the same time. Thus, Combadge dynamically constructs a derived exception class,
-            which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
-        """
-
-        def __init__(self, response: ResponseT) -> None:
-            """
-            Instantiate the error.
-
-            Args:
-                response: original response that caused the exception
-            """
-            super().__init__(response)
-
-        @property
-        def response(self) -> ResponseT:
-            """Get the response that caused the exception."""
-            return self.args[0]
+    Note: Why dynamically constructed class?
+        The problem with `pydantic` is that you can't inherit from `BaseModel` and `Exception`
+        at the same time. Thus, Combadge dynamically constructs a derived exception class,
+        which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
+    """
 
     def __init_subclass__(cls, exception_bases: Iterable[type[BaseException]] = (), **kwargs: Any) -> None:
         """
@@ -183,7 +187,3 @@ class ErrorResponse(BaseResponse, ABC):
     def unwrap(self) -> NoReturn:
         """Raise the derived exception."""
         raise self.Error(self)
-
-
-BaseError: TypeAlias = ErrorResponse.Error
-"""Base exception class for all errors derived from `ErrorResponse`."""

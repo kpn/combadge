@@ -86,6 +86,7 @@ ignore = [
     "PT013",
     "RET505",
     "TRY003",
+    "UP006", # Python 3.9+
 ]
 unfixable = ["B"]
 

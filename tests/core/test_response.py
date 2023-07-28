@@ -1,6 +1,6 @@
 from pytest import raises
 
-from combadge.core.response import ErrorResponse
+from combadge.core.response import BaseError, ErrorResponse
 
 
 def test_error_inheritance() -> None:
@@ -14,6 +14,7 @@ def test_error_inheritance() -> None:
         pass
 
     assert Bar.Error is not Foo.Error
+    assert issubclass(Foo.Error, BaseError)
     assert issubclass(Bar.Error, Foo.Error)
     assert issubclass(Foo.Error, AnotherBaseError)
     assert issubclass(Bar.Error, AnotherBaseError)
