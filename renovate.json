@@ -1,10 +1,23 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "commitMessagePrefix": "OPT: ",
-  "commitMessageSuffix": null,
+  "commitMessagePrefix": "OPT:",
+  "commitMessageSuffix": "⬆️",
   "extends": [
     "group:allNonMajor",
     "schedule:earlyMondays"
   ],
-  "rangeStrategy": "widen"
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "rangeStrategy": "widen"
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "rangeStrategy": "pin"
+    }
+  ]
 }
