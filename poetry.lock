@@ -2072,4 +2072,4 @@ zeep = ["zeep"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "86c9e31ac8b620e60997bc2f9ed349cb23b3f7b1a47228cef34a4426538dd5fb"
+content-hash = "db4312d41b1d5dcea9ef466536d0f01b1f58a4744130787ce68b560aa89723b8"
