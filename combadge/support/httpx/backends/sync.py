@@ -5,7 +5,7 @@ from types import TracebackType
 from typing import Any, Callable
 
 from httpx import Client, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 from typing_extensions import Self
 
 from combadge.core.backend import ServiceContainer
@@ -62,16 +62,19 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
             response.raise_for_status()
         return self._parse_response(response, response_type)
 
-    @classmethod
-    def bind_method(cls, signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
+    @staticmethod
+    def bind_method(signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
+        # Return type may be anything, hence wrapping into `RootModel`.
+        return_type = RootModel[signature.return_type]  # type: ignore[misc, name-defined]
+
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
             with self.backend._request_with(request):
-                return self.backend(request, signature.return_type)
+                return self.backend(request, return_type).root
 
         return bound_method  # type: ignore[return-value]
 
-    binder = bind_method  # type: ignore[assignment]
+    binder = bind_method
 
     def __enter__(self) -> Self:
         self._client = self._client.__enter__()

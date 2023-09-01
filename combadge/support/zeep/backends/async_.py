@@ -112,7 +112,7 @@ class ZeepBackend(
         request: Request,
         response_type: type[ResponseT],
         fault_type: type[SoapFaultT],
-    ) -> BaseModel:
+    ) -> ResponseT | SoapFaultT:
         """
         Call the specified service method.
 
@@ -123,7 +123,7 @@ class ZeepBackend(
         """
         operation = self._get_operation(request.operation_name)
         try:
-            response = await operation(**request.body.dict(by_alias=True))
+            response = await operation(**request.body.model_dump(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
@@ -135,7 +135,7 @@ class ZeepBackend(
         async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
             async with self.backend._request_with(request):
-                return await self.backend(request, response_type, fault_type)
+                return (await self.backend(request, response_type, fault_type)).root
 
         return bound_method  # type: ignore[return-value]
 

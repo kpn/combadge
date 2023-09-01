@@ -1,7 +1,7 @@
 from typing import List
 
 from httpx import AsyncClient, Client
-from pydantic import BaseModel, Field, ValidationError, validate_arguments
+from pydantic import BaseModel, Field, ValidationError, validate_call
 from pytest import mark, raises
 from typing_extensions import Annotated
 
@@ -26,7 +26,7 @@ def test_weather_sync() -> None:
     class SupportsWttrIn(SupportsService):
         @http_method("GET")
         @path("/{in_}")
-        @wrap_with(validate_arguments)
+        @wrap_with(validate_call)
         def get_weather(
             self,
             *,
@@ -51,7 +51,7 @@ async def test_weather_async() -> None:
     class SupportsWttrIn(SupportsService):
         @http_method("GET")
         @path("/{in_}")
-        @wrap_with(validate_arguments)
+        @wrap_with(validate_call)
         async def get_weather(
             self,
             *,

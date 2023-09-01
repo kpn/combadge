@@ -159,7 +159,7 @@ class ErrorResponse(BaseResponse, ABC):
             *exception_bases,
         )
 
-        class DerivedException(*exception_bases):  # type: ignore
+        class DerivedException(*exception_bases):  # type: ignore[misc]
             """
             Derived exception class.
 
@@ -171,7 +171,7 @@ class ErrorResponse(BaseResponse, ABC):
         DerivedException.__name__ = f"{cls.__name__}.Error"
         DerivedException.__qualname__ = f"{cls.__qualname__}.Error"
         DerivedException.__doc__ = cls.__doc__ or DerivedException.__doc__
-        cls.Error = DerivedException  # type: ignore
+        cls.Error = DerivedException
 
     def raise_for_result(self, exception: BaseException | None = None) -> NoReturn:
         """
