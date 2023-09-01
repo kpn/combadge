@@ -37,7 +37,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from typing import List
 
     from httpx import Client
-    from pydantic import BaseModel, Field, validate_arguments
+    from pydantic import BaseModel, Field, validate_call
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.binder import bind
@@ -62,7 +62,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     class SupportsWttrIn(Protocol):
         @http_method("GET")
         @path("/{in_}")
-        @wrap_with(validate_arguments)
+        @wrap_with(validate_call)
         def get_weather(
             self,
             *,
@@ -89,7 +89,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from typing import Literal, Protocol, Union
 
     import zeep
-    from pydantic import BaseModel, Field
+    from pydantic import BaseModel, Field, RootModel
     from pytest import raises
     from typing_extensions import Annotated
 
@@ -100,18 +100,18 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
 
     # 1️⃣ Declare the request model:
-    class NumberToWordsRequest(BaseModel, allow_population_by_field_name=True):
+    class NumberToWordsRequest(BaseModel, populate_by_name=True):
         number: Annotated[int, Field(alias="ubiNum")]
 
 
     # 2️⃣ Declare the response model:
-    class NumberToWordsResponse(SuccessfulResponse):
-        __root__: str
+    class NumberToWordsResponse(RootModel, SuccessfulResponse):
+        root: str
 
 
     # 3️⃣ Optionally, declare the error response models:
-    class NumberTooLargeResponse(ErrorResponse):
-        __root__: Literal["number too large"]
+    class NumberTooLargeResponse(RootModel, ErrorResponse):
+        root: Literal["number too large"]
 
 
     # 4️⃣ Declare the interface:
@@ -127,7 +127,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
     # 🚀 Call the service:
     response = service.number_to_words(NumberToWordsRequest(number=42))
-    assert response.unwrap().__root__ == "forty two "
+    assert response.unwrap().root == "forty two "
 
     # ☢️ Error classes are automatically derived for error models:
     response = service.number_to_words(NumberToWordsRequest(number=-1))

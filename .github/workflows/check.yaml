@@ -33,7 +33,6 @@ jobs:
       uses: actions/cache@v3
       with:
         path: |
-          ~/.cache
           .mypy_cache
           .pytest_cache
           .ruff_cache

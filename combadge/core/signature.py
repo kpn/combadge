@@ -6,12 +6,11 @@ from inspect import BoundArguments
 from inspect import signature as get_signature
 from typing import Any, Callable
 
-from pydantic import BaseModel, create_model
+from pydantic import BaseModel, RootModel
 
 from combadge.core.binder import ParameterDescriptor
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.response import SuccessfulResponse
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -54,10 +53,7 @@ class Signature:
     @cached_property
     def return_type(self) -> type[BaseModel]:
         """Get the method's return type."""
-        return self.annotations.get("return", SuccessfulResponse)
-
-    @cached_property
-    def parameters_model(self) -> type[BaseModel]:
-        """Get dynamically constructed model for this method."""
-        field_definitions: dict[str, Any] = {name: (type_, ...) for name, type_ in self.annotations.items()}
-        return create_model("DynamicModel", **field_definitions)  # TODO: better model name.
+        try:
+            return self.annotations["return"]
+        except KeyError:
+            return RootModel[None]

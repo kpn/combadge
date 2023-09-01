@@ -2,7 +2,7 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Iterable, List, Protocol
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 from pytest import fixture, mark
 from typing_extensions import Annotated
 from zeep import Client
@@ -22,8 +22,8 @@ class Continent(BaseModel):
     name: Annotated[str, Field(alias="sName")]
 
 
-class CountryInfoResponse(SuccessfulResponse):
-    __root__: List[Continent]
+class CountryInfoResponse(RootModel, SuccessfulResponse):
+    root: List[Continent]
 
 
 class SupportsCountryInfo(SupportsService, Protocol):
@@ -43,7 +43,7 @@ def country_info_service() -> Iterable[SupportsCountryInfo]:
 def test_happy_path(country_info_service: SupportsCountryInfo) -> None:
     response = country_info_service.list_of_continents_by_name(CountryInfoRequest())
 
-    continents = response.__root__
+    continents = response.root
     assert isinstance(continents, list)
     assert len(continents) == 6
     assert continents[0].code == "AF"

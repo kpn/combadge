@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Generic, TypeVar
 
 from httpx import AsyncClient, Client, Response
-from pydantic import parse_obj_as
 
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
@@ -35,8 +34,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
             json_fields = from_response.json()
         except ValueError:
             json_fields = {}
-        return parse_obj_as(
-            to_type,
+        return to_type.model_validate(
             {
                 STATUS_CODE_ALIAS: from_response.status_code,
                 REASON_ALIAS: from_response.reason_phrase,

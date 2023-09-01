@@ -1,5 +1,5 @@
 from types import TracebackType
-from typing import Any, Callable, ClassVar, Generic, Iterable, Optional, Type
+from typing import Any, ClassVar, Generic, Optional, Type
 
 from typing_extensions import Self
 
@@ -16,16 +16,6 @@ class BaseBoundService(Generic[BackendT]):
 
     def __init__(self, backend: BackendT) -> None:  # noqa: D107
         self.backend = backend
-
-    @classmethod
-    def __get_validators__(cls) -> Iterable[Callable[[Any], None]]:
-        """
-        Get validators for pydantic.
-
-        Returns:
-            No validators, this method only exists for compatibility with `@validate_arguments`.
-        """
-        return ()
 
     def __enter__(self) -> Self:
         self.backend.__enter__()  # type: ignore[attr-defined]

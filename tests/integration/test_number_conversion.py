@@ -2,7 +2,7 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Iterable, Literal, Protocol, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 from pytest import fixture, mark, raises
 from typing_extensions import Annotated, assert_type
 from zeep import AsyncClient, Client
@@ -15,16 +15,16 @@ from combadge.support.zeep.backends.base import ByServiceName
 from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
 
 
-class NumberToWordsRequest(BaseModel, allow_population_by_field_name=True):
+class NumberToWordsRequest(BaseModel, populate_by_name=True):
     number: Annotated[int, Field(alias="ubiNum")]
 
 
-class NumberToWordsResponse(SuccessfulResponse):
-    __root__: str
+class NumberToWordsResponse(RootModel, SuccessfulResponse):
+    root: str
 
 
-class NumberTooLargeResponse(ErrorResponse):
-    __root__: Literal["number too large"]
+class NumberTooLargeResponse(RootModel, ErrorResponse):
+    root: Literal["number too large"]
 
 
 class SupportsNumberConversion(SupportsService, Protocol):
@@ -68,7 +68,7 @@ def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]
 @mark.vcr(decode_compressed_response=True)
 def test_happy_path_scalar_response(number_conversion_service: SupportsNumberConversion) -> None:
     response = number_conversion_service.number_to_words(NumberToWordsRequest(number=42))
-    assert response.unwrap().__root__ == "forty two "
+    assert response.unwrap().root == "forty two "
 
 
 @mark.vcr(decode_compressed_response=True)
@@ -88,7 +88,7 @@ async def test_happy_path_scalar_response_async(number_conversion_service_async:
     response = response.unwrap()
     assert_type(response, NumberToWordsResponse)
 
-    assert response.__root__ == "forty two "
+    assert response.root == "forty two "
 
 
 @mark.vcr
@@ -100,7 +100,7 @@ def test_happy_path_with_params() -> None:
     )
     service = SupportsNumberConversion.bind(backend)
     response = service.number_to_words(NumberToWordsRequest(number=42)).unwrap()
-    assert response.__root__ == "forty two "
+    assert response.root == "forty two "
 
 
 @mark.vcr
@@ -112,4 +112,4 @@ async def test_happy_path_with_params_async() -> None:
     )
     service = SupportsNumberConversionAsync.bind(backend)
     response = (await service.number_to_words(NumberToWordsRequest(number=42))).unwrap()
-    assert response.__root__ == "forty two "
+    assert response.root == "forty two "

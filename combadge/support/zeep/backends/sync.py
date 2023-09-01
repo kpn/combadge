@@ -102,7 +102,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         """
         operation = self._get_operation(request.operation_name)
         try:
-            response = operation(**request.body.dict(by_alias=True))
+            response = operation(**request.body.model_dump(by_alias=True))
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
@@ -114,7 +114,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = build_request(Request, signature, self, args, kwargs)
             with self.backend._request_with(request):
-                return self.backend(request, response_type, fault_type)
+                return self.backend(request, response_type, fault_type).root
 
         return bound_method  # type: ignore[return-value]
 

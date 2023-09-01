@@ -128,7 +128,7 @@ class JsonMarker(ParameterMarker[SupportsJson]):
     by_alias: bool = False
 
     def prepare_request(self, request: SupportsJson, value: BaseModel) -> None:  # noqa: D102
-        request.json_.update(value.dict(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
+        request.json_.update(value.model_dump(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
 
 
 Json: TypeAlias = Annotated[_T, JsonMarker()]
@@ -195,7 +195,7 @@ class FormDataMarker(ParameterMarker[SupportsFormData]):
     __slots__ = ()
 
     def prepare_request(self, request: SupportsFormData, value: BaseModel) -> None:  # noqa: D102
-        for item_name, item_value in value.dict(by_alias=True).items():
+        for item_name, item_value in value.model_dump(by_alias=True).items():
             request.append_form_field(item_name, item_value)
 
 
