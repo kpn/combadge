@@ -63,13 +63,15 @@ plugins:
       handlers:
         python:
           options:
-            show_source: false
-            show_root_toc_entry: false
-            show_signature_annotations: true
+            docstring_style: google
+            line_length: 80
+            members_order: "source"
+            merge_init_into_class: false
             separate_signature: true
             show_bases: false
-            merge_init_into_class: false
-            members_order: "source"
+            show_root_toc_entry: false
+            show_signature_annotations: true
+            show_source: true
   - search:
       lang: en
   - social
