@@ -8,16 +8,21 @@ from combadge.core.typevars import FunctionT, RequestT
 
 
 class MethodMarker(ABC, Generic[RequestT, FunctionT]):
-    """Method-specific marker that modifies an entire request based on all the call arguments."""
+    """
+    Method-specific marker that modifies an entire request based on all the call arguments.
+
+    Notes:
+        - Method marker classes should stay _private_ and offer a convenience function calling `mark` on the marker.
+    """
 
     __slots__ = ()
 
     def wrap(self, what: FunctionT) -> FunctionT:
         """
-        Wrap the argument according to the marker.
+        Wrap the function according to the marker.
 
         Notes:
-            - Does nothing by default. Override in a child class.
+            - Does nothing by default. Should be overridden in a child class.
         """
         return what
 
@@ -26,10 +31,10 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
         Modify the request according to the mark.
 
         Notes:
-            - Does nothing by default. Override in a child class.
+            - Does nothing by default. Should be overridden in a child class.
 
         Args:
-            request: request that is being constructed, please refer to the ABCs for relevant keys
+            request: request that is being constructed, please refer to the ABCs for relevant attributes
             arguments: bound service call arguments
         """
 
@@ -44,7 +49,7 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
 
     def mark(self, what: FunctionT) -> FunctionT:
         """
-        Mark the argument with itself.
+        Mark the function with itself.
 
         This is not a part of the public interface and is used to derive the decorators.
         """
