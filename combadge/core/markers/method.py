@@ -23,6 +23,7 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
 
         Notes:
             - Does nothing by default. Should be overridden in a child class.
+            - Applied during the binding stage.
         """
         return what
 
@@ -51,7 +52,9 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
         """
         Mark the function with itself.
 
-        This is not a part of the public interface and is used to derive the decorators.
+        Notes:
+            - This is not a part of the public interface and is used to derive the decorators.
+            - This operates on a source unbound method stub. Any wrappers are applied during the binding stage.
         """
         MethodMarker.ensure_markers(what).append(self)
         return what
@@ -75,11 +78,5 @@ def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], Function
         >>> @wrap_with(functools.cache)
         >>> def service_method(self, ...) -> ...:
         >>>     ...
-
-    Note: Decorator cannot change function signature
-        At the moment the type hinting is limited to decorators, which do not change
-        a wrapped function's signature – possible Mypy's limitation.
-
-        It will still work at runtime, but Mypy will very likely complain if you do so.
     """
     return _WrapWithMethodMarker(decorator).mark
