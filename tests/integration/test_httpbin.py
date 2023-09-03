@@ -7,7 +7,7 @@ from pytest import mark
 from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
-from combadge.support.http.markers import FormData, FormField, Header, QueryParam, http_method, path
+from combadge.support.http.markers import CustomHeader, FormData, FormField, QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
@@ -71,9 +71,9 @@ def test_headers_sync() -> None:
         @abstractmethod
         def get_headers(
             self,
-            foo: Annotated[str, Header("x-foo")],
-            bar: Annotated[str, Header("x-bar")] = "barval",
-            baz: Annotated[Union[str, Callable[[], str]], Header("x-baz")] = lambda: "bazval",
+            foo: Annotated[str, CustomHeader("x-foo")],
+            bar: Annotated[str, CustomHeader("x-bar")] = "barval",
+            baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
         ) -> Response:
             ...
 
@@ -95,9 +95,9 @@ async def test_headers_async() -> None:
         @abstractmethod
         async def get_headers(
             self,
-            foo: Annotated[str, Header("x-foo")],
-            bar: Annotated[str, Header("x-bar")] = "barval",
-            baz: Annotated[Union[str, Callable[[], str]], Header("x-baz")] = lambda: "bazval",
+            foo: Annotated[str, CustomHeader("x-foo")],
+            bar: Annotated[str, CustomHeader("x-bar")] = "barval",
+            baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
         ) -> Response:
             ...
 

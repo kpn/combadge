@@ -24,8 +24,8 @@ _T = TypeVar("_T")
 
 
 @dataclass
-class HeaderMarker(ParameterMarker[SupportsHeaders]):
-    """Marker class for the [`Header`][combadge.support.http.markers.Header] alias."""
+class CustomHeaderMarker(ParameterMarker[SupportsHeaders]):
+    """Marker class for the [`CustomHeader`][combadge.support.http.markers.CustomHeader] alias."""
 
     name: str
     __slots__ = ("name",)
@@ -34,8 +34,15 @@ class HeaderMarker(ParameterMarker[SupportsHeaders]):
         request.headers.append((self.name, value))
 
 
-Header: TypeAlias = HeaderMarker
-"""Mark a parameter as a header value."""
+CustomHeader: TypeAlias = CustomHeaderMarker
+"""
+Mark a parameter as a header value. Argument is passed «as is» during a service call.
+
+Examples:
+    >>> class Service(Protocol):
+    >>>     def service(self, accept_language: Annotated[str, CustomHeader("Accept-Language")]):
+    >>>         ...
+"""
 
 
 class _PathMarker(Generic[FunctionT], MethodMarker[RequiresPath, FunctionT]):

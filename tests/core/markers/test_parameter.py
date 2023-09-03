@@ -4,8 +4,7 @@ import pytest
 from typing_extensions import Annotated
 
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.support.http.headers import AcceptLanguage
-from combadge.support.http.markers import Header, HeaderMarker
+from combadge.support.http.markers import CustomHeader, CustomHeaderMarker
 from combadge.support.soap.markers import Body, BodyMarker
 
 
@@ -14,8 +13,7 @@ from combadge.support.soap.markers import Body, BodyMarker
     [
         (int, []),
         (Body[int], [BodyMarker()]),
-        (Annotated[str, Header("X-Header")], [HeaderMarker("X-Header")]),
-        (AcceptLanguage[str], [HeaderMarker("Accept-Language")]),
+        (Annotated[str, CustomHeader("X-Header")], [CustomHeaderMarker("X-Header")]),
     ],
 )
 def test_extract_parameter_marks(type_: Type[Any], expected: List[ParameterMarker]) -> None:
