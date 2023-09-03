@@ -18,7 +18,6 @@ nav:
           - support/httpx.md
           - support/zeep.md
   - core-concepts.md
-  - extending.md
 
 theme:
   icon:

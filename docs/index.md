@@ -13,7 +13,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 [![Coverage](https://codecov.io/gh/kpn/combadge/branch/main/graph/badge.svg?token=ZAqYAaTXwE)](https://codecov.io/gh/kpn/combadge)
 ![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)
 [![Python Version](https://img.shields.io/pypi/pyversions/combadge?logo=python&logoColor=yellow)](https://pypi.org/project/combadge/)
-[![License](https://img.shields.io/github/license/kpn/combadge)](LICENSE)
+![License](https://img.shields.io/github/license/kpn/combadge)
 
 !!! warning "This package is in active development"
 
