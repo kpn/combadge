@@ -1,5 +1,5 @@
 .PHONY: all
-all: install lint test build
+all: install lint test build docs
 
 .PHONY: clean
 clean:
@@ -11,17 +11,13 @@ clean:
 
 .PHONY: install
 install:
-	poetry install --all-extras --with dev --with docs
+	poetry install --all-extras --with=dev --with=docs
 
 .PHONY: check
 check: lint test
 
 .PHONY: lint
-lint: lint/ruff lint/black lint/mypy
-
-.PHONY: lint/black
-lint/black:
-	poetry run black --diff --check combadge tests
+lint: lint/ruff lint/mypy
 
 .PHONY: lint/ruff
 lint/ruff:
@@ -32,11 +28,7 @@ lint/mypy:
 	poetry run mypy combadge tests
 
 .PHONY: format
-format: format/black format/ruff
-
-.PHONY: format/black
-format/black:
-	poetry run black combadge tests
+format: format/ruff
 
 .PHONY: format/ruff
 format/ruff:
@@ -49,3 +41,7 @@ test:
 .PHONY: build
 build:
 	poetry build
+
+.PHONY: docs
+docs:
+	poetry run mkdocs build --site-dir _site
