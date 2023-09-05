@@ -21,7 +21,7 @@ lint: lint/ruff lint/mypy
 
 .PHONY: lint/ruff
 lint/ruff:
-	poetry run ruff combadge tests
+	poetry run ruff check combadge tests
 
 .PHONY: lint/mypy
 lint/mypy:
@@ -32,7 +32,8 @@ format: format/ruff
 
 .PHONY: format/ruff
 format/ruff:
-	poetry run ruff --fix combadge tests
+	poetry run ruff check --fix combadge tests
+	poetry run ruff format combadge tests
 
 .PHONY: test
 test:
