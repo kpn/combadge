@@ -140,7 +140,7 @@ types-requests = "^2.28.11.8"
 ruff = "0.0.291"
 pytest-recording = "0.13.0"
 pytest-asyncio = "0.21.1"
-urllib3 = "1.26.16"
+urllib3 = "2.0.6"
 
 [tool.poetry.group.docs]
 optional = true
