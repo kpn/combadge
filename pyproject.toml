@@ -133,11 +133,11 @@ zeep = ["zeep"]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-mypy = "1.6.0"
+mypy = "1.6.1"
 pytest = "7.4.2"
 pytest-cov = "4.1.0"
 types-requests = "^2.28.11.8"
-ruff = "0.1.0"
+ruff = "0.1.1"
 pytest-recording = "0.13.0"
 pytest-asyncio = "0.21.1"
 urllib3 = "1.26.17"
@@ -152,7 +152,7 @@ cairosvg = "2.7.1"
 mkdocs-git-revision-date-localized-plugin = "1.2.1"
 mkdocstrings = { version = "0.23.0", extras = ["python"] }
 mkdocs-autorefs = "0.5.0"
-black = "23.9.1"
+black = "23.10.0"
 
 [tool.poetry-dynamic-versioning]
 enable = true
