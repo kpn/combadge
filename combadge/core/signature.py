@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from inspect import BoundArguments
 from inspect import signature as get_signature
-from typing import Any, Callable
+from typing import Any, Callable, Iterable, cast
 
 from pydantic import BaseModel, RootModel
 
@@ -47,7 +47,7 @@ class Signature:
         return [
             ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
             for name, annotation in self.annotations.items()
-            for marker in ParameterMarker.extract(annotation)
+            for marker in cast(Iterable[ParameterMarker], ParameterMarker.extract(annotation))
         ]
 
     @cached_property
