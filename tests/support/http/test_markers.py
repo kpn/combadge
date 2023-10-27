@@ -4,7 +4,7 @@ from typing import Any, Dict, Tuple
 from pytest import mark
 
 from combadge.support.http.abc import RequiresPath
-from combadge.support.http.markers import _PathMarker
+from combadge.support.http.markers.implementation import Path
 
 
 @mark.parametrize(
@@ -17,14 +17,14 @@ from combadge.support.http.markers import _PathMarker
     ],
 )
 def test_format(format_: str, call_args: Tuple[Any, ...], call_kwargs: Dict[str, Any], expected_path: str) -> None:
-    mark = _PathMarker[Any](format_)
+    mark = Path[Any](format_)
     request = RequiresPath.model_construct()
     mark.prepare_request(request, _example_signature.bind(*call_args, **call_kwargs))
     assert request.path == expected_path
 
 
 def test_factory() -> None:
-    mark = _PathMarker[Any](lambda _arguments: "don't care")
+    mark = Path[Any](lambda _arguments: "don't care")
     request = RequiresPath.model_construct()
     mark.prepare_request(request, _example_signature.bind("positional", keyword="keyword"))
     assert request.path == "don't care"
