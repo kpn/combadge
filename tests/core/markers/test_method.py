@@ -1,7 +1,7 @@
 from typing import Any
 
 from combadge.core.markers.method import MethodMarker
-from combadge.support.soap.markers import _OperationNameMarker
+from combadge.support.soap.markers.implementation import OperationName
 
 
 def test_ensure_markers() -> None:
@@ -11,6 +11,6 @@ def test_ensure_markers() -> None:
     marks = MethodMarker.ensure_markers(method)
     assert marks == []
 
-    mark = _OperationNameMarker[Any]("test")
+    mark = OperationName[Any]("test")
     marks.append(mark)
     assert MethodMarker.ensure_markers(method) == [mark]

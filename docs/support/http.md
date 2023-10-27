@@ -10,7 +10,7 @@ parameters of scalar types.
 You can map such parameters with the [JsonField][combadge.support.http.markers.JsonField] marker,
 which would mark them as separate root fields of a JSON payload:
 
-```python title="json_field.py"
+```python title="json_field.py" hl_lines="20"
 from httpx import Client
 from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol
@@ -27,7 +27,11 @@ class Response(BaseModel):
 class SupportsHttpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post(self, *, foo: Annotated[str, JsonField("foobar")] = "quuuuux") -> Response:
+    def post(
+        self,
+        *,
+        foo: Annotated[str, JsonField("foobar")] = "quuuuux",
+    ) -> Response:
         raise NotImplementedError
 
 
@@ -43,11 +47,15 @@ assert response.data == r"""{"foobar": "quuuuux"}"""
 ::: combadge.support.http.markers
     options:
       heading_level: 3
-      show_submodules: true
 
-## Aliases
+## Aliases for pseudo-fields
 
 ::: combadge.support.http.aliases
     options:
       heading_level: 3
-      show_submodules: true
+
+## Implementations
+
+::: combadge.support.http.markers.implementation
+    options:
+      heading_level: 3
