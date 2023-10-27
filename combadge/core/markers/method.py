@@ -9,10 +9,11 @@ from combadge.core.typevars import FunctionT, RequestT
 
 class MethodMarker(ABC, Generic[RequestT, FunctionT]):
     """
-    Method-specific marker that modifies an entire request based on all the call arguments.
+    Method marker that modifies an entire request based on all the call arguments.
 
     Notes:
         - Method marker classes should stay _private_ and offer a convenience function calling `mark` on the marker.
+          Normally, one just needs to inherit this class.
     """
 
     __slots__ = ()
@@ -72,7 +73,7 @@ class _WrapWithMethodMarker(Generic[FunctionT], MethodMarker[Any, FunctionT]):
 
 def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], FunctionT]:
     """
-    Put the decorator on top of the generated bound service method.
+    Wrap the generated bound service method with decorator.
 
     Examples:
         >>> @wrap_with(functools.cache)

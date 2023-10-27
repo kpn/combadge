@@ -2,14 +2,12 @@
 
 ## Markers
 
-### Method markers
-
 ::: combadge.core.markers.method
     options:
-        heading_level: 4
+        heading_level: 3
 
-### Parameter markers
+<hr>
 
 ::: combadge.core.markers.parameter
     options:
-        heading_level: 4
+        heading_level: 3

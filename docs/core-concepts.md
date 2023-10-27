@@ -36,7 +36,7 @@ Combadge does not restrict user in terms of response model classes: as long as t
 
 ### Method markers
 
-**Method markers** are used to attach a metadata that is relevant to a whole request rather than a specific parameter.
+[**Method markers**][combadge.core.markers.method.MethodMarker] are used to attach a metadata that is relevant to a whole request rather than a specific parameter.
 
 Examples:
 
@@ -56,7 +56,7 @@ Examples:
 - Query parameter: pass an argument as a specified query parameter
 - Body: pass an argument as a request body
 
-Parameter markers are specified with `#!python Annotated` type hints on corresponding parameters.
+[Parameter markers][combadge.core.markers.parameter.ParameterMarker] are specified with `#!python Annotated` type hints on corresponding parameters.
 
 ## Backends
 
