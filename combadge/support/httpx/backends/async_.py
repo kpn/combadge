@@ -11,7 +11,6 @@ from typing_extensions import Self
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import CallServiceMethod
-from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
 from combadge.support.http.request import Request
@@ -69,7 +68,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
         return_type = RootModel[signature.return_type]  # type: ignore[misc, name-defined]
 
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = build_request(Request, signature, self, args, kwargs)
+            request = Request.build_from(signature, self, args, kwargs)
             async with self.backend._request_with(request):
                 return (await self.backend(request, return_type)).root
 

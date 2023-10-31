@@ -15,7 +15,6 @@ from zeep.wsse import UsernameToken
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import CallServiceMethod
-from combadge.core.request import build_request
 from combadge.core.signature import Signature
 from combadge.core.typevars import ResponseT
 from combadge.support.shared.sync import SupportsRequestWith
@@ -112,7 +111,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         response_type, fault_type = cls._split_response_type(signature.return_type)
 
         def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = build_request(Request, signature, self, args, kwargs)
+            request = Request.build_from(signature, self, args, kwargs)
             with self.backend._request_with(request):
                 return self.backend(request, response_type, fault_type).root
 

@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-
+from combadge.core.request import BaseRequest
 from combadge.support.http.abc import (
     RequiresMethod,
     RequiresPath,
@@ -17,6 +16,6 @@ class Request(
     SupportsQueryParams,
     SupportsFormData,
     SupportsHeaders,
-    BaseModel,
+    BaseRequest,
 ):
     """Backend-agnostic REST request."""
