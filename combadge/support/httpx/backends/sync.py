@@ -50,8 +50,8 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
             One does not normally need to call this directly, unless writing a custom binder.
         """
         response: Response = self._client.request(
-            request.method,
-            request.path,
+            request.get_method(),
+            request.get_url_path(),
             json=request.json_,
             data=request.form_data,
             params=request.query_params,
@@ -67,7 +67,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
         return_type = RootModel[signature.return_type]  # type: ignore[misc, name-defined]
 
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = Request.build_from(signature, self, args, kwargs)
+            request = Request(signature, self, args, kwargs)
             with self.backend._request_with(request):
                 return self.backend(request, return_type).root
 

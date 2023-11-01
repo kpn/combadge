@@ -1,21 +1,24 @@
-from combadge.core.request import BaseRequest
+from dataclasses import dataclass
+
 from combadge.support.http.abc import (
-    RequiresMethod,
-    RequiresPath,
     SupportsFormData,
     SupportsHeaders,
     SupportsJson,
+    SupportsMethod,
     SupportsQueryParams,
+    SupportsUrlPath,
 )
+from combadge.support.shared.request import BaseBackendRequest
 
 
+@dataclass
 class Request(
-    RequiresMethod,
-    RequiresPath,
+    SupportsMethod,
+    SupportsUrlPath,
     SupportsJson,
     SupportsQueryParams,
     SupportsFormData,
     SupportsHeaders,
-    BaseRequest,
+    BaseBackendRequest,
 ):
-    """Backend-agnostic REST request."""
+    """Backend-agnostic HTTP request."""
