@@ -1,6 +1,9 @@
-from combadge.core.request import BaseRequest
-from combadge.support.soap.abc import RequiresBody, RequiresOperationName
+from dataclasses import dataclass
+
+from combadge.support.shared.request import BaseBackendRequest
+from combadge.support.soap.abc import SupportsBody, SupportsOperationName
 
 
-class Request(RequiresOperationName, RequiresBody, BaseRequest):
+@dataclass
+class Request(SupportsOperationName, SupportsBody, BaseBackendRequest):
     """Backend-agnostic SOAP request."""

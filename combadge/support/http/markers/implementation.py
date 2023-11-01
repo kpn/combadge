@@ -16,12 +16,12 @@ from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.http.abc import (
-    RequiresMethod,
-    RequiresPath,
     SupportsFormData,
     SupportsHeaders,
     SupportsJson,
+    SupportsMethod,
     SupportsQueryParams,
+    SupportsUrlPath,
 )
 
 
@@ -36,7 +36,7 @@ class CustomHeader(ParameterMarker[SupportsHeaders]):
         request.headers.append((self.name, value))
 
 
-class Path(Generic[FunctionT], MethodMarker[RequiresPath, FunctionT]):
+class Path(Generic[FunctionT], MethodMarker[SupportsUrlPath, FunctionT]):
     """[`path`][combadge.support.http.markers.path] marker implementation."""
 
     _factory: Callable[[BoundArguments], str]
@@ -54,17 +54,17 @@ class Path(Generic[FunctionT], MethodMarker[RequiresPath, FunctionT]):
 
             self._factory = factory
 
-    def prepare_request(self, request: RequiresPath, arguments: BoundArguments) -> None:  # noqa: D102
-        request.path = self._factory(arguments)
+    def prepare_request(self, request: SupportsUrlPath, arguments: BoundArguments) -> None:  # noqa: D102
+        request.url_path = self._factory(arguments)
 
 
 @dataclass
-class HttpMethod(Generic[FunctionT], MethodMarker[RequiresMethod, FunctionT]):
+class HttpMethod(Generic[FunctionT], MethodMarker[SupportsMethod, FunctionT]):
     """[`http_method`][combadge.support.http.markers.http_method] marker implementation."""
 
     method: str
 
-    def prepare_request(self, request: RequiresMethod, _arguments: BoundArguments) -> None:  # noqa: D102
+    def prepare_request(self, request: SupportsMethod, _arguments: BoundArguments) -> None:  # noqa: D102
         request.method = self.method
 
 

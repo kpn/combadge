@@ -51,8 +51,8 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
             One does not normally need to call this directly, unless writing a custom binder.
         """
         response: Response = await self._client.request(
-            request.method,
-            request.path,
+            request.get_method(),
+            request.get_url_path(),
             json=request.json_,
             data=request.form_data,
             params=request.query_params,
@@ -68,7 +68,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
         return_type = RootModel[signature.return_type]  # type: ignore[misc, name-defined]
 
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = Request.build_from(signature, self, args, kwargs)
+            request = Request(signature, self, args, kwargs)
             async with self.backend._request_with(request):
                 return (await self.backend(request, return_type)).root
 

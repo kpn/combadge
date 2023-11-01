@@ -99,9 +99,9 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
             response_type: non-fault response model type
             fault_type: SOAP fault model type
         """
-        operation = self._get_operation(request.operation_name)
+        operation = self._get_operation(request.get_operation_name())
         try:
-            response = operation(**request.body.model_dump(by_alias=True))
+            response = operation(**request.get_body())
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
@@ -111,7 +111,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
         response_type, fault_type = cls._split_response_type(signature.return_type)
 
         def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = Request.build_from(signature, self, args, kwargs)
+            request = Request(signature, self, args, kwargs)
             with self.backend._request_with(request):
                 return self.backend(request, response_type, fault_type).root
 
