@@ -1,120 +1,180 @@
-"""Markers for HTTP-compatible protocols."""
-
-from typing import Any, Callable, TypeVar, Union
-
-from typing_extensions import Annotated, TypeAlias
-
-from combadge.core.typevars import FunctionT
-
-from .implementation import CustomHeader as CustomHeaderImplementation
-from .implementation import FormData as FormDataImplementation
-from .implementation import FormField as FormFieldImplementation
-from .implementation import HttpMethod, Path
-from .implementation import Json as JsonImplementation
-from .implementation import JsonField as JsonFieldImplementation
-from .implementation import QueryParam as QueryParamImplementation
-
-_T = TypeVar("_T")
-
-
-CustomHeader: TypeAlias = CustomHeaderImplementation
 """
-Mark a parameter as a header value. Argument is passed «as is» during a service call.
+Marker implementations.
 
-Examples:
-    >>> class Service(Protocol):
-    >>>     def service(self, accept_language: Annotated[str, CustomHeader("Accept-Language")]):
-    >>>         ...
+Tip:
+    It is advised to use the type aliases unless you really need to customize the behavior.
 """
 
+from __future__ import annotations
 
-def path(path_or_factory: Union[str, Callable[..., str]]) -> Callable[[FunctionT], FunctionT]:
+from dataclasses import dataclass
+from enum import Enum
+from functools import cached_property
+from inspect import BoundArguments
+from typing import Any, Callable, Generic
+from typing import get_args as get_type_args
+
+from pydantic import BaseModel
+
+from combadge.core.markers.method import MethodMarker
+from combadge.core.markers.parameter import ParameterMarker
+from combadge.core.typevars import FunctionT, ResponseT
+from combadge.support.http.abc import (
+    ContainsFormData,
+    ContainsHeaders,
+    ContainsMethod,
+    ContainsPayload,
+    ContainsQueryParams,
+    ContainsUrlPath,
+)
+
+
+@dataclass
+class CustomHeader(ParameterMarker[ContainsHeaders]):
     """
-    Specify a URL path.
+    Mark a parameter as a header value. Argument is passed «as is» during a service call.
 
     Examples:
-        >>> @path("/hello/world")
-        >>> def call() -> None: ...
-
-        >>> @path("/hello/{name}")
-        >>> def call(name: str) -> None: ...
-
-        >>> @path("/hello/{0}")
-        >>> def call(name: str) -> None: ...
-
-        >>> @path(lambda name, **_: f"/hello/{name}")
-        >>> def call(name: str) -> None: ...
+        >>> class Service(Protocol):
+        >>>     def service(self, accept_language: Annotated[str, CustomHeader("Accept-Language")]):
+        >>>         ...
     """
-    return Path[Any](path_or_factory).mark
+
+    name: str
+    __slots__ = ("name",)
+
+    def prepare_request(self, request: ContainsHeaders, value: Any) -> None:  # noqa: D102
+        request.headers.append((self.name, value))
 
 
-def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
-    """Specify an HTTP method."""
-    return HttpMethod[Any](method).mark
+class Path(Generic[FunctionT], MethodMarker[ContainsUrlPath, FunctionT]):
+    """[`path`][combadge.support.http.markers.shortcuts.path] marker implementation."""
+
+    _factory: Callable[[BoundArguments], str]
+    __slots__ = ("_factory",)
+
+    def __init__(self, path_or_factory: str | Callable[[BoundArguments], str]) -> None:  # noqa: D107
+        if callable(path_or_factory):
+            self._factory = path_or_factory
+        else:
+
+            def factory(arguments: BoundArguments) -> str:
+                # The `arguments.arguments` will contain the positional arguments too.
+                # This is intentional to allow referring to positional arguments by their indexes and names.
+                return path_or_factory.format(*arguments.args, **arguments.arguments)  # type: ignore[union-attr]
+
+            self._factory = factory
+
+    def prepare_request(self, request: ContainsUrlPath, arguments: BoundArguments) -> None:  # noqa: D102
+        request.url_path = self._factory(arguments)
 
 
-QueryParam: TypeAlias = QueryParamImplementation
-"""
-Mark a parameter as a query parameter.
+@dataclass
+class HttpMethod(Generic[FunctionT], MethodMarker[ContainsMethod, FunctionT]):
+    """[`http_method`][combadge.support.http.markers.shortcuts.http_method] marker implementation."""
 
-Notes:
-    - Multiple arguments with the same query parameter name are allowed
-"""
+    method: str
 
-
-Json: TypeAlias = Annotated[_T, JsonImplementation()]
-"""
-Mark parameter as a request JSON body. An argument gets converted to a dictionary and passed over to a backend.
-
-Examples:
-    >>> from combadge.support.rest.markers import Json
-    >>>
-    >>> class BodyModel(BaseModel):
-    >>>     ...
-    >>>
-    >>> def call(body: Json[BodyModel]) -> ...:
-    >>>     ...
-"""
+    def prepare_request(self, request: ContainsMethod, _arguments: BoundArguments) -> None:  # noqa: D102
+        request.method = self.method
 
 
-JsonField: TypeAlias = JsonFieldImplementation
-"""
-Mark a parameter as a separate JSON field value.
+@dataclass
+class QueryParam(ParameterMarker[ContainsQueryParams]):
+    """[`QueryParam`][combadge.support.http.markers.QueryParam] marker implementation."""
 
-Examples:
-    >>> from combadge.support.rest.markers import JsonField
-    >>>
-    >>> def call(param: Annotated[int, JsonField("param")]) -> ...:
-    >>>     ...
-"""
+    name: str
+    __slots__ = ("name",)
 
-
-FormData: TypeAlias = Annotated[_T, FormDataImplementation()]
-"""
-Mark parameter as a request form data. An argument gets converted to a dictionary and passed over to a backend.
-
-Examples:
-    >>> from combadge.support.rest.markers import FormData
-    >>>
-    >>> class FormModel(BaseModel):
-    >>>     ...
-    >>>
-    >>> def call(body: FormData[FormModel]) -> ...:
-    >>>     ...
-"""
+    def prepare_request(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
+        request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 
-FormField: TypeAlias = FormFieldImplementation
-"""
-Mark a parameter as a separate form field value.
+@dataclass
+class Payload(ParameterMarker[ContainsPayload], Generic[ResponseT]):
+    """
+    [`Payload`][combadge.support.http.markers.Payload] marker implementation.
 
-Examples:
-    >>> from combadge.support.rest.markers import JsonField
-    >>>
-    >>> def call(param: Annotated[int, FormField("param")]) -> ...:
-    >>>     ...
+    Used for a more complex annotations, for example:
 
-Notes:
-    - Multiple arguments with the same field name are allowed
-    - [`FormData`][combadge.support.http.markers.FormData] marker's fields get merged with `FormField` ones (if present)
-"""
+    ```python
+    Annotated[BodyModel, Payload(), AnotherMarker]
+    ```
+    """
+
+    exclude_unset: bool = False
+    by_alias: bool = False
+
+    def prepare_request(self, request: ContainsPayload, value: BaseModel) -> None:  # noqa: D102
+        request.ensure_payload().update(value.model_dump(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
+
+    @cached_property
+    def _response_type(self) -> type[ResponseT]:
+        """Extract the expected response type for this marker."""
+        (response_type,) = get_type_args(type(self))
+        return response_type
+
+
+@dataclass
+class Field(ParameterMarker[ContainsPayload]):
+    """
+    Mark a parameter as a value of a separate payload field.
+
+    Examples:
+        >>> from combadge.support.http.markers.implementation import Field
+        >>>
+        >>> def call(param: Annotated[int, Field("param")]) -> ...:
+        >>>     ...
+
+    Notes:
+        - Enum values are passed by value
+    """
+
+    name: str
+    __slots__ = ("name",)
+
+    def prepare_request(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
+        request.ensure_payload()[self.name] = value.value if isinstance(value, Enum) else value
+
+
+@dataclass
+class FormData(ParameterMarker[ContainsFormData]):
+    """
+    [`FormData`][combadge.support.http.markers.FormData] implementation.
+
+    Used for a more complex annotations, for example:
+
+    ```python
+    Annotated[BodyModel, FormData(), AnotherMarker]
+    ```
+    """
+
+    __slots__ = ()
+
+    def prepare_request(self, request: ContainsFormData, value: BaseModel) -> None:  # noqa: D102
+        for item_name, item_value in value.model_dump(by_alias=True).items():
+            request.append_form_field(item_name, item_value)
+
+
+@dataclass
+class FormField(ParameterMarker[ContainsFormData]):
+    """
+    Mark a parameter as a separate form field value.
+
+    Examples:
+        >>> from combadge.support.http.markers.implementation import FormField
+        >>>
+        >>> def call(param: Annotated[int, FormField("param")]) -> ...:
+        >>>     ...
+
+    Notes:
+        - Multiple arguments with the same field name are allowed
+        - [`FormData`][combadge.support.http.markers.FormData] marker's fields get merged with `FormField` ones (if present)
+        - Enum values are passed by value
+    """  # noqa: E501
+
+    name: str
+    __slots__ = ("name",)
+
+    def prepare_request(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
+        request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)

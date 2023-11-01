@@ -8,7 +8,7 @@ from types import TracebackType
 from typing import Any, Callable
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 from typing_extensions import Self
 from zeep import AsyncClient, Plugin
 from zeep.exceptions import Fault
@@ -24,8 +24,7 @@ from combadge.core.typevars import ResponseT
 from combadge.support.shared.async_ import SupportsRequestWith
 from combadge.support.shared.contextlib import asyncnullcontext
 from combadge.support.soap.request import Request
-from combadge.support.soap.response import SoapFaultT
-from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
+from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName, _SoapFaultT
 
 
 class ZeepBackend(
@@ -109,9 +108,9 @@ class ZeepBackend(
     async def __call__(
         self,
         request: Request,
-        response_type: type[ResponseT],
-        fault_type: type[SoapFaultT],
-    ) -> ResponseT | SoapFaultT:
+        response_type: type[RootModel[ResponseT]],
+        fault_type: type[_SoapFaultT],
+    ) -> ResponseT | _SoapFaultT:
         """
         Call the specified service method.
 
@@ -122,7 +121,7 @@ class ZeepBackend(
         """
         operation = self._get_operation(request.get_operation_name())
         try:
-            response = await operation(**request.get_body())
+            response = await operation(**request.get_payload())
         except Fault as e:
             return self._parse_soap_fault(e, fault_type)
         return self._parse_response(response, response_type)
@@ -132,9 +131,9 @@ class ZeepBackend(
         response_type, fault_type = cls._split_response_type(signature.return_type)
 
         async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = Request(signature, self, args, kwargs)
+            request = signature.build_request(Request, self, args, kwargs)
             async with self.backend._request_with(request):
-                return (await self.backend(request, response_type, fault_type)).root
+                return await self.backend(request, response_type, fault_type)
 
         return bound_method  # type: ignore[return-value]
 

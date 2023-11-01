@@ -9,7 +9,8 @@ from zeep import AsyncClient, Client
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import ErrorResponse, SuccessfulResponse
-from combadge.support.soap.markers import Body, operation_name
+from combadge.support.http.markers import Payload
+from combadge.support.soap.markers.shortcuts import operation_name
 from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
 from combadge.support.zeep.backends.base import ByServiceName
 from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
@@ -32,7 +33,7 @@ class SupportsNumberConversion(SupportsService, Protocol):
     @abstractmethod
     def number_to_words(
         self,
-        request: Body[NumberToWordsRequest],
+        request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
     ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         raise NotImplementedError
 
@@ -42,7 +43,7 @@ class SupportsNumberConversionAsync(SupportsService, Protocol):
     @abstractmethod
     async def number_to_words(
         self,
-        request: Body[NumberToWordsRequest],
+        request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
     ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
         raise NotImplementedError
 

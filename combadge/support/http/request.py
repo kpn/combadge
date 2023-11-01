@@ -1,24 +1,24 @@
 from dataclasses import dataclass
 
 from combadge.support.http.abc import (
-    SupportsFormData,
-    SupportsHeaders,
-    SupportsJson,
-    SupportsMethod,
-    SupportsQueryParams,
-    SupportsUrlPath,
+    ContainsFormData,
+    ContainsHeaders,
+    ContainsMethod,
+    ContainsPayload,
+    ContainsQueryParams,
+    ContainsUrlPath,
 )
 from combadge.support.shared.request import BaseBackendRequest
 
 
 @dataclass
 class Request(
-    SupportsMethod,
-    SupportsUrlPath,
-    SupportsJson,
-    SupportsQueryParams,
-    SupportsFormData,
-    SupportsHeaders,
+    ContainsMethod,
+    ContainsUrlPath,
+    ContainsPayload,
+    ContainsQueryParams,
+    ContainsFormData,
+    ContainsHeaders,
     BaseBackendRequest,
 ):
     """Backend-agnostic HTTP request."""

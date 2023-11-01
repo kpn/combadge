@@ -15,10 +15,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 [![Python Version](https://img.shields.io/pypi/pyversions/combadge?logo=python&logoColor=yellow)](https://pypi.org/project/combadge/)
 ![License](https://img.shields.io/github/license/kpn/combadge)
 
-!!! warning "This package is in active development"
-
-    The documentation is not good and complete as it should be, and the implementation may change drastically.
-
 ## Features
 
 - Request and response models based on [**pydantic**](https://docs.pydantic.dev/)
@@ -43,7 +39,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from combadge.core.binder import bind
     from combadge.core.markers.method import wrap_with
     from combadge.support.http.aliases import StatusCode
-    from combadge.support.http.markers import QueryParam, http_method, path
+    from combadge.support.http.markers.shortcuts import QueryParam, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
 
 
@@ -95,7 +91,8 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
     from combadge.core.interfaces import SupportsService
     from combadge.core.response import ErrorResponse, SuccessfulResponse
-    from combadge.support.soap.markers import Body, operation_name
+    from combadge.support.http.markers import Payload
+    from combadge.support.soap.markers.shortcuts import operation_name
     from combadge.support.zeep.backends.sync import ZeepBackend
 
 
@@ -117,7 +114,10 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     # 4️⃣ Declare the interface:
     class SupportsNumberConversion(SupportsService, Protocol):
         @operation_name("NumberToWords")
-        def number_to_words(self, request: Body[NumberToWordsRequest]) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+        def number_to_words(
+            self,
+            request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
+        ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
             ...
 
 

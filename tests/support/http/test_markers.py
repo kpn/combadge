@@ -3,8 +3,8 @@ from typing import Any, Dict, Tuple
 
 from pytest import mark
 
-from combadge.support.http.abc import SupportsUrlPath
-from combadge.support.http.markers.implementation import Path
+from combadge.support.http.abc import ContainsUrlPath
+from combadge.support.http.markers import Path
 
 
 @mark.parametrize(
@@ -18,14 +18,14 @@ from combadge.support.http.markers.implementation import Path
 )
 def test_format(format_: str, call_args: Tuple[Any, ...], call_kwargs: Dict[str, Any], expected_path: str) -> None:
     mark = Path[Any](format_)
-    request = SupportsUrlPath()
+    request = ContainsUrlPath()
     mark.prepare_request(request, _example_signature.bind(*call_args, **call_kwargs))
     assert request.url_path == expected_path
 
 
 def test_factory() -> None:
     mark = Path[Any](lambda _arguments: "don't care")
-    request = SupportsUrlPath()
+    request = ContainsUrlPath()
     mark.prepare_request(request, _example_signature.bind("positional", keyword="keyword"))
     assert request.url_path == "don't care"
 

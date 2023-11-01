@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import wrap_with
-from combadge.support.http.markers import QueryParam, http_method, path
+from combadge.support.http.markers.shortcuts import QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
