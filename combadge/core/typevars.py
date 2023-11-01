@@ -2,11 +2,9 @@
 
 from typing import Any, Callable, TypeVar
 
-from pydantic import BaseModel
-
 BackendT = TypeVar("BackendT")
 RequestT = TypeVar("RequestT")
-ResponseT = TypeVar("ResponseT", bound=BaseModel)
+ResponseT = TypeVar("ResponseT")
 ServiceProtocolT = TypeVar("ServiceProtocolT")
 
 FunctionT = TypeVar("FunctionT", bound=Callable[..., Any])

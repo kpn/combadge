@@ -8,7 +8,7 @@ from combadge.core.typevars import RequestT
 
 
 class ParameterMarker(AnnotatedMarker, Generic[RequestT], ABC):
-    """Parameter-specific marker that modifies a request with a call-time argument."""
+    """Parameter marker: it modifies a request with a call-time argument."""
 
     __slots__ = ()
 

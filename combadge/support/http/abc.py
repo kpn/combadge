@@ -1,4 +1,11 @@
-"""Mixins for HTTP-related request classes."""
+"""
+Mixins for HTTP-related request and response classes.
+
+There are two types of mixins:
+
+- Containers, named as `Contains*`, are data classes that actually store something.
+- Protocols, named as `Protocol*`, are interfaces that should be implemented by the child classes.
+"""
 
 from abc import ABC
 from dataclasses import dataclass, field
@@ -6,14 +13,14 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 @dataclass
-class SupportsHeaders(ABC):
+class ContainsHeaders(ABC):
     """HTTP request headers."""
 
     headers: List[Tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
-class SupportsUrlPath(ABC):
+class ContainsUrlPath(ABC):
     """Request URL path."""
 
     url_path: Optional[str] = None
@@ -26,7 +33,7 @@ class SupportsUrlPath(ABC):
 
 
 @dataclass
-class SupportsMethod(ABC):
+class ContainsMethod(ABC):
     """HTTP request method."""
 
     method: Optional[str] = None
@@ -39,22 +46,14 @@ class SupportsMethod(ABC):
 
 
 @dataclass
-class SupportsQueryParams(ABC):
+class ContainsQueryParams(ABC):
     """HTTP request query parameters."""
 
     query_params: List[Tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
-class SupportsJson(ABC):
-    """HTTP request JSON body."""
-
-    json_: Dict[str, Any] = field(default_factory=dict)
-    """Used with [Json][combadge.support.http.markers.Json] and [JsonField][combadge.support.http.markers.JsonField]."""
-
-
-@dataclass
-class SupportsFormData(ABC):
+class ContainsFormData(ABC):
     """
     HTTP request [form data][1].
 
@@ -69,3 +68,22 @@ class SupportsFormData(ABC):
 
     def append_form_field(self, name: str, value: Any) -> None:  # noqa: D102
         self.form_data.setdefault(name, []).append(value)
+
+
+@dataclass
+class ContainsPayload(ABC):
+    """SOAP request payload."""
+
+    payload: Optional[dict] = None
+
+    def ensure_payload(self) -> dict:
+        """Ensure that the payload is initialized and return it."""
+        if self.payload is None:
+            self.payload = {}
+        return self.payload
+
+    def get_payload(self) -> dict:
+        """Get a validated request payload."""
+        if (payload := self.payload) is None:
+            raise ValueError("a request requires a non-empty payload")
+        return payload

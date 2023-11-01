@@ -35,7 +35,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Annotated, Protocol
 
 from combadge.support.http.aliases import StatusCode
-from combadge.support.http.markers import QueryParam, http_method, path
+from combadge.support.http.markers.shortcuts import QueryParam, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
 

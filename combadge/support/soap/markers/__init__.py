@@ -1,44 +1,26 @@
-from typing import Any, Callable, TypeVar
+"""
+Marker implementations.
 
-from typing_extensions import Annotated, TypeAlias
+Tip:
+    It is advised to use the type aliases unless you really need to customize the behavior.
+"""
 
+from dataclasses import dataclass
+from inspect import BoundArguments
+from typing import Generic
+
+from combadge.core.markers.method import MethodMarker
 from combadge.core.typevars import FunctionT
-
-from .implementation import Body as BodyImplementation
-from .implementation import OperationName
+from combadge.support.soap.abc import ContainsOperationName
 
 
-def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
-    """
-    Mark a service call's operation name.
+@dataclass
+class OperationName(Generic[FunctionT], MethodMarker[ContainsOperationName, FunctionT]):
+    """[`operation_name`][combadge.support.soap.markers.shortcuts.operation_name] marker implementation."""
 
-    Examples:
-        >>> from combadge.support.soap.markers import operation_name
-        >>>
-        >>> class SupportsNumberConversion(SupportsService):
-        >>>     @operation_name("NumberToWords")
-        >>>     def number_to_words(self) -> ...:
-        >>>         ...
+    name: str
 
-    See Also:
-        - [Structure of a WSDL message](https://www.ibm.com/docs/en/rtw/9.0.0?topic=documents-structure-wsdl-message)
-    """
-    return OperationName[Any](name).mark
+    __slots__ = ("name",)
 
-
-_T = TypeVar("_T")
-
-
-Body: TypeAlias = Annotated[_T, BodyImplementation()]
-"""
-Mark parameter as a request body. An argument gets converted to a dictionary and passed over to a backend.
-
-Examples:
-    >>> from combadge.support.http import Body
-    >>>
-    >>> class BodyModel(BaseModel):
-    >>>     ...
-    >>>
-    >>> def call(body: Body[BodyModel]) -> ...:
-    >>>     ...
-"""
+    def prepare_request(self, request: ContainsOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
+        request.operation_name = self.name

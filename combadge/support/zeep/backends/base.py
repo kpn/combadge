@@ -20,7 +20,7 @@ from zeep.xsd import CompoundValue
 
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
-from combadge.support.soap.response import BaseSoapFault, SoapFaultT
+from combadge.support.soap.response import BaseSoapFault
 
 _ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
 """
@@ -31,6 +31,9 @@ See Also:
 """
 
 _OperationProxyT = TypeVar("_OperationProxyT", bound=OperationProxy)
+
+_SoapFaultT = TypeVar("_SoapFaultT", bound=RootModel[Any])
+"""Specific SOAP Fault model type."""
 
 _UNSET = object()
 
@@ -85,14 +88,14 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
             raise RuntimeError(f"available operations are: {dir(self._service)}") from e
 
     @staticmethod
-    def _parse_response(value: CompoundValue, response_type: type[ResponseT]) -> ResponseT:
+    def _parse_response(value: CompoundValue, response_type: type[RootModel[ResponseT]]) -> ResponseT:
         """Parse the response value using the generic response types."""
-        return response_type.model_validate(serialize_object(value, dict))
+        return response_type.model_validate(serialize_object(value, dict)).root
 
     @staticmethod
-    def _parse_soap_fault(exception: Fault, fault_type: type[SoapFaultT]) -> SoapFaultT:
+    def _parse_soap_fault(exception: Fault, fault_type: type[RootModel[_SoapFaultT]]) -> _SoapFaultT:
         """Parse the SOAP fault."""
-        return fault_type.model_validate(exception.__dict__)
+        return fault_type.model_validate(exception.__dict__).root
 
 
 @dataclass

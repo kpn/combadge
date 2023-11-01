@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Generic, TypeVar
 
 from httpx import AsyncClient, Client, Response
+from pydantic import RootModel
 
 from combadge.core.interfaces import ProvidesBinder
 from combadge.core.typevars import ResponseT
@@ -12,15 +13,7 @@ _ClientT = TypeVar("_ClientT", Client, AsyncClient)
 
 
 class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
-    """
-    [HTTPX](https://www.python-httpx.org/) client support.
-
-    # Available response aliases
-
-    - [`Content`][combadge.support.http.aliases.Content]: HTTP response content
-    - [`StatusCode`][combadge.support.http.aliases.StatusCode]: HTTP response status code
-    - [`Reason`][combadge.support.http.aliases.Reason]: HTTP reason phrase
-    """
+    """[HTTPX](https://www.python-httpx.org/) client support."""
 
     _client: _ClientT
 
@@ -29,7 +22,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
         self._raise_for_status = raise_for_status
 
     @classmethod
-    def _parse_response(cls, from_response: Response, to_type: type[ResponseT]) -> ResponseT:
+    def _parse_response(cls, from_response: Response, to_type: type[RootModel[ResponseT]]) -> ResponseT:
         try:
             json_fields = from_response.json()
         except ValueError:
@@ -41,4 +34,4 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
                 CONTENT_ALIAS: from_response.content,
                 **json_fields,
             },
-        )
+        ).root

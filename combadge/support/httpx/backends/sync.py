@@ -42,7 +42,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
         SupportsRequestWith.__init__(self, request_with)
         ServiceContainer.__init__(self)
 
-    def __call__(self, request: Request, response_type: type[ResponseT]) -> ResponseT:
+    def __call__(self, request: Request, response_type: type[RootModel[ResponseT]]) -> ResponseT:
         """
         Call the backend and parse a response.
 
@@ -52,7 +52,7 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
         response: Response = self._client.request(
             request.get_method(),
             request.get_url_path(),
-            json=request.json_,
+            json=request.payload,
             data=request.form_data,
             params=request.query_params,
             headers=request.headers,
@@ -63,13 +63,13 @@ class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], Servi
 
     @staticmethod
     def bind_method(signature: Signature) -> CallServiceMethod[HttpxBackend]:  # noqa: D102
-        # Return type may be anything, hence wrapping into `RootModel`.
+        # Return type may be anything, hence wrapping it into `RootModel`.
         return_type = RootModel[signature.return_type]  # type: ignore[misc, name-defined]
 
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
-            request = Request(signature, self, args, kwargs)
+            request = signature.build_request(Request, self, args, kwargs)
             with self.backend._request_with(request):
-                return self.backend(request, return_type).root
+                return self.backend(request, return_type)
 
         return bound_method  # type: ignore[return-value]
 

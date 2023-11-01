@@ -37,8 +37,10 @@ def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> S
 @lru_cache(maxsize=100)
 def bind_class(
     from_protocol: type[ServiceProtocolT],
-    method_binder: MethodBinder[BackendT],
+    bind_method: MethodBinder[BackendT],
 ) -> Callable[[BackendT], ServiceProtocolT]:
+    """Create a class which implements the specified protocol, but not yet parametrized with a backend."""
+
     from combadge.core.signature import Signature
 
     class BoundService(BaseBoundService, from_protocol):  # type: ignore[misc, valid-type]
@@ -48,7 +50,7 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        bound_method: CallServiceMethod = method_binder(signature)
+        bound_method: CallServiceMethod = bind_method(signature)
         update_wrapper(bound_method, method)
         bound_method = _wrap(bound_method, signature.method_markers)
         setattr(BoundService, name, bound_method)

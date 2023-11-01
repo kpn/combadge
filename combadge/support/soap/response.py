@@ -1,8 +1,6 @@
 """Response extensions for SOAP."""
 
-from typing import NoReturn, Optional, TypeVar
-
-from pydantic import BaseModel
+from typing import NoReturn, Optional
 
 from combadge.core.response import ErrorResponse
 
@@ -28,11 +26,3 @@ class BaseSoapFault(ErrorResponse):
         if not exception:
             raise self.Error(self)
         raise exception from self.Error(self)
-
-
-SoapFaultT = TypeVar("SoapFaultT", bound=BaseModel)
-"""
-Specific SOAP Fault model type.
-
-It cannot be bound to `BaseSoapFault` as it may be a union of fault types.
-"""

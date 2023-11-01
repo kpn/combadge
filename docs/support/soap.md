@@ -6,8 +6,8 @@
     options:
       heading_level: 3
 
-## Implementations
+## Shortcuts
 
-::: combadge.support.soap.markers.implementation
+::: combadge.support.soap.markers.shortcuts
     options:
       heading_level: 3
