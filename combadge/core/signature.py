@@ -3,9 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from inspect import BoundArguments
 from inspect import signature as get_signature
-from typing import Any, Callable, Iterable, Mapping, Type, cast
+from typing import Any, Callable, Generic, Iterable, Mapping, Type, cast
 
-from combadge.core.binder import ParameterDescriptor
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.service import BaseBoundService
@@ -21,8 +20,8 @@ except ImportError:
 class Signature:
     """Extracted information about a service method."""
 
-    parameter_descriptors: Iterable[ParameterDescriptor]
-    """Extracted parameter descriptors, an iterable of name-marker pairs."""
+    request_preparers: Iterable[RequestPreparer]
+    """Request preparers constructed from the parameter markers."""
 
     method_markers: list[MethodMarker]
     """Extracted method markers."""
@@ -33,7 +32,7 @@ class Signature:
     bind_arguments: Callable[..., BoundArguments]
     """A callable that binds the method's arguments, it is cached here to improve performance."""
 
-    __slots__ = ("bind_arguments", "method_markers", "parameter_descriptors", "return_type")
+    __slots__ = ("bind_arguments", "method_markers", "request_preparers", "return_type")
 
     @classmethod
     def from_method(cls, method: Any) -> Signature:
@@ -41,7 +40,7 @@ class Signature:
         annotations_ = get_annotations(method, eval_str=True)
         return Signature(
             bind_arguments=get_signature(method).bind,
-            parameter_descriptors=Signature._extract_parameter_descriptors(annotations_),
+            request_preparers=Signature._build_request_preparers(annotations_),
             method_markers=MethodMarker.ensure_markers(method),
             return_type=Signature._extract_return_type(annotations_),
         )
@@ -73,27 +72,32 @@ class Signature:
 
         # Apply the parameter markers: they receive their respective values.
         all_arguments = bound_arguments.arguments
-        for marker in self.parameter_descriptors:
+        for preparer in self.request_preparers:
             try:
-                value = all_arguments[marker.name]
+                value = all_arguments[preparer.parameter_name]
             except KeyError:
                 # The parameter is not provided, skip the marker.
-                pass
-            else:
+                continue
+            if callable(value):
                 # Allow for lazy loaded default parameters.
-                if callable(value):
-                    value = value()
-                marker.prepare_request(request, value)
+                value = value()
+            for prepare_request in preparer.prepare_request:
+                prepare_request(request, value)
 
         return request
 
     @staticmethod
-    def _extract_parameter_descriptors(annotations_: dict[str, Any]) -> Iterable[ParameterDescriptor]:
+    def _build_request_preparers(annotations_: dict[str, Any]) -> Iterable[RequestPreparer]:
         """Extract the parameter descriptors: separate item for each parameter ⨯ marker combination."""
         return tuple(
-            ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
+            RequestPreparer(
+                parameter_name=name,
+                prepare_request=tuple(
+                    marker.prepare_request
+                    for marker in cast(Iterable[ParameterMarker], ParameterMarker.extract(annotation))
+                ),
+            )
             for name, annotation in annotations_.items()
-            for marker in cast(Iterable[ParameterMarker], ParameterMarker.extract(annotation))
         )
 
     @staticmethod
@@ -102,3 +106,13 @@ class Signature:
             return annotations_["return"]
         except KeyError:
             return None
+
+
+@dataclass
+class RequestPreparer(Generic[BackendRequestT]):  # noqa: D101
+    __slots__ = ("parameter_name", "prepare_request")
+
+    parameter_name: str
+
+    prepare_request: Iterable[Callable[[BackendRequestT, Any], None]]
+    """Collection of callables, which modify the request based on the parameter's value."""

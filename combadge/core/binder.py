@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from functools import update_wrapper
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable
+from typing import TYPE_CHECKING, Any, Callable, Iterable
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import BackendRequestT, BackendT, FunctionT, ServiceProtocolT
+from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
@@ -76,24 +75,3 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
         if "self" not in parameters:
             continue
         yield name, method
-
-
-@dataclass
-class ParameterDescriptor(Generic[BackendRequestT]):  # noqa: D101
-    """
-    Full description of a parameter needed to construct a request.
-
-    Original markers are independent instances which can be singletons or reused.
-    In order to construct a request, for each parameter in addition to the marker,
-    we need to know the parameter name.
-
-    This structure makes it easier to pass this information together.
-    """
-
-    __slots__ = ("name", "prepare_request")
-
-    name: str
-    """Parameter name."""
-
-    prepare_request: Callable[[BackendRequestT, Any], None]
-    """Original marker's method to prepare a request."""
