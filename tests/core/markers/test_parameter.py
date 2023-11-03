@@ -4,16 +4,14 @@ import pytest
 from typing_extensions import Annotated
 
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.support.http.markers import CustomHeader
-from combadge.support.http.markers import Payload as PayloadImplementation
-from combadge.support.http.markers.shortcuts import Payload
+from combadge.support.http.markers import CustomHeader, Payload
 
 
 @pytest.mark.parametrize(
     ("type_", "expected"),
     [
         (int, []),
-        (Payload[int], [PayloadImplementation()]),
+        (Payload[int], [Payload()]),
         (Annotated[str, CustomHeader("X-Header")], [CustomHeader("X-Header")]),
     ],
 )
