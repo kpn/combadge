@@ -8,23 +8,23 @@ from types import TracebackType
 from typing import Any, Callable
 
 import httpx
-from pydantic import BaseModel, RootModel
+from pydantic import BaseModel
 from typing_extensions import Self
 from zeep import AsyncClient, Plugin
 from zeep.exceptions import Fault
+from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 from zeep.transports import AsyncTransport
 from zeep.wsse import UsernameToken
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
-from combadge.core.interfaces import CallServiceMethod
+from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
-from combadge.core.typevars import ResponseT
 from combadge.support.shared.async_ import SupportsRequestWith
 from combadge.support.shared.contextlib import asyncnullcontext
 from combadge.support.soap.request import Request
-from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName, _SoapFaultT
+from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
 
 
 class ZeepBackend(
@@ -105,35 +105,20 @@ class ZeepBackend(
         SupportsRequestWith.__init__(self, request_with)
         ServiceContainer.__init__(self)
 
-    async def __call__(
-        self,
-        request: Request,
-        response_type: type[RootModel[ResponseT]],
-        fault_type: type[_SoapFaultT],
-    ) -> ResponseT | _SoapFaultT:
-        """
-        Call the specified service method.
-
-        Args:
-            request: prepared request
-            response_type: non-fault response model type
-            fault_type: SOAP fault model type
-        """
-        operation = self._get_operation(request.get_operation_name())
-        try:
-            response = await operation(**request.get_payload())
-        except Fault as e:
-            return self._parse_soap_fault(e, fault_type)
-        return self._parse_response(response, response_type)
-
-    @classmethod
-    def bind_method(cls, signature: Signature) -> CallServiceMethod[ZeepBackend]:  # noqa: D102
-        response_type, fault_type = cls._split_response_type(signature.return_type)
+    def bind_method(self, signature: Signature) -> ServiceMethod[ZeepBackend]:  # noqa: D102
+        response_type, fault_type = self._split_response_type(signature.return_type)
+        backend = self
 
         async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
             request = signature.build_request(Request, self, args, kwargs)
-            async with self.backend._request_with(request):
-                return await self.backend(request, response_type, fault_type)
+            operation = backend._get_operation(request.get_operation_name())
+            try:
+                async with self.backend._request_with(request):
+                    response = await operation(**request.get_payload())
+            except Fault as e:
+                return backend._parse_soap_fault(e, fault_type)
+            else:
+                return signature.apply_response_markers(serialize_object(response, dict), response_type)
 
         return bound_method  # type: ignore[return-value]
 

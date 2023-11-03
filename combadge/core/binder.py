@@ -12,7 +12,7 @@ from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
+    from combadge.core.interfaces import MethodBinder, ProvidesBinder, ServiceMethod
 
     def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]:
         ...
@@ -49,7 +49,7 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        bound_method: CallServiceMethod = bind_method(signature)
+        bound_method: ServiceMethod = bind_method(signature)
         update_wrapper(bound_method, method)
         bound_method = _wrap(bound_method, signature.method_markers)
         setattr(BoundService, name, bound_method)

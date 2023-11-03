@@ -5,10 +5,13 @@ from inspect import BoundArguments
 from inspect import signature as get_signature
 from typing import Any, Callable, Generic, Iterable, Mapping, Type, cast
 
+from pydantic import BaseModel, RootModel
+
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
+from combadge.core.markers.response import ResponseMarker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import BackendRequestT
+from combadge.core.typevars import BackendRequestT, ResponseT
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -29,20 +32,24 @@ class Signature:
     return_type: type[Any] | None
     """Extracted method return type."""
 
+    response_markers: Iterable[ResponseMarker]
+
     bind_arguments: Callable[..., BoundArguments]
     """A callable that binds the method's arguments, it is cached here to improve performance."""
 
-    __slots__ = ("bind_arguments", "method_markers", "request_preparers", "return_type")
+    __slots__ = ("bind_arguments", "method_markers", "request_preparers", "return_type", "response_markers")
 
     @classmethod
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         annotations_ = get_annotations(method, eval_str=True)
+        return_type = Signature._extract_return_type(annotations_)
         return Signature(
             bind_arguments=get_signature(method).bind,
             request_preparers=Signature._build_request_preparers(annotations_),
             method_markers=MethodMarker.ensure_markers(method),
-            return_type=Signature._extract_return_type(annotations_),
+            return_type=return_type,
+            response_markers=ResponseMarker.extract(return_type),
         )
 
     def build_request(
@@ -85,6 +92,16 @@ class Signature:
                 prepare_request(request, value)
 
         return request
+
+    def apply_response_markers(self, value: Any, response_type: type[ResponseT] | None) -> ResponseT:
+        """Apply the response markers to the value sequentially."""
+        for marker in self.response_markers:
+            value = marker.transform(value)
+        if not isinstance(value, BaseModel):
+            # Implicitly parse a Pydantic model.
+            # Need to come up with something smarter to uncouple Combadge from Pydantic.
+            value = RootModel[response_type].model_validate(value).root  # type: ignore[valid-type]
+        return value
 
     @staticmethod
     def _build_request_preparers(annotations_: dict[str, Any]) -> Iterable[RequestPreparer]:

@@ -56,12 +56,12 @@ class SupportsService(Protocol):
 class MethodBinder(Protocol[BackendT]):  # noqa: D101
     @staticmethod
     @abstractmethod
-    def __call__(__signature: Signature) -> CallServiceMethod[BackendT]:
+    def __call__(signature: Signature, /) -> ServiceMethod[BackendT]:
         """
         Bind the method by its signature (for example, a backend).
 
         Args:
-            __signature: extracted method signature
+            signature: extracted method signature
 
         Returns:
             Callable service method which is then fully capable of sending a request and receiving a response
@@ -81,7 +81,7 @@ class ProvidesBinder(Protocol):
     binder: MethodBinder[Self]
 
 
-class CallServiceMethod(Protocol[BackendT]):
+class ServiceMethod(Protocol[BackendT]):
     """
     Bound method call specification.
 
@@ -89,14 +89,14 @@ class CallServiceMethod(Protocol[BackendT]):
     """
 
     @abstractmethod
-    def __call__(self, __service: BaseBoundService[BackendT], *__args: Any, **__kwargs: Any) -> BaseModel:
+    def __call__(self, service: BaseBoundService[BackendT], /, *args: Any, **kwargs: Any) -> BaseModel:
         """
         Call the service method.
 
         Args:
-            __service: bound service instance
-            __args: positional request parameters
-            __kwargs: keyword request parameters
+            service: bound service instance
+            args: positional request parameters
+            kwargs: keyword request parameters
 
         Returns:
             Parsed response model.

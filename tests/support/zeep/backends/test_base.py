@@ -21,11 +21,11 @@ class _TestFault2(BaseSoapFault):
 @pytest.mark.parametrize(
     ("response_type", "expected_response_type", "expected_fault_type"),
     [
-        (int, RootModel[int], RootModel[BaseSoapFault]),
-        (None, RootModel[None], RootModel[BaseSoapFault]),
+        (int, int, RootModel[BaseSoapFault]),
+        (None, None, RootModel[BaseSoapFault]),
         (
             Union[int, _TestFault1, _TestFault2],
-            RootModel[int],
+            int,
             RootModel[Union[_TestFault1, _TestFault2, BaseSoapFault]],
         ),
     ],
@@ -37,6 +37,6 @@ def test_split_response_type(response_type: type, expected_response_type: type, 
 @pytest.mark.skipif(version_info < (3, 10), reason="PEP 604 required")
 def test_split_response_type_pep_604() -> None:
     assert BaseZeepBackend._split_response_type(int | _TestFault1 | _TestFault2) == (  # type: ignore[operator]
-        RootModel[int],
+        int,
         RootModel[Union[_TestFault1, _TestFault2, BaseSoapFault]],
     )
