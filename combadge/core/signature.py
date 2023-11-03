@@ -9,7 +9,7 @@ from combadge.core.binder import ParameterDescriptor
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import RequestT
+from combadge.core.typevars import BackendRequestT
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -52,11 +52,11 @@ class Signature:
 
     def build_request(
         self,
-        request_type: Type[RequestT],
+        request_type: Type[BackendRequestT],
         service: BaseBoundService,
         call_args: Iterable[Any],
         call_kwargs: Mapping[str, Any],
-    ) -> RequestT:
+    ) -> BackendRequestT:
         """
         Build a request using the provided request type, marks, and service call arguments.
 

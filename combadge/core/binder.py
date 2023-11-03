@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import BackendT, FunctionT, RequestT, ServiceProtocolT
+from combadge.core.typevars import BackendT, FunctionT, BackendRequestT, ServiceProtocolT
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder
@@ -79,7 +79,7 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
 
 
 @dataclass
-class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
+class ParameterDescriptor(Generic[BackendRequestT]):  # noqa: D101
     """
     Full description of a parameter needed to construct a request.
 
@@ -95,5 +95,5 @@ class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
     name: str
     """Parameter name."""
 
-    prepare_request: Callable[[RequestT, Any], None]
+    prepare_request: Callable[[BackendRequestT, Any], None]
     """Original marker's method to prepare a request."""

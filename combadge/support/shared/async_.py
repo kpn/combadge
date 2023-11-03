@@ -1,9 +1,9 @@
 from contextlib import AbstractAsyncContextManager
 from typing import Callable, Generic
 
-from combadge.core.typevars import RequestT
+from combadge.core.typevars import BackendRequestT
 
 
-class SupportsRequestWith(Generic[RequestT]):  # noqa: D101
-    def __init__(self, request_with: Callable[[RequestT], AbstractAsyncContextManager]) -> None:  # noqa: D107
+class SupportsRequestWith(Generic[BackendRequestT]):  # noqa: D101
+    def __init__(self, request_with: Callable[[BackendRequestT], AbstractAsyncContextManager]) -> None:  # noqa: D107
         self._request_with = request_with

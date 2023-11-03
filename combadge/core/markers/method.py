@@ -4,10 +4,10 @@ from abc import ABC
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
 
-from combadge.core.typevars import FunctionT, RequestT
+from combadge.core.typevars import FunctionT, BackendRequestT
 
 
-class MethodMarker(ABC, Generic[RequestT, FunctionT]):
+class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
     """
     Method marker that modifies an entire request based on all the call arguments.
 
@@ -28,7 +28,7 @@ class MethodMarker(ABC, Generic[RequestT, FunctionT]):
         """
         return what
 
-    def prepare_request(self, request: RequestT, arguments: BoundArguments) -> None:
+    def prepare_request(self, request: BackendRequestT, arguments: BoundArguments) -> None:
         """
         Modify the request according to the mark.
 
