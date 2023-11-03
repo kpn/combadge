@@ -5,8 +5,6 @@ from inspect import BoundArguments
 from inspect import signature as get_signature
 from typing import Any, Callable, Iterable, Mapping, Type, cast
 
-from pydantic import RootModel
-
 from combadge.core.binder import ParameterDescriptor
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
@@ -33,7 +31,7 @@ class Signature:
     method_markers: list[MethodMarker]
     """Extracted method markers."""
 
-    return_type: type[Any]
+    return_type: type[Any] | None
     """Extracted method return type."""
 
     bind_arguments: Callable[..., BoundArguments]
@@ -95,7 +93,7 @@ class Signature:
 
     @staticmethod
     def _extract_parameter_descriptors(annotations_: dict[str, Any]) -> Iterable[ParameterDescriptor]:
-        """Extract the parameter descriptors: separate list item for each parameter ⨯ marker combination."""
+        """Extract the parameter descriptors: separate item for each parameter ⨯ marker combination."""
         return tuple(
             ParameterDescriptor(name=name, prepare_request=marker.prepare_request)
             for name, annotation in annotations_.items()
@@ -103,8 +101,8 @@ class Signature:
         )
 
     @staticmethod
-    def _extract_return_type(annotations_: dict[str, Any]) -> type[Any]:
+    def _extract_return_type(annotations_: dict[str, Any]) -> type[Any] | None:
         try:
             return annotations_["return"]
         except KeyError:
-            return RootModel[None]
+            return None
