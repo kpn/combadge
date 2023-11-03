@@ -19,11 +19,7 @@ except ImportError:
 
 @dataclass
 class Signature:
-    """
-    Contains extracted information about a service method.
-
-    Why? Because passing all these parameters into `bind_method` would be messy.
-    """
+    """Extracted information about a service method."""
 
     parameter_descriptors: Iterable[ParameterDescriptor]
     """Extracted parameter descriptors, an iterable of name-marker pairs."""

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, Iterable
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import BackendT, FunctionT, BackendRequestT, ServiceProtocolT
+from combadge.core.typevars import BackendRequestT, BackendT, FunctionT, ServiceProtocolT
 
 if TYPE_CHECKING:
     from combadge.core.interfaces import CallServiceMethod, MethodBinder, ProvidesBinder

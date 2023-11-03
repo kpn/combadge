@@ -4,7 +4,7 @@ from abc import ABC
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
 
-from combadge.core.typevars import FunctionT, BackendRequestT
+from combadge.core.typevars import BackendRequestT, FunctionT
 
 
 class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
