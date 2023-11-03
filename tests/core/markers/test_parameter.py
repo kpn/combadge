@@ -18,4 +18,4 @@ from combadge.support.http.markers.shortcuts import Payload
     ],
 )
 def test_extract_parameter_marks(type_: Type[Any], expected: List[ParameterMarker]) -> None:
-    assert ParameterMarker.extract(type_) == expected
+    assert list(ParameterMarker.extract(type_)) == expected

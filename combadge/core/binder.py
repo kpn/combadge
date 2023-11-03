@@ -83,11 +83,11 @@ class ParameterDescriptor(Generic[RequestT]):  # noqa: D101
     """
     Full description of a parameter needed to construct a request.
 
-    Original markers are decoupled instances which can be singletons or reused.
-    In order to construct a request, we need a full parameter description: its name,
-    its marker, and/or its type annotation.
+    Original markers are independent instances which can be singletons or reused.
+    In order to construct a request, for each parameter in addition to the marker,
+    we need to know the parameter name.
 
-    This structure contains all the relevant data in a convenient form.
+    This structure makes it easier to pass this information together.
     """
 
     __slots__ = ("name", "prepare_request")
