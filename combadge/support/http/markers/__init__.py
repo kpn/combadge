@@ -9,16 +9,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from functools import cached_property
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
-from typing import get_args as get_type_args
 
 from pydantic import BaseModel
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.typevars import FunctionT, ResponseT
+from combadge.core.typevars import FunctionT
 from combadge.support.http.abc import (
     ContainsFormData,
     ContainsHeaders,
@@ -91,7 +89,7 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
 
 
 @dataclass
-class Payload(ParameterMarker[ContainsPayload], Generic[ResponseT]):
+class Payload(ParameterMarker[ContainsPayload]):
     """
     [`Payload`][combadge.support.http.markers.Payload] marker implementation.
 
@@ -107,12 +105,6 @@ class Payload(ParameterMarker[ContainsPayload], Generic[ResponseT]):
 
     def prepare_request(self, request: ContainsPayload, value: BaseModel) -> None:  # noqa: D102
         request.ensure_payload().update(value.model_dump(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
-
-    @cached_property
-    def _response_type(self) -> type[ResponseT]:
-        """Extract the expected response type for this marker."""
-        (response_type,) = get_type_args(type(self))
-        return response_type
 
 
 @dataclass

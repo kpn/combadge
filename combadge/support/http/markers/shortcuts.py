@@ -2,7 +2,6 @@
 
 from typing import Any, Callable, TypeVar, Union
 
-from pydantic import BaseModel
 from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.typevars import FunctionT
@@ -49,7 +48,7 @@ Notes:
 """
 
 
-Payload: TypeAlias = Annotated[_T, PayloadImplementation[BaseModel]()]
+Payload: TypeAlias = Annotated[_T, PayloadImplementation()]
 """
 # When used as a parameter type
 
