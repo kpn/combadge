@@ -16,7 +16,7 @@ class AnnotatedMarker:
     __slots__ = ()
 
     @classmethod
-    def extract(cls, type_: type[Any]) -> Iterable[Self]:
+    def extract(cls, type_: type[Any] | None) -> Iterable[Self]:
         """Extract all parameter markers from the type annotation, which are instances of the current class."""
         if isinstance(type_, TypeAliasType):
             type_ = type_.__value__

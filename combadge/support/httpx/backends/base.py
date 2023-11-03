@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from httpx import AsyncClient, Client, Response
-from pydantic import RootModel
 
 from combadge.core.interfaces import ProvidesBinder
-from combadge.core.typevars import ResponseT
-from combadge.support.http.aliases import CONTENT_ALIAS, REASON_ALIAS, STATUS_CODE_ALIAS
+from combadge.core.signature import Signature
 
 _ClientT = TypeVar("_ClientT", Client, AsyncClient)
 
@@ -21,17 +19,11 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
         self._client = client
         self._raise_for_status = raise_for_status
 
-    @classmethod
-    def _parse_response(cls, from_response: Response, to_type: type[RootModel[ResponseT]]) -> ResponseT:
+    def _parse_response(self, from_response: Response, signature: Signature) -> Any:
         try:
-            json_fields = from_response.json()
+            json_ = from_response.json()
         except ValueError:
-            json_fields = {}
-        return to_type.model_validate(
-            {
-                STATUS_CODE_ALIAS: from_response.status_code,
-                REASON_ALIAS: from_response.reason_phrase,
-                CONTENT_ALIAS: from_response.content,
-                **json_fields,
-            },
-        ).root
+            json_ = {}
+        if self._raise_for_status:
+            from_response.raise_for_status()
+        return signature.apply_response_markers(json_, signature.return_type)

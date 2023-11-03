@@ -5,16 +5,16 @@ from typing import Generic, TypeVar
 
 from combadge.core.markers.base import AnnotatedMarker
 
-_SourceT = TypeVar("_SourceT")
-"""Response marker conversion source type."""
+_InputT = TypeVar("_InputT")
+"""Response marker conversion input type."""
 
-_TargetT = TypeVar("_TargetT")
-"""Response marker conversion target type."""
+OutputT = TypeVar("OutputT")
+"""Response marker conversion output type."""
 
 
-class ResponseMarker(AnnotatedMarker, Generic[_SourceT, _TargetT], ABC):
+class ResponseMarker(AnnotatedMarker, Generic[_InputT, OutputT], ABC):
     """Response marker: it converts a response to the target type."""
 
     @abstractmethod
-    def transform(self, response: _SourceT) -> _TargetT:
+    def transform(self, input_: _InputT) -> OutputT:
         """Transform response from the source type to the target type."""

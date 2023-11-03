@@ -34,7 +34,6 @@ from httpx import Client
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated, Protocol
 
-from combadge.support.http.aliases import StatusCode
 from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
@@ -46,7 +45,6 @@ class CurrentCondition(BaseModel):
 
 
 class Weather(BaseModel):
-    status: StatusCode[HTTPStatus]
     current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
 
 
@@ -68,7 +66,6 @@ with HttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn] as service
     # 🚀 Call the service:
     response = service.get_weather(in_="amsterdam")
 
-assert response.status == HTTPStatus.OK
 assert response.current[0].humidity == 71
 assert response.current[0].temperature == 8.0
 ```

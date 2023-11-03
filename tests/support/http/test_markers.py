@@ -1,13 +1,13 @@
 import inspect
 from typing import Any, Dict, Tuple
 
-from pytest import mark
+import pytest
 
 from combadge.support.http.abc import ContainsUrlPath
 from combadge.support.http.markers import Path
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("format_", "call_args", "call_kwargs", "expected_path"),
     [
         ("/{keyword}", ("positional",), {"keyword": "keyword"}, "/keyword"),

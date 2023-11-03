@@ -14,12 +14,9 @@ from pydantic import RootModel
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
-from zeep.helpers import serialize_object
 from zeep.proxy import OperationProxy, ServiceProxy
-from zeep.xsd import CompoundValue
 
 from combadge.core.interfaces import ProvidesBinder
-from combadge.core.typevars import ResponseT
 from combadge.support.soap.response import BaseSoapFault
 
 _ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
@@ -46,7 +43,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         self._service = service
 
     @staticmethod
-    def _split_response_type(response_type: Any) -> tuple[type[RootModel[Any]], type[RootModel[Any]]]:
+    def _split_response_type(response_type: Any) -> tuple[type[Any], type[RootModel[Any]]]:
         """
         Split the response type into non-faults and faults.
 
@@ -76,9 +73,8 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         if fault_type is _UNSET:
             fault_type = BaseSoapFault
 
-        # Since response type may be anything and union is not a model, we wrap them into root model.
         # Base SOAP fault should always be present as a fallback.
-        return RootModel[response_type], RootModel[Union[fault_type, BaseSoapFault]]  # type: ignore[valid-type]
+        return response_type, RootModel[Union[fault_type, BaseSoapFault]]  # type: ignore[valid-type]
 
     def _get_operation(self, name: str) -> _OperationProxyT:
         """Get an operation by its name."""
@@ -86,11 +82,6 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
             return self._service[name]
         except AttributeError as e:
             raise RuntimeError(f"available operations are: {dir(self._service)}") from e
-
-    @staticmethod
-    def _parse_response(value: CompoundValue, response_type: type[RootModel[ResponseT]]) -> ResponseT:
-        """Parse the response value using the generic response types."""
-        return response_type.model_validate(serialize_object(value, dict)).root
 
     @staticmethod
     def _parse_soap_fault(exception: Fault, fault_type: type[RootModel[_SoapFaultT]]) -> _SoapFaultT:

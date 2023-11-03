@@ -38,7 +38,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
     from combadge.core.binder import bind
     from combadge.core.markers.method import wrap_with
-    from combadge.support.http.aliases import StatusCode
     from combadge.support.http.markers import QueryParam, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
 
@@ -50,7 +49,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
 
     class Weather(BaseModel):
-        status: StatusCode[HTTPStatus]
         current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
 
 
@@ -73,7 +71,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
     # 🚀 Call the service:
     response = service.get_weather(in_="amsterdam")
-    assert response.status == HTTPStatus.OK
     assert response.current[0].humidity == 71
     assert response.current[0].temperature == 8.0
     ```
