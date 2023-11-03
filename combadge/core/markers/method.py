@@ -8,15 +8,20 @@ from combadge.core.typevars import BackendRequestT, FunctionT
 
 
 class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
-    """
-    Method marker that modifies an entire request based on all the call arguments.
-
-    Notes:
-        - Method marker classes should stay _private_ and offer a convenience function calling `mark` on the marker.
-          Normally, one just needs to inherit this class.
-    """
+    """Method marker that modifies an entire request based on all the call arguments."""
 
     __slots__ = ()
+
+    def __call__(self, what: FunctionT) -> FunctionT:
+        """
+        Mark the function with itself.
+
+        Notes:
+            - This is not a part of the public interface and is used to derive the decorators.
+            - This operates on a source unbound method stub. Any wrappers are applied during the binding stage.
+        """
+        MethodMarker.ensure_markers(what).append(self)
+        return what
 
     def wrap(self, what: FunctionT) -> FunctionT:
         """
@@ -49,25 +54,14 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
             marks = in_.__combadge_marks__ = []
         return marks
 
-    def mark(self, what: FunctionT) -> FunctionT:
-        """
-        Mark the function with itself.
 
-        Notes:
-            - This is not a part of the public interface and is used to derive the decorators.
-            - This operates on a source unbound method stub. Any wrappers are applied during the binding stage.
-        """
-        MethodMarker.ensure_markers(what).append(self)
-        return what
-
-
-class _WrapWithMethodMarker(Generic[FunctionT], MethodMarker[Any, FunctionT]):
+class WrapWith(Generic[FunctionT], MethodMarker[Any, FunctionT]):  # noqa: D101
     __slots__ = ("_decorator",)
 
-    def __init__(self, decorator: Callable[[FunctionT], FunctionT]) -> None:
+    def __init__(self, decorator: Callable[[FunctionT], FunctionT]) -> None:  # noqa: D107
         self._decorator = decorator
 
-    def wrap(self, what: FunctionT) -> FunctionT:
+    def wrap(self, what: FunctionT) -> FunctionT:  # noqa: D102
         return self._decorator(what)
 
 
@@ -80,4 +74,4 @@ def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], Function
         >>> def service_method(self, ...) -> ...:
         >>>     ...
     """
-    return _WrapWithMethodMarker(decorator).mark
+    return WrapWith(decorator)

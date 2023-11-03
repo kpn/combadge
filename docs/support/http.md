@@ -6,12 +6,6 @@
     options:
       heading_level: 3
 
-## Shortcuts
-
-::: combadge.support.http.markers.shortcuts
-    options:
-      heading_level: 3
-
 ## Recipes
 
 ### Avoiding request models for simple requests
@@ -20,7 +14,7 @@ There are cases when having a request model is undesired. For example, when a ca
 parameters of scalar types.
 
 You can map such parameters with the [Field][combadge.support.http.markers.Field] marker,
-which would mark them as separate root fields of a JSON payload:
+which would mark them as separate root fields of the payload:
 
 ```python title="field.py" hl_lines="20"
 from httpx import Client
@@ -28,8 +22,7 @@ from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol
 
 from combadge.core.binder import bind
-from combadge.support.http.markers import Field
-from combadge.support.http.markers.shortcuts import http_method, path
+from combadge.support.http.markers import Field, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
 

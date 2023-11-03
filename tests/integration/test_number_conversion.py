@@ -10,7 +10,7 @@ from zeep import AsyncClient, Client
 from combadge.core.interfaces import SupportsService
 from combadge.core.response import ErrorResponse, SuccessfulResponse
 from combadge.support.http.markers import Payload
-from combadge.support.soap.markers.shortcuts import operation_name
+from combadge.support.soap.markers import operation_name
 from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
 from combadge.support.zeep.backends.base import ByServiceName
 from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
