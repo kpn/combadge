@@ -1,5 +1,7 @@
 # Zeep
 
+::: combadge.support.zeep
+
 ## Sync
 
 ::: combadge.support.zeep.backends.sync.ZeepBackend

@@ -1,7 +1,5 @@
 """
-Support for HTTPX client.
+Support for [HTTPX][1] client.
 
-See Also:
-    - <https://www.python-httpx.org/>
-    - <https://github.com/encode/httpx/>
+[1]: https://www.python-httpx.org/
 """

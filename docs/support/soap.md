@@ -1,5 +1,7 @@
 # SOAP
 
+::: combadge.support.soap
+
 ## Markers
 
 ::: combadge.support.soap.markers

@@ -3,14 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
 from pydantic import BaseModel
 from typing_extensions import Annotated, TypeAlias
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.markers.response import ResponseMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.http.abc import (
     ContainsFormData,
@@ -19,7 +18,6 @@ from combadge.support.http.abc import (
     ContainsPayload,
     ContainsQueryParams,
     ContainsUrlPath,
-    SupportsStatusCode,
 )
 
 _T = TypeVar("_T")
@@ -229,16 +227,3 @@ class FormField(ParameterMarker[ContainsFormData]):
 
     def prepare_request(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
         request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)
-
-
-@dataclass
-class StatusCode(Generic[_T], ResponseMarker[SupportsStatusCode, Any, Dict[_T, int]]):
-    """Extract status code as a dictionary from an original response."""
-
-    key: _T
-    """Key under which the status code should returned in the payload."""
-
-    __slots__ = ("key",)
-
-    def transform(self, response: SupportsStatusCode, input_: Any) -> Dict[_T, int]:  # noqa: D102
-        return {self.key: response.status_code}
