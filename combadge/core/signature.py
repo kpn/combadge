@@ -3,9 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from inspect import BoundArguments
 from inspect import signature as get_signature
-from typing import Any, Callable, Generic, Iterable, Mapping, Type, cast
+from typing import Any, Callable, Generic, Iterable, Mapping, Type
 
-from pydantic import BaseModel, RootModel
+from pydantic import BaseModel, TypeAdapter
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
@@ -16,7 +16,7 @@ from combadge.core.typevars import BackendRequestT, ResponseT
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
 except ImportError:
-    from get_annotations import get_annotations  # type: ignore[no-redef, import]
+    from get_annotations import get_annotations  # type: ignore[no-redef, import-not-found, import-untyped]
 
 
 @dataclass
@@ -94,14 +94,21 @@ class Signature:
 
         return request
 
-    def apply_response_markers(self, response: Any, payload: Any, response_type: type[ResponseT] | None) -> ResponseT:
-        """Apply the response markers to the payload sequentially."""
+    def apply_response_markers(self, response: Any, payload: Any, response_type: TypeAdapter[ResponseT]) -> ResponseT:
+        """
+        Apply the response markers to the payload sequentially.
+
+        Args:
+            response: original backend response
+            payload: parsed response payload
+            response_type: user response type (we require type adapter because the inner type may be anything)
+        """
         for marker in self.response_markers:
             payload = marker.transform(response, payload)
         if not isinstance(payload, BaseModel):
             # Implicitly parse a Pydantic model.
             # Need to come up with something smarter to uncouple Combadge from Pydantic.
-            payload = RootModel[response_type].model_validate(payload).root  # type: ignore[valid-type]
+            payload = response_type.validate_python(payload)
         return payload
 
     @staticmethod
@@ -110,9 +117,8 @@ class Signature:
         return tuple(
             RequestPreparer(
                 parameter_name=name,
-                prepare_request=tuple(
-                    marker.prepare_request
-                    for marker in cast(Iterable[ParameterMarker], ParameterMarker.extract(annotation))
+                prepare_request=tuple(  # type: ignore[var-annotated]
+                    marker.prepare_request for marker in ParameterMarker.extract(annotation)
                 ),
             )
             for name, annotation in annotations_.items()

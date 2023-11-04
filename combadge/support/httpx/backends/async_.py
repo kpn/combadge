@@ -5,7 +5,7 @@ from types import TracebackType
 from typing import Any, Callable
 
 from httpx import AsyncClient, Response
-from pydantic import BaseModel
+from pydantic import TypeAdapter
 from typing_extensions import Self
 
 from combadge.core.backend import ServiceContainer
@@ -44,8 +44,9 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
 
     def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
         backend = self
+        response_type = TypeAdapter(signature.return_type)
 
-        async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> BaseModel:
+        async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
             async with self.backend._request_with(request):
                 response: Response = await backend._client.request(
@@ -56,7 +57,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], 
                     params=request.query_params,
                     headers=request.headers,
                 )
-            return backend._parse_response(response, signature)
+            return signature.apply_response_markers(response, backend._parse_response(response), response_type)
 
         return bound_method  # type: ignore[return-value]
 
