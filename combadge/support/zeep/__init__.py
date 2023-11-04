@@ -1,7 +1,5 @@
 """
-Support for Zeep client.
+Support for [Zeep][1] client.
 
-See Also:
-    - https://docs.python-zeep.org/
-    - https://github.com/mvantellingen/python-zeep
+[1]: https://docs.python-zeep.org/
 """

@@ -1,8 +1,6 @@
 # HTTPX
 
-::: combadge.support.httpx.backends.base.BaseHttpxBackend
-    options:
-      heading_level: 3
+::: combadge.support.httpx
 
 ## Sync
 

@@ -1,8 +1,3 @@
----
-hide:
-  - navigation
----
-
 # Core concepts
 
 ## Service protocol
@@ -38,9 +33,9 @@ Combadge models are based on [Pydantic](https://docs.pydantic.dev/):
 
 Examples:
 
-- HTTP method
-- HTTP endpoint path
-- SOAP operation name
+- [HTTP method][combadge.support.http.markers.http_method]
+- [HTTP endpoint path][combadge.support.http.markers.path]
+- [SOAP operation name][combadge.support.soap.markers.operation_name]
 
 !!! info ""
 
