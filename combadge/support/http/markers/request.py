@@ -53,7 +53,7 @@ class Path(Generic[FunctionT], MethodMarker[ContainsUrlPath, FunctionT]):  # noq
             def factory(arguments: BoundArguments) -> str:
                 # The `arguments.arguments` will contain the positional arguments too.
                 # This is intentional to allow referring to positional arguments by their indexes and names.
-                return path_or_factory.format(*arguments.args, **arguments.arguments)  # type: ignore[union-attr]
+                return path_or_factory.format(*arguments.args, **arguments.arguments)
 
             self._factory = factory
 

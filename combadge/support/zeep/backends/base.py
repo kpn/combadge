@@ -10,7 +10,7 @@ except ImportError:
     # Before Python 3.10:
     UnionType = type(Union[int, str])  # type: ignore[assignment, misc]
 
-from pydantic import RootModel
+from pydantic import RootModel, TypeAdapter
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
@@ -43,7 +43,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         self._service = service
 
     @staticmethod
-    def _split_response_type(response_type: Any) -> tuple[type[Any], type[RootModel[Any]]]:
+    def _split_response_type(response_type: Any) -> tuple[Any, Any]:
         """
         Split the response type into non-faults and faults.
 
@@ -74,7 +74,13 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
             fault_type = BaseSoapFault
 
         # Base SOAP fault should always be present as a fallback.
-        return response_type, RootModel[Union[fault_type, BaseSoapFault]]  # type: ignore[valid-type]
+        return response_type, Union[fault_type, BaseSoapFault]
+
+    @classmethod
+    def _adapt_response_type(cls, response_type: Any) -> tuple[TypeAdapter[Any], TypeAdapter[Any]]:
+        """Split the response type into non-faults and faults, and wrap them into the adapters."""
+        response_type, fault_type = cls._split_response_type(response_type)
+        return TypeAdapter(response_type), TypeAdapter(fault_type)
 
     def _get_operation(self, name: str) -> _OperationProxyT:
         """Get an operation by its name."""
@@ -84,9 +90,9 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
             raise RuntimeError(f"available operations are: {dir(self._service)}") from e
 
     @staticmethod
-    def _parse_soap_fault(exception: Fault, fault_type: type[RootModel[_SoapFaultT]]) -> _SoapFaultT:
+    def _parse_soap_fault(exception: Fault, fault_type: TypeAdapter[_SoapFaultT]) -> _SoapFaultT:
         """Parse the SOAP fault."""
-        return fault_type.model_validate(exception.__dict__).root
+        return fault_type.validate_python(exception.__dict__)
 
 
 @dataclass

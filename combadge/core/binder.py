@@ -54,7 +54,7 @@ def bind_class(
         bound_method = _wrap(bound_method, signature.method_markers)
         setattr(BoundService, name, bound_method)
 
-    del BoundService.__abstractmethods__  # type: ignore[attr-defined]
+    del BoundService.__abstractmethods__
     update_wrapper(BoundService, from_protocol, updated=())
     return BoundService
 

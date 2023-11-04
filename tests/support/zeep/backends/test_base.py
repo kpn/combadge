@@ -4,7 +4,6 @@ from sys import version_info
 from typing import Union
 
 import pytest
-from pydantic import RootModel
 
 from combadge.support.soap.response import BaseSoapFault
 from combadge.support.zeep.backends.base import BaseZeepBackend
@@ -21,12 +20,12 @@ class _TestFault2(BaseSoapFault):
 @pytest.mark.parametrize(
     ("response_type", "expected_response_type", "expected_fault_type"),
     [
-        (int, int, RootModel[BaseSoapFault]),
-        (None, None, RootModel[BaseSoapFault]),
+        (int, int, BaseSoapFault),
+        (None, None, BaseSoapFault),
         (
             Union[int, _TestFault1, _TestFault2],
             int,
-            RootModel[Union[_TestFault1, _TestFault2, BaseSoapFault]],
+            Union[_TestFault1, _TestFault2, BaseSoapFault],
         ),
     ],
 )
@@ -36,7 +35,7 @@ def test_split_response_type(response_type: type, expected_response_type: type, 
 
 @pytest.mark.skipif(version_info < (3, 10), reason="PEP 604 required")
 def test_split_response_type_pep_604() -> None:
-    assert BaseZeepBackend._split_response_type(int | _TestFault1 | _TestFault2) == (  # type: ignore[operator]
+    assert BaseZeepBackend._split_response_type(Union[int, _TestFault1, _TestFault2]) == (
         int,
-        RootModel[Union[_TestFault1, _TestFault2, BaseSoapFault]],
+        Union[_TestFault1, _TestFault2, BaseSoapFault],
     )

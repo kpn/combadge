@@ -8,7 +8,6 @@ from types import TracebackType
 from typing import Any, Callable
 
 import httpx
-from pydantic import BaseModel
 from typing_extensions import Self
 from zeep import AsyncClient, Plugin
 from zeep.exceptions import Fault
@@ -106,10 +105,10 @@ class ZeepBackend(
         ServiceContainer.__init__(self)
 
     def bind_method(self, signature: Signature) -> ServiceMethod[ZeepBackend]:  # noqa: D102
-        response_type, fault_type = self._split_response_type(signature.return_type)
+        response_type, fault_type = self._adapt_response_type(signature.return_type)
         backend = self
 
-        async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> BaseModel:
+        async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
             operation = backend._get_operation(request.get_operation_name())
             try:
