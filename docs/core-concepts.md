@@ -23,12 +23,10 @@ Result of binding is a service class which encapsulates request and response han
 
 ## Models
 
-Combadge models are based on [pydantic](https://docs.pydantic.dev/):
+Combadge models are based on [Pydantic](https://docs.pydantic.dev/):
 
 - A request model is built and validated before it gets sent. Specific request model is defined by the backend.
 - A response is parsed based on the method's signature: what you annotate is what you get.
-
-Combadge does not restrict user in terms of response model classes: as long as they are inherited from the `#!python BaseModel`, you are good to go.
 
 ## Markers
 
@@ -36,7 +34,7 @@ Combadge does not restrict user in terms of response model classes: as long as t
 
 ### Method markers
 
-[**Method markers**][combadge.core.markers.method.MethodMarker] are used to attach a metadata that is relevant to a whole request rather than a specific parameter.
+**Method markers** are used to attach a metadata that is relevant to a whole request rather than a specific parameter.
 
 Examples:
 
@@ -56,7 +54,11 @@ Examples:
 - Query parameter: pass an argument as a specified query parameter
 - Body: pass an argument as a request body
 
-[Parameter markers][combadge.core.markers.parameter.ParameterMarker] are specified with `#!python Annotated` type hints on corresponding parameters.
+Parameter markers are specified with `#!python Annotated` type hints on corresponding parameters.
+
+### Response markers
+
+**Response markers** are used to transform a response payload prior to passing it into a final response model.
 
 ## Backends
 

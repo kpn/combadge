@@ -11,7 +11,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
 ## Features
 
-- Request and response models based on [**pydantic**](https://docs.pydantic.dev/)
+- Request and response models based on [**Pydantic**](https://docs.pydantic.dev/)
 - Declarative services using [`Protocol`](https://peps.python.org/pep-0544/)
 - Exception classes automatically derived from error models
 - Built-in backends:
@@ -27,7 +27,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 ## Sneak peek
 
 ```python title="quickstart_httpx.py"
-from http import HTTPStatus
 from typing import List
 
 from httpx import Client

@@ -136,7 +136,7 @@ class ErrorResponse(BaseResponse, ABC):
         >>>     ...
 
     Note: Why dynamically constructed class?
-        The problem with `pydantic` is that you can't inherit from `BaseModel` and `Exception`
+        The problem with Pydantic is that you can't inherit from `BaseModel` and `Exception`
         at the same time. Thus, Combadge dynamically constructs a derived exception class,
         which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
     """

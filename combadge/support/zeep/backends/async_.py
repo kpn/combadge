@@ -118,7 +118,7 @@ class ZeepBackend(
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             else:
-                return signature.apply_response_markers(serialize_object(response, dict), response_type)
+                return signature.apply_response_markers(response, serialize_object(response, dict), response_type)
 
         return bound_method  # type: ignore[return-value]
 

@@ -5,6 +5,7 @@
 ::: combadge.support.http.markers
     options:
       heading_level: 3
+      show_bases: true
 
 ## Recipes
 
