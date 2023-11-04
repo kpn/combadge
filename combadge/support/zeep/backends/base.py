@@ -10,7 +10,7 @@ except ImportError:
     # Before Python 3.10:
     UnionType = type(Union[int, str])  # type: ignore[assignment, misc]
 
-from pydantic import RootModel, TypeAdapter
+from pydantic import TypeAdapter
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
@@ -29,7 +29,7 @@ See Also:
 
 _OperationProxyT = TypeVar("_OperationProxyT", bound=OperationProxy)
 
-_SoapFaultT = TypeVar("_SoapFaultT", bound=RootModel[Any])
+_SoapFaultT = TypeVar("_SoapFaultT")
 """Specific SOAP Fault model type."""
 
 _UNSET = object()
