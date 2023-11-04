@@ -6,6 +6,8 @@
     options:
       heading_level: 3
 
+<hr>
+
 ## Response markers
 
 ::: combadge.support.http.markers.response

@@ -9,6 +9,8 @@ simplify the binding process:
     options:
       heading_level: 3
 
+<hr>
+
 ## Method markers
 
 ::: combadge.core.markers.method
@@ -16,9 +18,11 @@ simplify the binding process:
       heading_level: 3
       members: ["wrap_with"]
 
+<hr>
+
 ## Response markers
 
 ::: combadge.core.markers.response
     options:
       heading_level: 3
-      members: ["Map"]
+      members: ["Drop", "Map", "GetItem"]
