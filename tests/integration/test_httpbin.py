@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, Protocol, Union
+from typing import Any, Callable, Dict, List, Protocol, Union
 
 from httpx import AsyncClient, Client
 from pydantic import BaseModel
@@ -106,3 +106,18 @@ async def test_headers_async() -> None:
     assert response.headers["X-Foo"] == "fooval"
     assert response.headers["X-Bar"] == "barval"
     assert response.headers["X-Baz"] == "bazval"
+
+
+@mark.vcr
+def test_non_dict_json() -> None:
+    class SupportsHttpbin(SupportsService, Protocol):
+        @http_method("GET")
+        @path("/get")
+        @abstractmethod
+        def get_non_dict(self) -> List[int]:
+            ...
+
+    # Since httpbin.org is not capable of returning a non-dict JSON,
+    # I manually patched the recorded VCR.py response.
+    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
+    assert service.get_non_dict() == [42, 43]

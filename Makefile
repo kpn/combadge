@@ -39,6 +39,10 @@ format/ruff:
 test:
 	poetry run pytest tests
 
+.PHONY: test/record
+test/record:
+	poetry run pytest --record-mode=once tests
+
 .PHONY: build
 build:
 	poetry build
