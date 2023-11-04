@@ -33,6 +33,7 @@ class Signature:
     """Extracted method return type."""
 
     response_markers: Iterable[ResponseMarker]
+    """Response markers extracted from the return type"""
 
     bind_arguments: Callable[..., BoundArguments]
     """A callable that binds the method's arguments, it is cached here to improve performance."""
@@ -93,15 +94,15 @@ class Signature:
 
         return request
 
-    def apply_response_markers(self, value: Any, response_type: type[ResponseT] | None) -> ResponseT:
-        """Apply the response markers to the value sequentially."""
+    def apply_response_markers(self, response: Any, payload: Any, response_type: type[ResponseT] | None) -> ResponseT:
+        """Apply the response markers to the payload sequentially."""
         for marker in self.response_markers:
-            value = marker.transform(value)
-        if not isinstance(value, BaseModel):
+            payload = marker.transform(response, payload)
+        if not isinstance(payload, BaseModel):
             # Implicitly parse a Pydantic model.
             # Need to come up with something smarter to uncouple Combadge from Pydantic.
-            value = RootModel[response_type].model_validate(value).root  # type: ignore[valid-type]
-        return value
+            payload = RootModel[response_type].model_validate(payload).root  # type: ignore[valid-type]
+        return payload
 
     @staticmethod
     def _build_request_preparers(annotations_: dict[str, Any]) -> Iterable[RequestPreparer]:

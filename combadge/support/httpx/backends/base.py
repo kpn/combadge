@@ -26,4 +26,4 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
             json_ = {}
         if self._raise_for_status:
             from_response.raise_for_status()
-        return signature.apply_response_markers(json_, signature.return_type)
+        return signature.apply_response_markers(from_response, json_, signature.return_type)

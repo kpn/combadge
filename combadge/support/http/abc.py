@@ -9,7 +9,7 @@ There are two types of mixins:
 
 from abc import ABC
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Protocol, Tuple
 
 
 @dataclass
@@ -87,3 +87,9 @@ class ContainsPayload(ABC):
         if (payload := self.payload) is None:
             raise ValueError("a request requires a non-empty payload")
         return payload
+
+
+class SupportsStatusCode(Protocol):
+    """Supports a status code attribute or property."""
+
+    status_code: int
