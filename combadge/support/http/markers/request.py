@@ -125,11 +125,12 @@ if not TYPE_CHECKING:
         Mark parameter as a request payload. An argument gets converted to a dictionary and passed over to a backend.
 
         Examples:
-            >>> class BodyModel(BaseModel):
-            >>>     ...
+            Simple usage:
 
             >>> def call(body: Payload[BodyModel]) -> ...:
             >>>     ...
+
+            Equivalent expanded usage:
 
             >>> def call(body: Annotated[BodyModel, Payload()]) -> ...:
             >>>     ...
@@ -184,9 +185,6 @@ if not TYPE_CHECKING:
         An argument gets converted to a dictionary and passed over to a backend.
 
         Examples:
-            >>> class FormModel(BaseModel):
-            >>>     ...
-
             >>> def call(body: FormData[FormModel]) -> ...:
             >>>     ...
 

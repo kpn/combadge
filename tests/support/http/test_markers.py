@@ -1,11 +1,12 @@
 import inspect
-from types import SimpleNamespace
+from http import HTTPStatus
 from typing import Any, Dict, Tuple
 
 import pytest
+from httpx import Response
 
 from combadge.support.http.abc import ContainsUrlPath
-from combadge.support.http.markers import Path, StatusCodeMixin
+from combadge.support.http.markers import Path, ReasonPhraseMixin, StatusCodeMixin, TextMixin
 
 
 @pytest.mark.parametrize(
@@ -32,7 +33,15 @@ def test_path_factory() -> None:
 
 
 def test_status_code_mixin() -> None:
-    assert StatusCodeMixin("key").transform(SimpleNamespace(status_code=200), {}) == {"key": 200}
+    assert StatusCodeMixin("key").transform(Response(status_code=200), {}) == {"key": HTTPStatus.OK}
+
+
+def test_reason_phrase_mixin() -> None:
+    assert ReasonPhraseMixin("key").transform(Response(status_code=200), {}) == {"key": "OK"}
+
+
+def test_text_mixin() -> None:
+    assert TextMixin("key").transform(Response(status_code=200, text="my text"), {}) == {"key": "my text"}
 
 
 def _example(positional: str, *, keyword: str) -> None:
