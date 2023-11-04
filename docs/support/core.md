@@ -21,4 +21,4 @@ simplify the binding process:
 ::: combadge.core.markers.response
     options:
       heading_level: 3
-      members: ["Mixin"]
+      members: ["Map"]

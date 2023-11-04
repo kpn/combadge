@@ -1,10 +1,11 @@
 import inspect
+from types import SimpleNamespace
 from typing import Any, Dict, Tuple
 
 import pytest
 
 from combadge.support.http.abc import ContainsUrlPath
-from combadge.support.http.markers import Path
+from combadge.support.http.markers import Path, StatusCodeMixin
 
 
 @pytest.mark.parametrize(
@@ -16,18 +17,22 @@ from combadge.support.http.markers import Path
         ("/{positional}", (), {"positional": "positional_as_kwarg", "keyword": "keyword"}, "/positional_as_kwarg"),
     ],
 )
-def test_format(format_: str, call_args: Tuple[Any, ...], call_kwargs: Dict[str, Any], expected_path: str) -> None:
+def test_path_format(format_: str, call_args: Tuple[Any, ...], call_kwargs: Dict[str, Any], expected_path: str) -> None:
     mark = Path[Any](format_)
     request = ContainsUrlPath()
     mark.prepare_request(request, _example_signature.bind(*call_args, **call_kwargs))
     assert request.url_path == expected_path
 
 
-def test_factory() -> None:
+def test_path_factory() -> None:
     mark = Path[Any](lambda _arguments: "don't care")
     request = ContainsUrlPath()
     mark.prepare_request(request, _example_signature.bind("positional", keyword="keyword"))
     assert request.url_path == "don't care"
+
+
+def test_status_code_mixin() -> None:
+    assert StatusCodeMixin("key").transform(SimpleNamespace(status_code=200), {}) == {"key": 200}
 
 
 def _example(positional: str, *, keyword: str) -> None:

@@ -1,22 +1,27 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Generic, TypeVar
+from typing import Any, MutableMapping, TypeVar
 
 from combadge.core.markers.response import ResponseMarker
 from combadge.support.http.abc import SupportsStatusCode
 
-_T = TypeVar("_T")
+_MutableMappingT = TypeVar("_MutableMappingT", bound=MutableMapping[Any, Any])
 
 
 @dataclass
-class StatusCode(Generic[_T], ResponseMarker[SupportsStatusCode, Any, Dict[_T, int]]):
-    """Extract status code as a dictionary from an original response."""
+class StatusCodeMixin(ResponseMarker):
+    """
+    Update payload with response status code.
 
-    key: _T
-    """Key under which the status code should returned in the payload."""
+    Warning:
+        Input payload **must be** a mutable mapping (for example, a `#!python dict`).
+        If this is not the case, map it first with the [`Map` marker][combadge.core.markers.response.Map].
+    """
 
-    __slots__ = ("key",)
+    key: Any = "status_code"
+    """Key under which the status code should assigned in the payload."""
 
-    def transform(self, response: SupportsStatusCode, input_: Any) -> Dict[_T, int]:  # noqa: D102
-        return {self.key: response.status_code}
+    def transform(self, response: SupportsStatusCode, input_: _MutableMappingT) -> _MutableMappingT:  # noqa: D102
+        input_[self.key] = response.status_code
+        return input_
