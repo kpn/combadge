@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Protocol, Union
 
+import pytest
 from httpx import AsyncClient, Client
 from pydantic import BaseModel
-from pytest import mark
 from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
@@ -12,7 +12,7 @@ from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBac
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
 
-@mark.vcr
+@pytest.mark.vcr()
 def test_form_data() -> None:
     class Data(BaseModel):
         foo: int
@@ -38,7 +38,7 @@ def test_form_data() -> None:
     assert response == Response(form={"foo": "42", "barqux": ["100500", "100501"]})
 
 
-@mark.vcr
+@pytest.mark.vcr()
 def test_query_params() -> None:
     class Response(BaseModel):
         args: Dict[str, Any]
@@ -60,7 +60,7 @@ def test_query_params() -> None:
     assert response == Response(args={"foobar": ["100500", "100501"]})
 
 
-@mark.vcr
+@pytest.mark.vcr()
 def test_headers_sync() -> None:
     class Response(BaseModel):
         headers: Dict[str, Any]
@@ -84,7 +84,7 @@ def test_headers_sync() -> None:
     assert response.headers["X-Baz"] == "bazval"
 
 
-@mark.vcr
+@pytest.mark.vcr()
 async def test_headers_async() -> None:
     class Response(BaseModel):
         headers: Dict[str, Any]
@@ -108,7 +108,7 @@ async def test_headers_async() -> None:
     assert response.headers["X-Baz"] == "bazval"
 
 
-@mark.vcr
+@pytest.mark.vcr()
 def test_non_dict_json() -> None:
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")

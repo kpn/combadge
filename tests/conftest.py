@@ -1,8 +1,8 @@
 from typing import Any, Dict
 
-from pytest import fixture
+import pytest
 
 
-@fixture(scope="module")
+@pytest.fixture(scope="module")
 def vcr_config() -> Dict[str, Any]:
     return {}
