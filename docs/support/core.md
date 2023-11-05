@@ -25,4 +25,4 @@ simplify the binding process:
 ::: combadge.core.markers.response
     options:
       heading_level: 3
-      members: ["Drop", "Map", "GetItem"]
+      members: ["Map", "Extract", "Mixin"]

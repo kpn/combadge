@@ -104,7 +104,7 @@ class Signature:
             response_type: user response type (we require type adapter because the inner type may be anything)
         """
         for marker in self.response_markers:
-            payload = marker.transform(response, payload)
+            payload = marker(response, payload)
         if not isinstance(payload, BaseModel):
             # Implicitly parse a Pydantic model.
             # Need to come up with something smarter to uncouple Combadge from Pydantic.
