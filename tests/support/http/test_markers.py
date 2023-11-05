@@ -6,7 +6,7 @@ import pytest
 from httpx import Response
 
 from combadge.support.http.abc import ContainsUrlPath
-from combadge.support.http.markers import Path, ReasonPhraseMixin, StatusCodeMixin, TextMixin
+from combadge.support.http.markers import Path, ReasonPhrase, StatusCode, Text
 
 
 @pytest.mark.parametrize(
@@ -32,16 +32,16 @@ def test_path_factory() -> None:
     assert request.url_path == "don't care"
 
 
-def test_status_code_mixin() -> None:
-    assert StatusCodeMixin("key").transform(Response(status_code=200), {}) == {"key": HTTPStatus.OK}
+def test_status_code() -> None:
+    assert StatusCode("key")(Response(status_code=200), ...) == {"key": HTTPStatus.OK}
 
 
-def test_reason_phrase_mixin() -> None:
-    assert ReasonPhraseMixin("key").transform(Response(status_code=200), {}) == {"key": "OK"}
+def test_reason_phrase() -> None:
+    assert ReasonPhrase("key")(Response(status_code=200), ...) == {"key": "OK"}
 
 
-def test_text_mixin() -> None:
-    assert TextMixin("key").transform(Response(status_code=200, text="my text"), {}) == {"key": "my text"}
+def test_text() -> None:
+    assert Text("key")(Response(status_code=200, text="my text"), ...) == {"key": "my text"}
 
 
 def _example(positional: str, *, keyword: str) -> None:
