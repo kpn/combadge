@@ -30,4 +30,4 @@ def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
     See Also:
         - [Structure of a WSDL message](https://www.ibm.com/docs/en/rtw/9.0.0?topic=documents-structure-wsdl-message)
     """
-    return OperationName[Any](name)
+    return OperationName[Any](name).mark

@@ -37,7 +37,7 @@ class CustomHeader(ParameterMarker[ContainsHeaders]):
     name: str
     __slots__ = ("name",)
 
-    def prepare_request(self, request: ContainsHeaders, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: ContainsHeaders, value: Any) -> None:  # noqa: D102
         request.headers.append((self.name, value))
 
 
@@ -78,7 +78,7 @@ def path(path_or_factory: str | Callable[..., str]) -> Callable[[FunctionT], Fun
         >>> @path(lambda name, **_: f"/hello/{name}")
         >>> def call(name: str) -> None: ...
     """
-    return Path[Any](path_or_factory)
+    return Path[Any](path_or_factory).mark
 
 
 @dataclass
@@ -97,7 +97,7 @@ def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
         >>> @http_method("POST")
         >>> def call() -> None: ...
     """
-    return HttpMethod[Any](method)
+    return HttpMethod[Any](method).mark
 
 
 @dataclass
@@ -113,7 +113,7 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
     name: str
     __slots__ = ("name",)
 
-    def prepare_request(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
         request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 
@@ -139,7 +139,7 @@ if not TYPE_CHECKING:
         exclude_unset: bool = False
         by_alias: bool = False
 
-        def prepare_request(self, request: ContainsPayload, value: BaseModel) -> None:  # noqa: D102
+        def __call__(self, request: ContainsPayload, value: BaseModel) -> None:  # noqa: D102
             request.ensure_payload().update(value.model_dump(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
 
         def __class_getitem__(cls, item: type[Any]) -> Any:
@@ -171,7 +171,7 @@ class Field(ParameterMarker[ContainsPayload]):
     name: str
     __slots__ = ("name",)
 
-    def prepare_request(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
         request.ensure_payload()[self.name] = value.value if isinstance(value, Enum) else value
 
 
@@ -194,7 +194,7 @@ if not TYPE_CHECKING:
 
         __slots__ = ()
 
-        def prepare_request(self, request: ContainsFormData, value: BaseModel) -> None:  # noqa: D102
+        def __call__(self, request: ContainsFormData, value: BaseModel) -> None:  # noqa: D102
             for item_name, item_value in value.model_dump(by_alias=True).items():
                 request.append_form_field(item_name, item_value)
 
@@ -223,5 +223,5 @@ class FormField(ParameterMarker[ContainsFormData]):
     name: str
     __slots__ = ("name",)
 
-    def prepare_request(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
         request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)

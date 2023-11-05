@@ -117,9 +117,7 @@ class Signature:
         return tuple(
             RequestPreparer(
                 parameter_name=name,
-                prepare_request=tuple(  # type: ignore[var-annotated]
-                    marker.prepare_request for marker in ParameterMarker.extract(annotation)
-                ),
+                prepare_request=ParameterMarker.extract(annotation),
             )
             for name, annotation in annotations_.items()
         )
