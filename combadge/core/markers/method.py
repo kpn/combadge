@@ -12,7 +12,7 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
 
     __slots__ = ()
 
-    def __call__(self, what: FunctionT) -> FunctionT:
+    def mark(self, what: FunctionT) -> FunctionT:
         """
         Mark the function with itself.
 
@@ -74,4 +74,4 @@ def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], Function
         >>> def service_method(self, ...) -> ...:
         >>>     ...
     """
-    return WrapWith(decorator)
+    return WrapWith(decorator).mark

@@ -13,5 +13,5 @@ class ParameterMarker(AnnotatedMarker, Generic[BackendRequestT], ABC):
     __slots__ = ()
 
     @abstractmethod
-    def prepare_request(self, request: BackendRequestT, value: Any) -> None:
+    def __call__(self, request: BackendRequestT, value: Any) -> None:
         """Update the request according to the marker and the actual argument."""
