@@ -1,8 +1,8 @@
 from typing import List
 
+import pytest
 from httpx import AsyncClient, Client
 from pydantic import BaseModel, Field, ValidationError, validate_call
-from pytest import mark, raises
 from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
@@ -21,7 +21,7 @@ class Weather(BaseModel):
     current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
 
 
-@mark.vcr
+@pytest.mark.vcr()
 def test_weather_sync() -> None:
     class SupportsWttrIn(SupportsService):
         @http_method("GET")
@@ -42,11 +42,11 @@ def test_weather_sync() -> None:
     assert response.current[0].humidity == 93
     assert response.current[0].temperature == 2
 
-    with raises(ValidationError):
+    with pytest.raises(ValidationError):
         service.get_weather(in_="")
 
 
-@mark.vcr
+@pytest.mark.vcr()
 async def test_weather_async() -> None:
     class SupportsWttrIn(SupportsService):
         @http_method("GET")
@@ -62,7 +62,7 @@ async def test_weather_async() -> None:
 
     backend = AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in"))
     async with backend[SupportsWttrIn] as service:
-        with raises(ValidationError):
+        with pytest.raises(ValidationError):
             await service.get_weather(in_="")
         response = await service.get_weather(in_="amsterdam")
 

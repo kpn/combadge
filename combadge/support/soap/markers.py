@@ -2,6 +2,9 @@ from dataclasses import dataclass
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
 
+# noinspection PyUnresolvedReferences
+from typing_extensions import override
+
 from combadge.core.markers.method import MethodMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.soap.abc import ContainsOperationName
@@ -13,6 +16,7 @@ class OperationName(Generic[FunctionT], MethodMarker[ContainsOperationName, Func
 
     __slots__ = ("name",)
 
+    @override
     def prepare_request(self, request: ContainsOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
         request.operation_name = self.name
 

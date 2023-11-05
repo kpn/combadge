@@ -4,6 +4,9 @@ from abc import ABC
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
 
+# noinspection PyUnresolvedReferences
+from typing_extensions import override
+
 from combadge.core.typevars import BackendRequestT, FunctionT
 
 
@@ -61,6 +64,7 @@ class WrapWith(Generic[FunctionT], MethodMarker[Any, FunctionT]):  # noqa: D101
     def __init__(self, decorator: Callable[[FunctionT], FunctionT]) -> None:  # noqa: D107
         self._decorator = decorator
 
+    @override
     def wrap(self, what: FunctionT) -> FunctionT:  # noqa: D102
         return self._decorator(what)
 

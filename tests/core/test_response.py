@@ -1,4 +1,4 @@
-from pytest import raises
+import pytest
 
 from combadge.core.response import BaseError, ErrorResponse
 
@@ -26,7 +26,7 @@ def test_default_raise_for_result() -> None:
     class Error(ErrorResponse):
         pass
 
-    with raises(Error.Error):
+    with pytest.raises(Error.Error):
         Error().raise_for_result()
 
 
@@ -40,7 +40,7 @@ def test_custom_raise_for_result() -> None:
         pass
 
     response = Error()
-    with raises(CustomError) as e:
+    with pytest.raises(CustomError) as e:
         response.raise_for_result(CustomError())
 
     assert isinstance(e.value.__cause__, Error.Error)

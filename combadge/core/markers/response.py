@@ -4,6 +4,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, Mapping, MutableMapping, TypeVar
 
+# noinspection PyUnresolvedReferences
+from typing_extensions import override
+
 from combadge.core.markers.base import AnnotatedMarker
 
 _InputPayloadT = TypeVar("_InputPayloadT")
@@ -29,6 +32,7 @@ class Map(ResponseMarker):
 
     __slots__ = ("key",)
 
+    @override
     def __call__(self, response: Any, payload: Any) -> Dict[Any, Any]:  # noqa: D102
         return {self.key: payload}
 
@@ -52,6 +56,7 @@ class Extract(ResponseMarker):
 
     __slots__ = ("key",)
 
+    @override
     def __call__(self, response: Any, payload: Mapping[Any, Any]) -> Any:  # noqa: D102
         return payload[self.key]
 
@@ -68,6 +73,7 @@ class Mixin(ResponseMarker):
 
     __slots__ = ("inner",)
 
+    @override
     def __call__(self, response: Any, payload: _MutableMappingT) -> _MutableMappingT:  # noqa: D102
         payload.update(self.inner(response, payload))
         return payload

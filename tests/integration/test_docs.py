@@ -6,7 +6,7 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Iterator, NamedTuple
 
-from pytest import mark, param
+import pytest
 
 CODE_BLOCK_RE = re.compile(r"""```python title="([^"]+)"[^\n]*(.+?)```""", re.MULTILINE | re.DOTALL)
 
@@ -18,13 +18,13 @@ def _discover_files() -> Iterator[Path]:
 
 def _generate_params(path: Path) -> Iterator[NamedTuple]:
     for test_id, snippet in CODE_BLOCK_RE.findall(path.read_text()):
-        yield param(snippet, id=f"{'-'.join(path.parts)}#{test_id}")
+        yield pytest.param(snippet, id=f"{'-'.join(path.parts)}#{test_id}")
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     "snippet",
     chain.from_iterable(_generate_params(path) for path in _discover_files()),
 )
-@mark.vcr(decode_compressed_response=True)
+@pytest.mark.vcr(decode_compressed_response=True)
 def test_documentation_snippet(snippet: str) -> None:
     exec(dedent(snippet), {})

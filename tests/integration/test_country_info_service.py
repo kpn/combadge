@@ -2,8 +2,8 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Iterable, List, Protocol
 
+import pytest
 from pydantic import BaseModel, Field
-from pytest import fixture, mark
 from typing_extensions import Annotated
 from zeep import Client
 
@@ -29,13 +29,13 @@ class SupportsCountryInfo(SupportsService, Protocol):
         raise NotImplementedError
 
 
-@fixture
+@pytest.fixture()
 def country_info_service() -> Iterable[SupportsCountryInfo]:
     with Client(wsdl=str(Path(__file__).parent / "wsdl" / "CountryInfoService.wsdl")) as client:
         yield SupportsCountryInfo.bind(ZeepBackend(client.service))
 
 
-@mark.vcr(decode_compressed_response=True)
+@pytest.mark.vcr(decode_compressed_response=True)
 def test_happy_path(country_info_service: SupportsCountryInfo) -> None:
     continents = country_info_service.list_of_continents_by_name(CountryInfoRequest())
 

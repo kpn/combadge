@@ -6,7 +6,7 @@ from inspect import BoundArguments
 from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
 from pydantic import BaseModel
-from typing_extensions import Annotated, TypeAlias
+from typing_extensions import Annotated, TypeAlias, override
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
@@ -37,6 +37,7 @@ class CustomHeader(ParameterMarker[ContainsHeaders]):
     name: str
     __slots__ = ("name",)
 
+    @override
     def __call__(self, request: ContainsHeaders, value: Any) -> None:  # noqa: D102
         request.headers.append((self.name, value))
 
@@ -57,6 +58,7 @@ class Path(Generic[FunctionT], MethodMarker[ContainsUrlPath, FunctionT]):  # noq
 
             self._factory = factory
 
+    @override
     def prepare_request(self, request: ContainsUrlPath, arguments: BoundArguments) -> None:  # noqa: D102
         request.url_path = self._factory(arguments)
 
@@ -85,6 +87,7 @@ def path(path_or_factory: str | Callable[..., str]) -> Callable[[FunctionT], Fun
 class HttpMethod(Generic[FunctionT], MethodMarker[ContainsMethod, FunctionT]):  # noqa: D101
     method: str
 
+    @override
     def prepare_request(self, request: ContainsMethod, _arguments: BoundArguments) -> None:  # noqa: D102
         request.method = self.method
 
@@ -113,6 +116,7 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
     name: str
     __slots__ = ("name",)
 
+    @override
     def __call__(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
         request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
@@ -139,6 +143,7 @@ if not TYPE_CHECKING:
         exclude_unset: bool = False
         by_alias: bool = False
 
+        @override
         def __call__(self, request: ContainsPayload, value: BaseModel) -> None:  # noqa: D102
             request.ensure_payload().update(value.model_dump(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
 
@@ -171,6 +176,7 @@ class Field(ParameterMarker[ContainsPayload]):
     name: str
     __slots__ = ("name",)
 
+    @override
     def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
         request.ensure_payload()[self.name] = value.value if isinstance(value, Enum) else value
 
@@ -194,6 +200,7 @@ if not TYPE_CHECKING:
 
         __slots__ = ()
 
+        @override
         def __call__(self, request: ContainsFormData, value: BaseModel) -> None:  # noqa: D102
             for item_name, item_value in value.model_dump(by_alias=True).items():
                 request.append_form_field(item_name, item_value)
@@ -223,5 +230,6 @@ class FormField(ParameterMarker[ContainsFormData]):
     name: str
     __slots__ = ("name",)
 
+    @override
     def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
         request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)
