@@ -5,9 +5,7 @@ site_description: "Generic API client based on Pydantic"
 
 nav:
   - index.md
-  - Core concepts:
-      - core-concepts/index.md
-      - core-concepts/handling-errors.md
+  - core-concepts.md
   - Support:
       - Core:
           - support/core/method-markers.md
@@ -19,6 +17,7 @@ nav:
       - Backends:
           - support/httpx.md
           - support/zeep.md
+      - support/handling-errors.md
   - tags.md
   - Cookbook:
       - cookbook/capturing-http-status-code.md
