@@ -1,3 +1,8 @@
+---
+tags:
+  - HTTP
+---
+
 # HTTPX
 
 ::: combadge.support.httpx

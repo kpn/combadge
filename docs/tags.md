@@ -1,0 +1,3 @@
+# Documentation tags
+
+[TAGS]

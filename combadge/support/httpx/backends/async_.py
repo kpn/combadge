@@ -19,7 +19,7 @@ from combadge.support.shared.contextlib import asyncnullcontext
 
 
 class HttpxBackend(BaseHttpxBackend[AsyncClient], SupportsRequestWith[Request], ServiceContainer):
-    """Async HTTPX backend for REST APIs."""
+    """Async HTTPX backend."""
 
     __slots__ = ("_client", "_request_with", "_service_cache", "_raise_for_status")
 

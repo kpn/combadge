@@ -1,9 +1,20 @@
+---
+tags:
+  - HTTP
+---
+
 # Capturing HTTP status code
 
 Status code can be «mixed» into a model by using a combination of the
 [`Mixin`][combadge.core.markers.Mixin] and [`StatusCode`][combadge.support.http.markers.StatusCode] markers:
 
-```python title="status_code.py" hl_lines="14 20"
+```python title="status_code.py" hl_lines="20 26"
+import pytest
+import sys
+
+if sys.version_info < (3, 9):
+    pytest.skip("HTTP 418 requires Python 3.9 or higher")
+
 from http import HTTPStatus
 
 from httpx import Client

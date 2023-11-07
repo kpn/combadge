@@ -1,6 +1,6 @@
 # Parameter validation
 
-Combadge supports the [call validation](https://docs.pydantic.dev/latest/api/validate_call/) via the
+Combadge supports [`#!python @pydantic.validate_call`](https://docs.pydantic.dev/latest/api/validate_call/) via the
 [`@wrap_with`][combadge.core.markers.method.wrap_with] marker:
 
 ```python

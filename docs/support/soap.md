@@ -1,3 +1,9 @@
+---
+tags:
+  - HTTP
+  - SOAP
+---
+
 # SOAP
 
 ::: combadge.support.soap

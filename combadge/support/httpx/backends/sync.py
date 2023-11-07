@@ -18,7 +18,7 @@ from combadge.support.shared.sync import SupportsRequestWith
 
 
 class HttpxBackend(BaseHttpxBackend[Client], SupportsRequestWith[Request], ServiceContainer):
-    """Sync HTTPX backend for REST APIs."""
+    """Sync HTTPX backend."""
 
     __slots__ = ("_client", "_request_with", "_service_cache", "_raise_for_status")
 

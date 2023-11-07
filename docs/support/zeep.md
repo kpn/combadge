@@ -1,3 +1,9 @@
+---
+tags:
+  - HTTP
+  - SOAP
+---
+
 # Zeep
 
 ::: combadge.support.zeep

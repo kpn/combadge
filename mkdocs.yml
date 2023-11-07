@@ -9,13 +9,17 @@ nav:
       - core-concepts/index.md
       - core-concepts/handling-errors.md
   - Support:
-      - support/core.md
+      - Core:
+          - support/core/method-markers.md
+          - support/core/response-markers.md
+          - support/core/service-container.md
       - Protocols:
           - support/http.md
           - support/soap.md
       - Backends:
           - support/httpx.md
           - support/zeep.md
+  - tags.md
   - Cookbook:
       - cookbook/capturing-http-status-code.md
       - cookbook/parameter-validation.md
@@ -33,6 +37,7 @@ theme:
     - navigation.footer
     - navigation.indexes
     - navigation.instant
+    - navigation.instant.progress
     - navigation.sections
     - navigation.top
     - navigation.tracking
@@ -75,6 +80,8 @@ plugins:
   - search:
       lang: en
   - social
+  - tags:
+      tags_file: tags.md
 
 markdown_extensions:
   - admonition
