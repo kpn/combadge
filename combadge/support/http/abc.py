@@ -82,12 +82,6 @@ class ContainsPayload(ABC):
             self.payload = {}
         return self.payload
 
-    def get_payload(self) -> dict:
-        """Get a validated request payload."""
-        if (payload := self.payload) is None:
-            raise ValueError("a request requires a non-empty payload")
-        return payload
-
 
 class SupportsStatusCode(Protocol):
     """Supports a read-only status code attribute or property."""

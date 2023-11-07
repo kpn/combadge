@@ -113,7 +113,7 @@ class ZeepBackend(
             operation = backend._get_operation(request.get_operation_name())
             try:
                 async with self.backend._request_with(request):
-                    response = await operation(**request.get_payload())
+                    response = await operation(**(request.payload or {}))
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             else:
