@@ -7,6 +7,12 @@ You can map such parameters with the [`Field`][combadge.support.http.markers.Fie
 which would mark them as separate root fields of the payload:
 
 ```python title="field.py" hl_lines="20"
+import pytest
+import sys
+
+if sys.version_info < (3, 9):
+    pytest.skip("HTTP 418 requires Python 3.9 or higher")
+
 from httpx import Client
 from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol
