@@ -13,7 +13,13 @@ from combadge.support.http.abc import SupportsReasonPhrase, SupportsStatusCode, 
 
 @dataclass
 class StatusCode(ResponseMarker):
-    """Build a payload with response status code."""
+    """
+    Build a payload with response status code.
+
+    Examples:
+        >>> def call(...) -> Annotated[Model, Mixin(StatusCode())]:
+        >>>     ...
+    """
 
     key: Any = "status_code"
     """Key under which the status code should mapped in the payload."""

@@ -17,8 +17,9 @@ nav:
           - support/httpx.md
           - support/zeep.md
   - Cookbook:
-      - cookbook/field.md
+      - cookbook/capturing-http-status-code.md
       - cookbook/parameter-validation.md
+      - cookbook/using-field-for-simple-requests.md
 
 theme:
   icon:
