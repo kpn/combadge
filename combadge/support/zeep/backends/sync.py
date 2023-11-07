@@ -92,7 +92,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
             operation = backend._get_operation(request.get_operation_name())
             try:
                 with self.backend._request_with(request):
-                    response = operation(**request.get_payload())
+                    response = operation(**(request.payload or {}))
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             else:
