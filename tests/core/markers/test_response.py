@@ -8,11 +8,16 @@ def test_map() -> None:
 
 
 def test_mixin() -> None:
-    class InnerMarker(ResponseMarker):
+    class InnerMarker1(ResponseMarker):
         def __call__(self, response: Any, payload: Any) -> Any:
-            return {"inner": "foo"}
+            return {"inner1": "foo"}
 
-    assert Mixin(InnerMarker())(..., {"outer": "bar"}) == {
-        "inner": "foo",
-        "outer": "bar",
+    class InnerMarker2(ResponseMarker):
+        def __call__(self, response: Any, payload: Any) -> Any:
+            return {"inner2": "bar"}
+
+    assert Mixin(InnerMarker1(), InnerMarker2())(..., {"outer": "qux"}) == {
+        "inner1": "foo",
+        "inner2": "bar",
+        "outer": "qux",
     }
