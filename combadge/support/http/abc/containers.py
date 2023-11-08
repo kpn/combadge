@@ -1,15 +1,8 @@
-"""
-Mixins for HTTP-related request and response classes.
-
-There are two types of mixins:
-
-- Containers, named as `Contains*`, are data classes that actually store something.
-- Protocols, named as `Protocol*`, are interfaces that should be implemented by the child classes.
-"""
+"""Mixins for HTTP-related request and response classes."""
 
 from abc import ABC
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -81,27 +74,3 @@ class ContainsPayload(ABC):
         if self.payload is None:
             self.payload = {}
         return self.payload
-
-
-class SupportsStatusCode(Protocol):
-    """Supports a read-only status code attribute or property."""
-
-    @property
-    def status_code(self) -> int:  # noqa: D102
-        raise NotImplementedError
-
-
-class SupportsReasonPhrase(Protocol):
-    """Supports a read-only reason phrase attribute or property."""
-
-    @property
-    def reason_phrase(self) -> str:  # noqa: D102
-        raise NotImplementedError
-
-
-class SupportsText(Protocol):
-    """Supports a read-only text attribute or property."""
-
-    @property
-    def text(self) -> str:  # noqa: D102
-        raise NotImplementedError
