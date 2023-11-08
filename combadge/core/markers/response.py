@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, Mapping, MutableMapping, TypeVar
+from typing import Any, Dict, Iterable, Mapping, MutableMapping, TypeVar
 
 # noinspection PyUnresolvedReferences
 from typing_extensions import override
@@ -64,16 +64,25 @@ class Extract(ResponseMarker):
 _MutableMappingT = TypeVar("_MutableMappingT", bound=MutableMapping[Any, Any])
 
 
-@dataclass
+@dataclass(init=False)
 class Mixin(ResponseMarker):
-    """Mix in the inner marker output to the payload."""
+    """Mix in the inner marker outputs to the payload."""
 
-    inner: ResponseMarker
-    """Inner marker to apply to a payload."""
+    inner: Iterable[ResponseMarker]
 
     __slots__ = ("inner",)
 
+    def __init__(self, *inner: ResponseMarker) -> None:
+        """
+        Initialize the marker.
+
+        Args:
+            *inner: inner markers to apply to a payload
+        """
+        self.inner = inner
+
     @override
     def __call__(self, response: Any, payload: _MutableMappingT) -> _MutableMappingT:  # noqa: D102
-        payload.update(self.inner(response, payload))
+        for marker in self.inner:
+            payload.update(marker(response, payload))
         return payload
