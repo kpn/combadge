@@ -1,0 +1,71 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Body><ns0:NumberToWords
+      xmlns:ns0="http://www.dataaccess.com/webservicesserver/"><ns0:ubiNum>42</ns0:ubiNum></ns0:NumberToWords></soap-env:Body></soap-env:Envelope>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '291'
+      Content-Type:
+      - text/xml; charset=utf-8
+      SOAPAction:
+      - '""'
+      User-Agent:
+      - Zeep/4.2.1 (www.python-zeep.org)
+    method: POST
+    uri: https://www.dataaccess.com/webservicesserver/NumberConversion.wso
+  response:
+    body:
+      string: "<?xml version='1.0' encoding='UTF-8'?>
+        <SOAP-ENV:Envelope
+          xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"
+          xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\"
+          xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\"
+        >
+          <SOAP-ENV:Body>
+            <SOAP-ENV:Fault>
+              <faultcode>SOAP-ENV:Server</faultcode>
+              <faultstring>Test Fault</faultstring>
+              <faultactor>/soap/servlet/rpcrouter</faultactor>
+              <detail>
+                <stackTrace>[SOAPException: faultCode=SOAP-ENV:Server; msg=Test Fault]
+                  at StockQuantity.getQty(StockQuantity.java:21)
+                  at java.lang.reflect.Method.invoke(Native Method)
+                  at org.apache.soap.server.RPCRouter.invoke(RPCRouter.java:146)
+                  ...
+                  at org.apache.tomcat.util.ThreadPool$ControlRunnable.run(
+                      ThreadPool.java:501)
+                  at java.lan g.Thread.run(Thread.java:498)
+                </stackTrace>
+              </detail>
+             </SOAP-ENV:Fault>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>"
+    headers:
+      Cache-Control:
+      - private, max-age=0
+      Content-Type:
+      - text/xml; charset=utf-8
+      Date:
+      - Fri, 27 Jan 2023 13:09:50 GMT
+      Server:
+      - Server
+      Vary:
+      - Accept-Encoding
+      Web-Service:
+      - DataFlex 19.1
+      X-Powered-By:
+      - ASP.NET
+      content-length:
+      - '342'
+    status:
+      code: 200
+      message: OK
+version: 1
