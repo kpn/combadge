@@ -17,6 +17,7 @@ nav:
       - Backends:
           - support/httpx.md
           - support/zeep.md
+      - support/models.md
       - support/handling-errors.md
   - tags.md
   - Cookbook:
@@ -33,6 +34,7 @@ theme:
     - content.action.edit
     - content.code.annotate
     - content.code.copy
+    - navigation.expand
     - navigation.footer
     - navigation.indexes
     - navigation.instant

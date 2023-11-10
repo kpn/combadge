@@ -5,7 +5,6 @@ from enum import Enum
 from inspect import BoundArguments
 from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
-from pydantic import BaseModel
 from typing_extensions import Annotated, TypeAlias, override
 
 from combadge.core.markers.method import MethodMarker
@@ -19,6 +18,7 @@ from combadge.support.http.abc import (
     ContainsQueryParams,
     ContainsUrlPath,
 )
+from combadge.support.shared.functools import get_type_adapter
 
 _T = TypeVar("_T")
 
@@ -144,8 +144,18 @@ if not TYPE_CHECKING:
         by_alias: bool = False
 
         @override
-        def __call__(self, request: ContainsPayload, value: BaseModel) -> None:  # noqa: D102
-            request.ensure_payload().update(value.model_dump(by_alias=self.by_alias, exclude_unset=self.exclude_unset))
+        def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
+            value = get_type_adapter(type(value)).dump_python(
+                value,
+                by_alias=self.by_alias,
+                exclude_unset=self.exclude_unset,
+            )
+            if request.payload is None:
+                request.payload = value
+            elif isinstance(request.payload, dict):
+                request.payload.update(value)  # merge into the existing payload
+            else:
+                raise ValueError(f"attempting to merge {type(value)} into {type(request.payload)}")
 
         def __class_getitem__(cls, item: type[Any]) -> Any:
             return Annotated[item, cls()]
@@ -178,7 +188,9 @@ class Field(ParameterMarker[ContainsPayload]):
 
     @override
     def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
-        request.ensure_payload()[self.name] = value.value if isinstance(value, Enum) else value
+        if request.payload is None:
+            request.payload = {}
+        request.payload[self.name] = value.value if isinstance(value, Enum) else value
 
 
 if not TYPE_CHECKING:
@@ -201,8 +213,11 @@ if not TYPE_CHECKING:
         __slots__ = ()
 
         @override
-        def __call__(self, request: ContainsFormData, value: BaseModel) -> None:  # noqa: D102
-            for item_name, item_value in value.model_dump(by_alias=True).items():
+        def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
+            value = get_type_adapter(type(value)).dump_python(value, by_alias=True)
+            if not isinstance(value, dict):
+                raise TypeError(f"form data requires a dictionary, got {type(value)}")
+            for item_name, item_value in value.items():
                 request.append_form_field(item_name, item_value)
 
         def __class_getitem__(cls, item: type[Any]) -> Any:
