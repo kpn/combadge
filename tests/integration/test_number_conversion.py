@@ -11,6 +11,7 @@ from combadge.core.interfaces import SupportsService
 from combadge.core.response import ErrorResponse, SuccessfulResponse
 from combadge.support.http.markers import Payload
 from combadge.support.soap.markers import operation_name
+from combadge.support.soap.response import BaseSoapFault
 from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
 from combadge.support.zeep.backends.base import ByServiceName
 from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
@@ -28,13 +29,18 @@ class NumberTooLargeResponse(RootModel, ErrorResponse):
     root: Literal["number too large"]
 
 
+class TestFault(BaseSoapFault):
+    code: Literal["SOAP-ENV:Server"]
+    message: Literal["Test Fault"]
+
+
 class SupportsNumberConversion(SupportsService, Protocol):
     @operation_name("NumberToWords")
     @abstractmethod
     def number_to_words(
         self,
         request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, TestFault]:
         raise NotImplementedError
 
 
@@ -44,7 +50,7 @@ class SupportsNumberConversionAsync(SupportsService, Protocol):
     async def number_to_words(
         self,
         request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse]:
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, TestFault]:
         raise NotImplementedError
 
 
@@ -81,10 +87,18 @@ def test_sad_path_scalar_response(number_conversion_service: SupportsNumberConve
     assert exception.value.response == response
 
 
+@pytest.mark.vcr(decode_compressed_response=True)
+def test_sad_path_web_fault(number_conversion_service: SupportsNumberConversion) -> None:
+    # Note: the cassette is manually patched to return the SOAP fault.
+    response = number_conversion_service.number_to_words(NumberToWordsRequest(number=42))
+    with pytest.raises(TestFault.Error):
+        response.raise_for_result()
+
+
 @pytest.mark.vcr()
 async def test_happy_path_scalar_response_async(number_conversion_service_async: SupportsNumberConversionAsync) -> None:
     response = await number_conversion_service_async.number_to_words(NumberToWordsRequest(number=42))
-    assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse])
+    assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse, TestFault])
 
     response = response.unwrap()
     assert_type(response, NumberToWordsResponse)
