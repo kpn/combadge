@@ -27,4 +27,5 @@ def _generate_params(path: Path) -> Iterator[NamedTuple]:
 )
 @pytest.mark.vcr(decode_compressed_response=True)
 def test_documentation_snippet(snippet: str) -> None:
+    __tracebackhide__ = True
     exec(dedent(snippet), {})

@@ -29,7 +29,7 @@ class NumberTooLargeResponse(RootModel, ErrorResponse):
     root: Literal["number too large"]
 
 
-class TestFault(BaseSoapFault):
+class _TestFault(BaseSoapFault):
     code: Literal["SOAP-ENV:Server"]
     message: Literal["Test Fault"]
 
@@ -40,7 +40,7 @@ class SupportsNumberConversion(SupportsService, Protocol):
     def number_to_words(
         self,
         request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, TestFault]:
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, _TestFault]:
         raise NotImplementedError
 
 
@@ -50,7 +50,7 @@ class SupportsNumberConversionAsync(SupportsService, Protocol):
     async def number_to_words(
         self,
         request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, TestFault]:
+    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, _TestFault]:
         raise NotImplementedError
 
 
@@ -91,14 +91,14 @@ def test_sad_path_scalar_response(number_conversion_service: SupportsNumberConve
 def test_sad_path_web_fault(number_conversion_service: SupportsNumberConversion) -> None:
     # Note: the cassette is manually patched to return the SOAP fault.
     response = number_conversion_service.number_to_words(NumberToWordsRequest(number=42))
-    with pytest.raises(TestFault.Error):
+    with pytest.raises(_TestFault.Error):
         response.raise_for_result()
 
 
 @pytest.mark.vcr()
 async def test_happy_path_scalar_response_async(number_conversion_service_async: SupportsNumberConversionAsync) -> None:
     response = await number_conversion_service_async.number_to_words(NumberToWordsRequest(number=42))
-    assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse, TestFault])
+    assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse, _TestFault])
 
     response = response.unwrap()
     assert_type(response, NumberToWordsResponse)

@@ -32,8 +32,8 @@ format: format/ruff
 
 .PHONY: format/ruff
 format/ruff:
-	poetry run ruff check --fix combadge tests
 	poetry run ruff format combadge tests
+	poetry run ruff check --fix combadge tests
 
 .PHONY: test
 test:

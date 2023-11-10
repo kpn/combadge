@@ -67,10 +67,4 @@ class ContainsFormData(ABC):
 class ContainsPayload(ABC):
     """SOAP request payload."""
 
-    payload: Optional[dict] = None
-
-    def ensure_payload(self) -> dict:
-        """Ensure that the payload is initialized and return it."""
-        if self.payload is None:
-            self.payload = {}
-        return self.payload
+    payload: Optional[Any] = None
