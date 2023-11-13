@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Collection
-from contextlib import AbstractAsyncContextManager
 from os import PathLike, fspath
 from ssl import SSLContext
 from types import TracebackType
-from typing import Any, Callable
+from typing import Any
 
 import httpx
 from typing_extensions import Self
@@ -20,20 +19,17 @@ from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
-from combadge.support.shared.async_ import SupportsRequestWith
-from combadge.support.shared.contextlib import asyncnullcontext
 from combadge.support.soap.request import Request
 from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
 
 
 class ZeepBackend(
     BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy],
-    SupportsRequestWith[Request],
     ServiceContainer,
 ):
     """Asynchronous Zeep service."""
 
-    __slots__ = ("_service", "_request_with", "_service_cache")
+    __slots__ = ("_service", "_service_cache")
 
     @classmethod
     def with_params(
@@ -90,18 +86,14 @@ class ZeepBackend(
     def __init__(
         self,
         service: AsyncServiceProxy,
-        *,
-        request_with: Callable[[Any], AbstractAsyncContextManager] = asyncnullcontext,
     ) -> None:
         """
         Instantiate the backend.
 
         Args:
             service: [service proxy object](https://docs.python-zeep.org/en/master/client.html#the-serviceproxy-object)
-            request_with: an optional context manager getter to wrap each request into
         """
         BaseZeepBackend.__init__(self, service)
-        SupportsRequestWith.__init__(self, request_with)
         ServiceContainer.__init__(self)
 
     def bind_method(self, signature: Signature) -> ServiceMethod[ZeepBackend]:  # noqa: D102
@@ -112,8 +104,7 @@ class ZeepBackend(
             request = signature.build_request(Request, self, args, kwargs)
             operation = backend._get_operation(request.get_operation_name())
             try:
-                async with self.backend._request_with(request):
-                    response = await operation(**(request.payload or {}))
+                response = await operation(**(request.payload or {}))
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             else:

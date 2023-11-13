@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from contextlib import AbstractContextManager, nullcontext
 from os import PathLike, fspath
 from types import TracebackType
-from typing import Any, Callable, Collection
+from typing import Any, Collection
 
 from typing_extensions import Self
 from zeep import Client, Plugin, Transport
@@ -16,15 +15,14 @@ from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
-from combadge.support.shared.sync import SupportsRequestWith
 from combadge.support.soap.request import Request
 from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
 
 
-class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequestWith[Request], ServiceContainer):
+class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ServiceContainer):
     """Synchronous Zeep service."""
 
-    __slots__ = ("_service", "_request_with", "_service_cache")
+    __slots__ = ("_service", "_service_cache")
 
     @classmethod
     def with_params(
@@ -69,18 +67,14 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
     def __init__(
         self,
         service: ServiceProxy,
-        *,
-        request_with: Callable[[Any], AbstractContextManager] = nullcontext,
     ) -> None:
         """
         Instantiate the backend.
 
         Args:
             service: [service proxy object](https://docs.python-zeep.org/en/master/client.html#the-serviceproxy-object)
-            request_with: an optional context manager getter to wrap each request into
         """
         BaseZeepBackend.__init__(self, service)
-        SupportsRequestWith.__init__(self, request_with)
         ServiceContainer.__init__(self)
 
     def bind_method(self, signature: Signature) -> ServiceMethod[ZeepBackend]:  # noqa: D102
@@ -91,8 +85,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], SupportsRequest
             request = signature.build_request(Request, self, args, kwargs)
             operation = backend._get_operation(request.get_operation_name())
             try:
-                with self.backend._request_with(request):
-                    response = operation(**(request.payload or {}))
+                response = operation(**(request.payload or {}))
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             else:
