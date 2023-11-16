@@ -7,11 +7,12 @@ from typing import Any, Dict
 # noinspection PyUnresolvedReferences
 from typing_extensions import override
 
+from combadge._helpers.dataclasses import SLOTS
 from combadge.core.markers.response import ResponseMarker
 from combadge.support.http.abc import SupportsReasonPhrase, SupportsStatusCode, SupportsText
 
 
-@dataclass
+@dataclass(**SLOTS)
 class StatusCode(ResponseMarker):
     """
     Build a payload with response status code.
@@ -29,7 +30,7 @@ class StatusCode(ResponseMarker):
         return {self.key: HTTPStatus(response.status_code)}
 
 
-@dataclass
+@dataclass(**SLOTS)
 class ReasonPhrase(ResponseMarker):
     """Build a payload with HTTP reason message."""
 
@@ -41,7 +42,7 @@ class ReasonPhrase(ResponseMarker):
         return {self.key: response.reason_phrase}
 
 
-@dataclass
+@dataclass(**SLOTS)
 class Text(ResponseMarker):
     """
     Build a payload with HTTP response text.

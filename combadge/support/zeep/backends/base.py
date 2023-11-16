@@ -4,6 +4,8 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar, Union
 
+from combadge._helpers.dataclasses import SLOTS
+
 try:
     from types import UnionType  # type: ignore[attr-defined]
 except ImportError:
@@ -95,7 +97,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         return fault_type.validate_python(exception.__dict__)
 
 
-@dataclass
+@dataclass(**SLOTS)
 class ByBindingName:
     """Create service by binding name and address."""
 
@@ -103,7 +105,7 @@ class ByBindingName:
     address: str
 
 
-@dataclass
+@dataclass(**SLOTS)
 class ByServiceName:
     """Create service by service and port names."""
 

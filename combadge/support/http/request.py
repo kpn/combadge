@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from combadge._helpers.dataclasses import SLOTS
 from combadge.support.http.abc import (
     ContainsFormData,
     ContainsHeaders,
@@ -11,7 +12,7 @@ from combadge.support.http.abc import (
 from combadge.support.shared.request import BaseBackendRequest
 
 
-@dataclass
+@dataclass(**SLOTS)
 class Request(
     ContainsMethod,
     ContainsUrlPath,
