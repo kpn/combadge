@@ -7,37 +7,35 @@ from typing import Any, Dict, Iterable, Mapping, MutableMapping, TypeVar
 # noinspection PyUnresolvedReferences
 from typing_extensions import override
 
+from combadge._helpers.dataclasses import SLOTS
 from combadge.core.markers.base import AnnotatedMarker
 
 _InputPayloadT = TypeVar("_InputPayloadT")
 _OutputPayloadT = TypeVar("_OutputPayloadT")
 
 
+@dataclass(**SLOTS)
 class ResponseMarker(AnnotatedMarker, ABC):
     """Response marker: it transforms or contructs a response."""
-
-    __slots__ = ()
 
     @abstractmethod
     def __call__(self, response: Any, payload: Any) -> Any:
         """Transform the response."""
 
 
-@dataclass
+@dataclass(**SLOTS)
 class Map(ResponseMarker):
     """Map a payload to a dictionary under the specified key."""
 
     key: Any
     """Key under which the response will be mapped."""
 
-    __slots__ = ("key",)
-
     @override
     def __call__(self, response: Any, payload: Any) -> Dict[Any, Any]:  # noqa: D102
         return {self.key: payload}
 
 
-@dataclass
+@dataclass(**SLOTS)
 class Extract(ResponseMarker):
     """
     Extract a value from the specified key.
@@ -53,8 +51,6 @@ class Extract(ResponseMarker):
 
     key: Any
     """Key which will be extracted from the payload."""
-
-    __slots__ = ("key",)
 
     @override
     def __call__(self, response: Any, payload: Mapping[Any, Any]) -> Any:  # noqa: D102

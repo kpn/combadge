@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 from abc import ABC
+from dataclasses import dataclass
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
 
 # noinspection PyUnresolvedReferences
 from typing_extensions import override
 
+from combadge._helpers.dataclasses import SLOTS
 from combadge.core.typevars import BackendRequestT, FunctionT
 
 
+@dataclass(**SLOTS)
 class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
     """Method marker that modifies an entire request based on all the call arguments."""
-
-    __slots__ = ()
 
     def mark(self, what: FunctionT) -> FunctionT:
         """
@@ -58,15 +59,13 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
         return marks
 
 
+@dataclass(**SLOTS)
 class WrapWith(Generic[FunctionT], MethodMarker[Any, FunctionT]):  # noqa: D101
-    __slots__ = ("_decorator",)
-
-    def __init__(self, decorator: Callable[[FunctionT], FunctionT]) -> None:  # noqa: D107
-        self._decorator = decorator
+    decorator: Callable[[FunctionT], FunctionT]
 
     @override
     def wrap(self, what: FunctionT) -> FunctionT:  # noqa: D102
-        return self._decorator(what)
+        return self.decorator(what)
 
 
 def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], FunctionT]:
@@ -77,5 +76,10 @@ def wrap_with(decorator: Callable[[Any], Any]) -> Callable[[FunctionT], Function
         >>> @wrap_with(functools.cache)
         >>> def service_method(self, ...) -> ...:
         >>>     ...
+
+    Question: Why can I not just use a decorator directly?
+        The decorator needs to wrap a method **implementation** and a service definition is just an **interface**.
+        If you put it directly onto an abstract method, it would wrap only this abstract method,
+        but **not** the actual implementation which is produced by [binding][binding].
     """
     return WrapWith(decorator).mark

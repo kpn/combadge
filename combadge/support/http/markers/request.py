@@ -42,9 +42,9 @@ class CustomHeader(ParameterMarker[ContainsHeaders]):
         request.headers.append((self.name, value))
 
 
+@dataclass(init=False, **SLOTS)
 class Path(Generic[FunctionT], MethodMarker[ContainsUrlPath, FunctionT]):  # noqa: D101
     _factory: Callable[[BoundArguments], str]
-    __slots__ = ("_factory",)
 
     def __init__(self, path_or_factory: str | Callable[[BoundArguments], str]) -> None:  # noqa: D107
         if callable(path_or_factory):
