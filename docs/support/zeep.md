@@ -20,3 +20,11 @@ tags:
     options:
       heading_level: 3
       show_submodules: true
+
+## Binding specification
+
+::: combadge.support.zeep.backends.base
+    options:
+      heading_level: 3
+      show_submodules: true
+      members: ["ByBindingName", "ByServiceName"]
