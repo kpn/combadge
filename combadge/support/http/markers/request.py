@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
 from typing_extensions import Annotated, TypeAlias, override
 
+from combadge._helpers.dataclasses import SLOTS
+from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
@@ -18,12 +20,11 @@ from combadge.support.http.abc import (
     ContainsQueryParams,
     ContainsUrlPath,
 )
-from combadge.support.shared.functools import get_type_adapter
 
 _T = TypeVar("_T")
 
 
-@dataclass
+@dataclass(**SLOTS)
 class CustomHeader(ParameterMarker[ContainsHeaders]):
     """
     Mark a parameter as a header value. Argument is passed «as is» during a service call.
@@ -35,7 +36,6 @@ class CustomHeader(ParameterMarker[ContainsHeaders]):
     """
 
     name: str
-    __slots__ = ("name",)
 
     @override
     def __call__(self, request: ContainsHeaders, value: Any) -> None:  # noqa: D102
@@ -83,7 +83,7 @@ def path(path_or_factory: str | Callable[..., str]) -> Callable[[FunctionT], Fun
     return Path[Any](path_or_factory).mark
 
 
-@dataclass
+@dataclass(**SLOTS)
 class HttpMethod(Generic[FunctionT], MethodMarker[ContainsMethod, FunctionT]):  # noqa: D101
     method: str
 
@@ -103,7 +103,7 @@ def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
     return HttpMethod[Any](method).mark
 
 
-@dataclass
+@dataclass(**SLOTS)
 class QueryParam(ParameterMarker[ContainsQueryParams]):
     """
     Mark parameter as a query parameter.
@@ -114,7 +114,6 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
     """
 
     name: str
-    __slots__ = ("name",)
 
     @override
     def __call__(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
@@ -123,7 +122,7 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
 
 if not TYPE_CHECKING:
 
-    @dataclass
+    @dataclass(**SLOTS)
     class Payload(ParameterMarker[ContainsPayload]):
         """
         Mark parameter as a request payload. An argument gets converted to a dictionary and passed over to a backend.
@@ -170,7 +169,7 @@ else:
     Payload: TypeAlias = _T
 
 
-@dataclass
+@dataclass(**SLOTS)
 class Field(ParameterMarker[ContainsPayload]):
     """
     Mark a parameter as a value of a separate payload field.
@@ -184,7 +183,6 @@ class Field(ParameterMarker[ContainsPayload]):
     """
 
     name: str
-    __slots__ = ("name",)
 
     @override
     def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
@@ -195,7 +193,7 @@ class Field(ParameterMarker[ContainsPayload]):
 
 if not TYPE_CHECKING:
 
-    @dataclass
+    @dataclass(**SLOTS)
     class FormData(ParameterMarker[ContainsFormData]):
         """
         Mark parameter as a request form data.
@@ -209,8 +207,6 @@ if not TYPE_CHECKING:
             >>> def call(body: Annotated[FormModel, FormData()]) -> ...:
             >>>     ...
         """
-
-        __slots__ = ()
 
         @override
         def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
@@ -227,7 +223,7 @@ else:
     FormData: TypeAlias = _T
 
 
-@dataclass
+@dataclass(**SLOTS)
 class FormField(ParameterMarker[ContainsFormData]):
     """
     Mark a parameter as a separate form field value.
@@ -243,7 +239,6 @@ class FormField(ParameterMarker[ContainsFormData]):
     """  # noqa: E501
 
     name: str
-    __slots__ = ("name",)
 
     @override
     def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
