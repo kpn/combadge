@@ -70,7 +70,7 @@ def test_protocol_class_var() -> None:
 
     service = bind(ServiceProtocol, Mock())  # type: ignore[type-abstract]
     assert isinstance(service, BaseBoundService)
-    assert service._protocol is ServiceProtocol
+    assert service.__combadge_protocol__ is ServiceProtocol
 
 
 def test_service_type() -> None:
