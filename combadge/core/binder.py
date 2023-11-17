@@ -47,7 +47,7 @@ def bind_class(
     class BoundService(BaseBoundService, from_protocol):  # type: ignore[misc, valid-type]
         """Bound service class that implements the protocol."""
 
-        _protocol = from_protocol
+        __combadge_protocol__ = from_protocol
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
