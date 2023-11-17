@@ -7,6 +7,8 @@ from inspect import getmembers as get_members
 from inspect import signature as get_signature
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 
+from typing_extensions import override
+
 from combadge.core.markers.method import MethodMarker
 from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
@@ -49,9 +51,10 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        bound_method: ServiceMethod = bind_method(signature)
+        bound_method: ServiceMethod = bind_method(signature)  # generate implementation by the backend
         update_wrapper(bound_method, method)
-        bound_method = _wrap(bound_method, signature.method_markers)
+        bound_method = _wrap(bound_method, signature.method_markers)  # apply user decorators
+        bound_method = override(bound_method)  # no functional change, just possibly setting `__override__`
         setattr(BoundService, name, bound_method)
 
     del BoundService.__abstractmethods__
