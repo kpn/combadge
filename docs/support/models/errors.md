@@ -1,4 +1,4 @@
-# Handling errors
+# Errors
 
 In **Pydantic** you can define a model as a [`#!python Union`](https://docs.python.org/3/library/typing.html#typing.Union) of possible models: whichever validates first – that one gets returned. For us, it means that you can simply `#!python Union[...]` all possible successful and error models – and use the `#!python Union` as a return type.
 

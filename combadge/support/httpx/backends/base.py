@@ -18,7 +18,7 @@ class BaseHttpxBackend(ProvidesBinder, Generic[_ClientT]):
         self._client = client
         self._raise_for_status = raise_for_status
 
-    def _parse_response(self, from_response: Response) -> Any:
+    def _parse_payload(self, from_response: Response) -> Any:
         if self._raise_for_status:
             from_response.raise_for_status()
         try:

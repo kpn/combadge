@@ -8,6 +8,7 @@ from typing import Any, ClassVar, Generic, Iterable, NoReturn, Type
 from pydantic import BaseModel
 from typing_extensions import Self
 
+from combadge.core.errors import CombadgeError
 from combadge.core.typevars import ResponseT
 
 
@@ -97,7 +98,7 @@ class SuccessfulResponse(BaseResponse):
         return self
 
 
-class BaseError(Generic[ResponseT], Exception):
+class _BaseDerivedError(Generic[ResponseT], CombadgeError):
     """Base exception class for all errors derived from `ErrorResponse`."""
 
     def __init__(self, response: ResponseT) -> None:
@@ -122,7 +123,7 @@ class ErrorResponse(BaseResponse, ABC):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    Error: ClassVar[Type[BaseError]] = BaseError
+    Error: ClassVar[Type[_BaseDerivedError]] = _BaseDerivedError
     """
     Dynamically derived exception class.
 

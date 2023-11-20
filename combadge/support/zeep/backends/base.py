@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Generic, TypeVar, Union
 
 from combadge._helpers.dataclasses import SLOTS
+from combadge.core.errors import BackendError
 
 try:
     from types import UnionType  # type: ignore[attr-defined]
@@ -89,7 +90,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         try:
             return self._service[name]
         except AttributeError as e:
-            raise RuntimeError(f"available operations are: {dir(self._service)}") from e
+            raise InvalidOperationError(f"available operations are: {dir(self._service)}") from e
 
     @staticmethod
     def _parse_soap_fault(exception: Fault, fault_type: TypeAdapter[_SoapFaultT]) -> _SoapFaultT:
@@ -111,3 +112,7 @@ class ByServiceName:
 
     service_name: str | None = None
     port_name: str | None = None
+
+
+class InvalidOperationError(BackendError, RuntimeError):
+    """Invalid operation is being called."""

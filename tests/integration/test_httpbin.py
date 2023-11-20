@@ -6,6 +6,7 @@ from httpx import AsyncClient, Client
 from pydantic import BaseModel
 from typing_extensions import Annotated
 
+from combadge.core.errors import BackendError
 from combadge.core.interfaces import SupportsService
 from combadge.support.http.markers import CustomHeader, FormData, FormField, QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
@@ -121,3 +122,19 @@ def test_non_dict_json() -> None:
     # I manually patched the recorded VCR.py response.
     service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     assert service.get_non_dict() == [42, 43]
+
+
+@pytest.mark.vcr()
+def test_reraise_backend_error() -> None:
+    """Test that an HTTPX error is properly reraised."""
+
+    class SupportsHttpbin(SupportsService, Protocol):
+        @http_method("GET")
+        @path("/status/500")
+        @abstractmethod
+        def get_internal_server_error(self) -> None:
+            ...
+
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
+    with pytest.raises(BackendError):
+        service.get_internal_server_error()

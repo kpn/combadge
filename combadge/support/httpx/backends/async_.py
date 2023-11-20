@@ -9,6 +9,7 @@ from typing_extensions import Self
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
+from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
 from combadge.support.http.request import Request
@@ -42,15 +43,17 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
 
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
-            response: Response = await backend._client.request(
-                request.get_method(),
-                request.get_url_path(),
-                json=request.payload,
-                data=request.form_data,
-                params=request.query_params,
-                headers=request.headers,
-            )
-            return signature.apply_response_markers(response, backend._parse_response(response), response_type)
+            with BackendError:
+                response: Response = await backend._client.request(
+                    request.get_method(),
+                    request.get_url_path(),
+                    json=request.payload,
+                    data=request.form_data,
+                    params=request.query_params,
+                    headers=request.headers,
+                )
+                payload = backend._parse_payload(response)
+            return signature.apply_response_markers(response, payload, response_type)
 
         return bound_method  # type: ignore[return-value]
 

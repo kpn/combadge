@@ -17,6 +17,7 @@ from zeep.wsse import UsernameToken
 
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
+from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
 from combadge.support.soap.request import Request
@@ -107,6 +108,8 @@ class ZeepBackend(
                 response = await operation(**(request.payload or {}))
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
+            except Exception as e:
+                raise BackendError from e
             else:
                 return signature.apply_response_markers(response, serialize_object(response, dict), response_type)
 

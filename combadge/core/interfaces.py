@@ -16,13 +16,10 @@ class SupportsService(Protocol):
     """
     Convenience base for service protocols.
 
-    You can still inherit from `Protocol` directly and call the `bind()` manually.
-    There are a few reasons why you might want to use `SupportsService`:
-
-    - To call the `ServiceProtocol.bind(backend)` method instead of the standalone `bind()` function
-      avoid importing the `bind()` altogether.
-    - To use a service instance as a context manager because `SupportsService.__enter__()`
-      and `__exit__()` provide the proper type hinting.
+    Tip:
+        Combadge can inspect any `Protocol` or `ABC`.
+        But it might be a little easier to inherit from `#!python SupportsService`
+        since it provides the `bind(to_backend)` method as a shorthand for `#!python bind(from_protocol, to_backend)`.
     """
 
     @classmethod

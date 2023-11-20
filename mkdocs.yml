@@ -5,25 +5,32 @@ site_description: "Generic API client based on Pydantic"
 
 nav:
   - index.md
-  - core-concepts.md
   - Support:
-      - Core:
-          - support/core/method-markers.md
-          - support/core/response-markers.md
-          - support/core/service-container.md
-      - Protocols:
+      - Models:
+          - support/models/index.md
+          - support/models/errors.md
+      - Application protocols:
           - support/http.md
           - support/soap.md
       - Backends:
-          - support/httpx.md
-          - support/zeep.md
-      - support/models.md
-      - support/handling-errors.md
-  - tags.md
+          - support/backends/index.md
+          - support/backends/httpx.md
+          - support/backends/zeep.md
+  - Core:
+      - core/service-protocol.md
+      - core/binding.md
+      - Markers:
+          - core/markers/index.md
+          - core/markers/method.md
+          - core/markers/parameter.md
+          - core/markers/response.md
+      - core/service-container.md
+      - core/exceptions.md
   - Cookbook:
       - cookbook/capturing-http-status-code.md
       - cookbook/parameter-validation.md
       - cookbook/using-field-for-simple-requests.md
+  - tags.md
 
 theme:
   icon:
@@ -34,7 +41,6 @@ theme:
     - content.action.edit
     - content.code.annotate
     - content.code.copy
-    - navigation.expand
     - navigation.footer
     - navigation.indexes
     - navigation.instant
