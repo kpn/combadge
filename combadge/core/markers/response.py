@@ -37,17 +37,7 @@ class Map(ResponseMarker):
 
 @dataclass(**SLOTS)
 class Extract(ResponseMarker):
-    """
-    Extract a value from the specified key.
-
-    Examples:
-        >>> def call() -> Annotated[
-        >>>     HTTPStatus,
-        >>>     StatusCode(),            # Drop the original payload and return the status code
-        >>>     Extract("status_code"),  # Extract the status code
-        >>> ]:
-        >>>     ...
-    """
+    """Extract a value from the specified key."""
 
     key: Any
     """Key which will be extracted from the payload."""
