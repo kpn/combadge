@@ -136,7 +136,7 @@ mypy = "1.7.0"
 pytest = "7.4.3"
 pytest-cov = "4.1.0"
 types-requests = "^2.28.11.8"
-ruff = "0.1.5"
+ruff = "0.1.6"
 pytest-recording = "0.13.0"
 pytest-asyncio = "0.21.1"
 urllib3 = "1.26.18"
@@ -145,11 +145,11 @@ urllib3 = "1.26.18"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs-material = "9.4.8"
+mkdocs-material = "9.4.10"
 pillow = "10.1.0"
 cairosvg = "2.7.1"
 mkdocs-git-revision-date-localized-plugin = "1.2.1"
-mkdocstrings = { version = "0.23.0", extras = ["python"] }
+mkdocstrings = { version = "0.24.0", extras = ["python"] }
 mkdocs-autorefs = "0.5.0"
 black = "23.11.0"
 
