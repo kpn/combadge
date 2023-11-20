@@ -8,6 +8,17 @@ In **Pydantic** you can define a model as a [`#!python Union`](https://docs.pyth
 
 In addition, Combadge provides some base response classes, which come in handy:
 
+::: combadge.core.response.BaseResponse
+    options:
+      show_root_heading: true
+      heading_level: 2
+
+!!! tip "That looks rusty, huh"
+
+    The resemblance with Rust is not concidential: the author was inspired by [`std::result::Result`](https://doc.rust-lang.org/std/result/enum.Result.html).
+
+<br>
+
 ::: combadge.core.response.SuccessfulResponse
     options:
       show_root_heading: true

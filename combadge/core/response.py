@@ -33,14 +33,10 @@ class BaseResponse(ABC, BaseModel):
         Returns:
             always `None`
 
-        Warning: Mypy does not recognize `NoReturn` here
-            As of the time of writing, Mypy does not infer response type correctly
-            after calling `response.raise_for_result()`.
-            The `NoReturn` should suggest that `response` can only be a successful response
-            (otherwise, the next line would be unreachable).
-
-            The advice is to use [`unwrap()`][combadge.core.response.BaseResponse.unwrap]
-            for the time being.
+        Tip: Calling `raise_for_result()` is always possible
+            `#!python BaseResponse`, `#!python SuccessfulResponse`, and
+            `#!python ErrorResponse` are designed so that calling `raise_for_result()` on **any**
+            response would either result in an exception, or guarantee a valid successful response otherwise.
         """
         raise NotImplementedError
 
@@ -52,6 +48,13 @@ class BaseResponse(ABC, BaseModel):
         This method allows «unpacking» a response with proper type hinting.
         The trick here is that all error responses' `unwrap()` are annotated with `NoReturn`,
         which suggests a type linter, that `unwrap()` may never return an error.
+
+        Tip: Calling `unwrap()` is always possible
+            `#!python BaseResponse`, `#!python SuccessfulResponse`, and
+            `#!python ErrorResponse` are designed so that calling `unwrap()` on **any**
+            response would either result in an exception, or return a valid successful response otherwise.
+
+            Futhermore, Mypy should be able to figure out the correct type afterwards.
 
         Examples:
             >>> class MyResponse(SuccessfulResponse): ...
@@ -131,7 +134,7 @@ class ErrorResponse(BaseResponse, ABC):
         >>>     code: Literal["INVALID_INPUT"]
         >>>
         >>> try:
-        >>>     service.call(...)
+        >>>     service.call(...).raise_for_result()
         >>> except InvalidInput.Error:
         >>>     ...
 
