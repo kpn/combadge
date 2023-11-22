@@ -28,8 +28,9 @@ nav:
       - core/exceptions.md
   - Cookbook:
       - cookbook/capturing-http-status-code.md
+      - cookbook/do-not-repeat-response-annotations.md
+      - cookbook/fields-for-simple-requests.md
       - cookbook/parameter-validation.md
-      - cookbook/using-field-for-simple-requests.md
   - tags.md
 
 theme:

@@ -1,4 +1,4 @@
-# Using `Field` for simple requests
+# `Field`s for simple requests
 
 There are cases when having a request model is undesired. For example, when a call takes a handful of simple
 parameters of scalar types.
