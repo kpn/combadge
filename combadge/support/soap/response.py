@@ -7,15 +7,20 @@ from combadge.core.response import ErrorResponse
 
 class BaseSoapFault(ErrorResponse):
     """
-    SOAP Fault model.
+    [SOAP Fault][1] error response model.
 
-    Notes:
-        - This class matches the SOAP Fault specification.
-          For custom errors returned in a SOAP response body (such as `<error>` tag),
-          subclass the `ErrorResponse`.
+    [1]: https://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383507
 
-    See Also:
-        - https://www.w3.org/TR/2000/NOTE-SOAP-20000508/#_Toc478383507
+    Note: This class is intended for use with the SOAP Fault specification
+        For custom errors returned in a SOAP response body (such as `<error>` tag),
+        subclass the `ErrorResponse`.
+
+    Tip:
+        SOAP backends should **always** fall back to `BaseSoapFault` if the actual SOAP fault
+        does not match any of the protocol's return types.
+
+        For client developers, this means that it is a good idea to include `BaseSoapFault`
+        as the last possible `Union` variant to let users know that is should be handled.
     """
 
     code: str
