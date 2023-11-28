@@ -186,8 +186,16 @@ class ErrorResponse(BaseResponse, ABC):
         """
         if not exception:
             raise self.Error(self)
-        raise exception from self.Error(self)
+        raise exception from self.as_exception()
 
     def unwrap(self) -> NoReturn:
         """Raise the derived exception."""
-        raise self.Error(self)
+        raise self.as_exception()
+
+    def as_exception(self) -> _BaseDerivedError:
+        """
+        Return the derived exception without raising it.
+
+        Convenience wrapper around `self.Error(self)` as the exception class requires the response as an argument.
+        """
+        return self.Error(self)
