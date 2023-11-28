@@ -109,7 +109,7 @@ class ZeepBackend(
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             except Exception as e:
-                raise BackendError from e
+                raise BackendError(e) from e
             else:
                 return signature.apply_response_markers(response, serialize_object(response, dict), response_type)
 

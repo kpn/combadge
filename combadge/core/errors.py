@@ -21,7 +21,7 @@ class _BackendErrorMeta(type, AbstractContextManager):
     ) -> None:
         __tracebackhide__ = True
         if exc_value is not None:
-            raise cls from exc_value
+            raise cls(exc_value) from exc_value
 
 
 class BackendError(CombadgeError, metaclass=_BackendErrorMeta):
