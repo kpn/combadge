@@ -19,7 +19,6 @@ class _BackendErrorMeta(type, AbstractContextManager):
         traceback: TracebackType | None,
         /,
     ) -> None:
-        __tracebackhide__ = True
         if exc_value is not None:
             raise cls(exc_value) from exc_value
 
