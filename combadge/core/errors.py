@@ -28,6 +28,33 @@ class BackendError(CombadgeError, metaclass=_BackendErrorMeta):
     Base error for any backend errors.
 
     Examples:
+        Handling inner error:
+
+        >>> try:
+        >>>     client.method()
+        >>> except BackendError as e:
+        >>>     match e.inner:
+        >>>         case httpx.TimeoutException():
+        >>>             # Handle timeout error.
+        >>>         case _:
+        >>>             raise
+
+        Wrapping client call (only needed for a new backend implementation):
+
         >>> with BackendError:
         >>>     ...
     """
+
+    def __init__(self, inner: BaseException) -> None:
+        """
+        Instantiate the backend error.
+
+        Args:
+            inner: wrapped backend client exception
+        """
+        super().__init__(inner)
+
+    @property
+    def inner(self) -> BaseException:
+        """Get the wrapped backend client exception."""
+        return self.args[0]

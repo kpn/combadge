@@ -90,7 +90,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         try:
             return self._service[name]
         except AttributeError as e:
-            raise InvalidOperationError(f"available operations are: {dir(self._service)}") from e
+            raise InvalidOperationError(e) from e
 
     @staticmethod
     def _parse_soap_fault(exception: Fault, fault_type: TypeAdapter[_SoapFaultT]) -> _SoapFaultT:
