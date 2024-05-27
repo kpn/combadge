@@ -1,19 +1,18 @@
 """Mixins for HTTP-related request and response classes."""
 
-from abc import ABC
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 
 @dataclass
-class ContainsHeaders(ABC):
+class ContainsHeaders:
     """HTTP request headers."""
 
     headers: List[Tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
-class ContainsUrlPath(ABC):
+class ContainsUrlPath:
     """Request URL path."""
 
     url_path: Optional[str] = None
@@ -26,7 +25,7 @@ class ContainsUrlPath(ABC):
 
 
 @dataclass
-class ContainsMethod(ABC):
+class ContainsMethod:
     """HTTP request method."""
 
     method: Optional[str] = None
@@ -39,14 +38,14 @@ class ContainsMethod(ABC):
 
 
 @dataclass
-class ContainsQueryParams(ABC):
+class ContainsQueryParams:
     """HTTP request query parameters."""
 
     query_params: List[Tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
-class ContainsFormData(ABC):
+class ContainsFormData:
     """
     HTTP request [form data][1].
 
@@ -64,7 +63,7 @@ class ContainsFormData(ABC):
 
 
 @dataclass
-class ContainsPayload(ABC):
+class ContainsPayload:
     """SOAP request payload."""
 
     payload: Optional[Any] = None

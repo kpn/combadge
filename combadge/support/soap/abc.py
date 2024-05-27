@@ -1,4 +1,3 @@
-from abc import ABC
 from dataclasses import dataclass
 from typing import Optional
 
@@ -6,7 +5,7 @@ from combadge._helpers.dataclasses import SLOTS
 
 
 @dataclass(**SLOTS)
-class ContainsOperationName(ABC):
+class ContainsOperationName:
     """SOAP operation name."""
 
     operation_name: Optional[str] = None
