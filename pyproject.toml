@@ -130,26 +130,26 @@ zeep = ["zeep"]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-mypy = "1.9.0"
-pytest = "8.1.1"
+mypy = "1.10.0"
+pytest = "8.2.1"
 pytest-cov = "5.0.0"
 types-requests = "^2.28.11.8"
 ruff = "0.4.5"
 pytest-recording = "0.13.1"
-pytest-asyncio = "0.23.6"
+pytest-asyncio = "0.23.7"
 urllib3 = "1.26.18"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-black = "24.3.0"
+black = "24.4.2"
 cairosvg = "2.7.1"
 mkdocs-autorefs = "1.0.1"
 mkdocs-git-committers-plugin-2 = "2.3.0"
-mkdocs-git-revision-date-localized-plugin = "1.2.4"
-mkdocs-material = "9.5.17"
-mkdocstrings = { version = "0.24.3", extras = ["python"] }
+mkdocs-git-revision-date-localized-plugin = "1.2.5"
+mkdocs-material = "9.5.25"
+mkdocstrings = { version = "0.25.1", extras = ["python"] }
 pillow = "10.3.0"
 
 [tool.poetry-dynamic-versioning]
