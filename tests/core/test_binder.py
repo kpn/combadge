@@ -65,8 +65,7 @@ def test_decorator_ordering() -> None:
 
 
 def test_protocol_class_var() -> None:
-    class ServiceProtocol(Protocol):
-        ...
+    class ServiceProtocol(Protocol): ...
 
     service = bind(ServiceProtocol, Mock())  # type: ignore[type-abstract]
     assert isinstance(service, BaseBoundService)
@@ -74,8 +73,7 @@ def test_protocol_class_var() -> None:
 
 
 def test_service_type() -> None:
-    class ServiceProtocol(SupportsService):
-        ...
+    class ServiceProtocol(SupportsService): ...
 
     service = ServiceProtocol.bind(Mock())
     assert_type(service, ServiceProtocol)
