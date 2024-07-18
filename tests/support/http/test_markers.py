@@ -6,7 +6,7 @@ import pytest
 from httpx import Response
 
 from combadge.support.http.abc import ContainsUrlPath
-from combadge.support.http.markers import Path, ReasonPhrase, StatusCode, Text
+from combadge.support.http.markers import Header, Path, ReasonPhrase, StatusCode, Text
 
 
 @pytest.mark.parametrize(
@@ -42,6 +42,14 @@ def test_reason_phrase() -> None:
 
 def test_text() -> None:
     assert Text("key")(Response(status_code=200, text="my text"), ...) == {"key": "my text"}
+
+
+def test_present_header() -> None:
+    assert Header("x-foo", "key")(Response(200, headers={"X-Foo": "42"}), ...) == {"key": "42"}
+
+
+def test_missing_header() -> None:
+    assert Header("x-foo", "key")(Response(200, headers={}), ...) == {}
 
 
 def _example(positional: str, *, keyword: str) -> None:

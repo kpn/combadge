@@ -9,12 +9,10 @@ from combadge.support.soap.response import BaseSoapFault
 from combadge.support.zeep.backends.base import BaseZeepBackend
 
 
-class _TestFault1(BaseSoapFault):
-    ...
+class _TestFault1(BaseSoapFault): ...
 
 
-class _TestFault2(BaseSoapFault):
-    ...
+class _TestFault2(BaseSoapFault): ...
 
 
 @pytest.mark.parametrize(

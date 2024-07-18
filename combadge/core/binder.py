@@ -16,8 +16,7 @@ from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 if TYPE_CHECKING:
     from combadge.core.interfaces import MethodBinder, ProvidesBinder, ServiceMethod
 
-    def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]:
-        ...
+    def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]: ...
 
 else:
     from functools import lru_cache
