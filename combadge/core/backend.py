@@ -17,8 +17,13 @@ class ServiceContainer(ProvidesBinder):  # noqa: D101
         without a performance impact.
 
         Examples:
-            >>> class ServiceProtocol(Protocol): ...
-            >>> service = BackendClass()[ServiceProtocol]
+            >>> class ServiceProtocolA(Protocol): ...
+            >>> class ServiceProtocolB(Protocol): ...
+            >>>
+            >>> backend = HttpxBackend()
+            >>>
+            >>> service_a = backend[ServiceProtocolA]
+            >>> service_b = backend[ServiceProtocolB]
         """
         service = self._service_cache.get(protocol)
         if service is None:

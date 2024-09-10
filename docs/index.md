@@ -52,7 +52,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
             in_: Annotated[str, Field(min_length=1)],
             format_: Annotated[str, Field(min_length=1), QueryParam("format")] = "j1",
         ) -> Weather:
-            raise NotImplementedError
+            ...
 
 
     # 3️⃣ Bind the service:
