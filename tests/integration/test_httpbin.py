@@ -14,7 +14,7 @@ from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBac
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_form_data() -> None:
     class Data(BaseModel):
         foo: int
@@ -39,7 +39,7 @@ def test_form_data() -> None:
     assert response == Response(form={"foo": "42", "barqux": ["100500", "100501"]})
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_query_params() -> None:
     class Response(BaseModel):
         args: Dict[str, Any]
@@ -66,7 +66,7 @@ class _HeadersResponse(BaseModel):
     missing_header: int = 42
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_headers_sync() -> None:
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")
@@ -88,7 +88,7 @@ def test_headers_sync() -> None:
     assert response.missing_header == 42
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 async def test_headers_async() -> None:
     class Response(BaseModel):
         headers: Dict[str, Any]
@@ -114,7 +114,7 @@ async def test_headers_async() -> None:
     assert response.missing_header == 42
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_non_dict_json() -> None:
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")
@@ -128,7 +128,7 @@ def test_non_dict_json() -> None:
     assert service.get_non_dict() == [42, 43]
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_reraise_backend_error() -> None:
     """Test that an HTTPX error is properly reraised."""
 

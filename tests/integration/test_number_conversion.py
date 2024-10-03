@@ -54,7 +54,7 @@ class SupportsNumberConversionAsync(SupportsService, Protocol):
         raise NotImplementedError
 
 
-@pytest.fixture()
+@pytest.fixture
 def number_conversion_service() -> Iterable[SupportsNumberConversion]:
     with Client(
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
@@ -63,7 +63,7 @@ def number_conversion_service() -> Iterable[SupportsNumberConversion]:
         yield SupportsNumberConversion.bind(SyncZeepBackend(client.service))
 
 
-@pytest.fixture()
+@pytest.fixture
 def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]:
     with AsyncClient(
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
@@ -95,7 +95,7 @@ def test_sad_path_web_fault(number_conversion_service: SupportsNumberConversion)
         response.raise_for_result()
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 async def test_happy_path_scalar_response_async(number_conversion_service_async: SupportsNumberConversionAsync) -> None:
     response = await number_conversion_service_async.number_to_words(NumberToWordsRequest(number=42))
     assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse, _TestFault])
@@ -106,7 +106,7 @@ async def test_happy_path_scalar_response_async(number_conversion_service_async:
     assert response.root == "forty two "
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_happy_path_with_params() -> None:
     backend = SyncZeepBackend.with_params(
         Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
@@ -118,7 +118,7 @@ def test_happy_path_with_params() -> None:
     assert response.root == "forty two "
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 async def test_happy_path_with_params_async() -> None:
     backend = AsyncZeepBackend.with_params(
         Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",

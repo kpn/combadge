@@ -21,7 +21,7 @@ class Weather(BaseModel):
     current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 def test_weather_sync() -> None:
     class SupportsWttrIn(SupportsService):
         @http_method("GET")
@@ -46,7 +46,7 @@ def test_weather_sync() -> None:
         service.get_weather(in_="")
 
 
-@pytest.mark.vcr()
+@pytest.mark.vcr
 async def test_weather_async() -> None:
     class SupportsWttrIn(SupportsService):
         @http_method("GET")

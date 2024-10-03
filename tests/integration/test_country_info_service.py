@@ -29,7 +29,7 @@ class SupportsCountryInfo(SupportsService, Protocol):
         raise NotImplementedError
 
 
-@pytest.fixture()
+@pytest.fixture
 def country_info_service() -> Iterable[SupportsCountryInfo]:
     with Client(wsdl=str(Path(__file__).parent / "wsdl" / "CountryInfoService.wsdl")) as client:
         yield SupportsCountryInfo.bind(ZeepBackend(client.service))
