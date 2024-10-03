@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import CancelledError
 from contextlib import AbstractContextManager
 from types import TracebackType
 from typing import Type
@@ -19,7 +20,8 @@ class _BackendErrorMeta(type, AbstractContextManager):
         traceback: TracebackType | None,
         /,
     ) -> None:
-        if exc_value is not None:
+        # Wrapping `CancelledError` breaks `asyncio.TaskGroup`.
+        if exc_value is not None and not isinstance(exc_type, CancelledError):
             raise cls(exc_value) from exc_value
 
 
