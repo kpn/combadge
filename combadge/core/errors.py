@@ -21,7 +21,7 @@ class _BackendErrorMeta(type, AbstractContextManager):
         /,
     ) -> None:
         # Wrapping `CancelledError` breaks `asyncio.TaskGroup`.
-        if exc_value is not None and not isinstance(exc_type, CancelledError):
+        if exc_value is not None and not isinstance(exc_value, CancelledError):
             raise cls(exc_value) from exc_value
 
 
