@@ -52,12 +52,13 @@ def test_query_params() -> None:
             self,
             foo: Annotated[int, QueryParam("foobar")],
             bar: Annotated[int, QueryParam("foobar")],
+            multivalue: Annotated[list[str], QueryParam("multivalue")],
         ) -> Response: ...
 
     service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
-    response = service.get_anything(foo=100500, bar=100501)
+    response = service.get_anything(foo=100500, bar=100501, multivalue=["value1","value2"])
 
-    assert response == Response(args={"foobar": ["100500", "100501"]})
+    assert response == Response(args={"foobar": ["100500", "100501"], "multivalue": ["value1", "value2"]})
 
 
 class _HeadersResponse(BaseModel):
