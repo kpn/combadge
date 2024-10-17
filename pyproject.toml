@@ -1,5 +1,5 @@
 [project]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [tool.poetry]
 authors = [
@@ -19,11 +19,11 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Internet",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Software Development",
@@ -43,7 +43,7 @@ warn_redundant_casts = true
 
 [tool.ruff]
 line-length = 120
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = [
@@ -115,7 +115,7 @@ requires = ["poetry-core", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = "^3.9.0"
 typing-extensions = "^4.5.0"
 pydantic = "^2.0.0"
 get-annotations = { version = "^0.1.2", python = "<3.10" }

@@ -1,10 +1,10 @@
 from abc import abstractmethod
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, List, Protocol
+from typing import Annotated, Protocol
 
 import pytest
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated
 from zeep import Client
 
 from combadge.core.errors import BackendError
@@ -21,7 +21,7 @@ class Continent(BaseModel):
 class SupportsCountryInfo(SupportsService, Protocol):
     @operation_name("ListOfContinentsByName")
     @abstractmethod
-    def list_of_continents_by_name(self) -> List[Continent]:
+    def list_of_continents_by_name(self) -> list[Continent]:
         raise NotImplementedError
 
     @operation_name("InvalidOperation")

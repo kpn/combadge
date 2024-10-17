@@ -3,9 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, TypeVar
 
-from typing_extensions import Annotated, TypeAlias, override
+from typing_extensions import TypeAlias, override
 
 from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter

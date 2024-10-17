@@ -8,7 +8,7 @@ from combadge._helpers.dataclasses import SLOTS
 from combadge.core.errors import BackendError
 
 try:
-    from types import UnionType  # type: ignore[attr-defined]
+    from types import GenericAlias, UnionType  # type: ignore[attr-defined]
 except ImportError:
     # Before Python 3.10:
     UnionType = type(Union[int, str])  # type: ignore[assignment, misc]
@@ -63,7 +63,11 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         fault_type: Any = _UNSET
 
         for return_type in return_types:
-            if isinstance(return_type, type) and issubclass(return_type, BaseSoapFault):
+            if (
+                isinstance(return_type, type)
+                and not isinstance(return_type, GenericAlias)  # remove when dropping Python 3.10
+                and issubclass(return_type, BaseSoapFault)
+            ):
                 # We should treat the return type as a SOAP fault type.
                 fault_type = Union[fault_type, return_type] if fault_type is not _UNSET else return_type
             elif response_type is _UNSET:

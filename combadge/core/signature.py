@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from inspect import BoundArguments
 from inspect import signature as get_signature
-from typing import Any, Callable, Generic, Iterable, Mapping, Type
+from typing import Any, Callable, Generic
 
 from pydantic import BaseModel, TypeAdapter
 
@@ -55,7 +56,7 @@ class Signature:
 
     def build_request(
         self,
-        request_type: Type[BackendRequestT],
+        request_type: type[BackendRequestT],
         service: BaseBoundService,
         call_args: Iterable[Any],
         call_kwargs: Mapping[str, Any],

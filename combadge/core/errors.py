@@ -3,7 +3,6 @@ from __future__ import annotations
 from asyncio import CancelledError
 from contextlib import AbstractContextManager
 from types import TracebackType
-from typing import Type
 
 
 class CombadgeError(Exception):
@@ -14,8 +13,8 @@ class _BackendErrorMeta(type, AbstractContextManager):
     """Makes class a context manager which re-raises any exceptions inside the context of itself."""
 
     def __exit__(  # type: ignore[misc]
-        cls: Type[BaseException],  # noqa: N805
-        exc_type: Type[BaseException] | None,
+        cls: type[BaseException],  # noqa: N805
+        exc_type: type[BaseException] | None,
         exc_value: BaseException | None,
         traceback: TracebackType | None,
         /,

@@ -1,10 +1,9 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, List, Protocol, Union
+from typing import Annotated, Any, Callable, Protocol, Union
 
 import pytest
 from httpx import AsyncClient, Client
 from pydantic import BaseModel
-from typing_extensions import Annotated
 
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import SupportsService
@@ -20,7 +19,7 @@ def test_form_data() -> None:
         foo: int
 
     class Response(BaseModel):
-        form: Dict[str, Any]
+        form: dict[str, Any]
 
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("POST")
@@ -42,7 +41,7 @@ def test_form_data() -> None:
 @pytest.mark.vcr
 def test_query_params() -> None:
     class Response(BaseModel):
-        args: Dict[str, Any]
+        args: dict[str, Any]
 
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")
@@ -62,7 +61,7 @@ def test_query_params() -> None:
 
 
 class _HeadersResponse(BaseModel):
-    headers: Dict[str, Any]
+    headers: dict[str, Any]
     content_length: int
     missing_header: int = 42
 
@@ -92,7 +91,7 @@ def test_headers_sync() -> None:
 @pytest.mark.vcr
 async def test_headers_async() -> None:
     class Response(BaseModel):
-        headers: Dict[str, Any]
+        headers: dict[str, Any]
         content_length: int
 
     class SupportsHttpbin(SupportsService, Protocol):
@@ -121,7 +120,7 @@ def test_non_dict_json() -> None:
         @http_method("GET")
         @path("/get")
         @abstractmethod
-        def get_non_dict(self) -> List[int]: ...
+        def get_non_dict(self) -> list[int]: ...
 
     # Since httpbin.org is not capable of returning a non-dict JSON,
     # I manually patched the recorded VCR.py response.

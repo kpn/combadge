@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, Mapping, MutableMapping, TypeVar
+from typing import Any, TypeVar
 
 # noinspection PyUnresolvedReferences
 from typing_extensions import override
@@ -31,7 +32,7 @@ class Map(ResponseMarker):
     """Key under which the response will be mapped."""
 
     @override
-    def __call__(self, response: Any, payload: Any) -> Dict[Any, Any]:  # noqa: D102
+    def __call__(self, response: Any, payload: Any) -> dict[Any, Any]:  # noqa: D102
         return {self.key: payload}
 
 

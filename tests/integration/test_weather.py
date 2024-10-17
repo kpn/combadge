@@ -1,9 +1,8 @@
-from typing import List
+from typing import Annotated
 
 import pytest
 from httpx import AsyncClient, Client
 from pydantic import BaseModel, Field, ValidationError, validate_call
-from typing_extensions import Annotated
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import wrap_with
@@ -18,7 +17,7 @@ class CurrentCondition(BaseModel):
 
 
 class Weather(BaseModel):
-    current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
+    current: Annotated[list[CurrentCondition], Field(alias="current_condition")]
 
 
 @pytest.mark.vcr

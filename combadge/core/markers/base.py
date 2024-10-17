@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Annotated, Any
 
-from typing_extensions import Annotated, Self, TypeAliasType, get_origin
+from typing_extensions import Self, TypeAliasType, get_origin
 from typing_extensions import get_args as get_type_args
 
 

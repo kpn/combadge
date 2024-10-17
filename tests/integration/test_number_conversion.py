@@ -1,10 +1,11 @@
 from abc import abstractmethod
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Literal, Protocol, Union
+from typing import Annotated, Literal, Protocol, Union
 
 import pytest
 from pydantic import BaseModel, Field, RootModel
-from typing_extensions import Annotated, assert_type
+from typing_extensions import assert_type
 from zeep import AsyncClient, Client
 
 from combadge.core.interfaces import SupportsService

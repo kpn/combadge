@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Generic, Iterable, NoReturn, Type
+from collections.abc import Iterable
+from typing import Any, ClassVar, Generic, NoReturn
 
 from pydantic import BaseModel
 from typing_extensions import Self
@@ -123,7 +124,7 @@ class ErrorResponse(BaseResponse, ABC):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    Error: ClassVar[Type[_BaseDerivedError]] = _BaseDerivedError
+    Error: ClassVar[type[_BaseDerivedError]] = _BaseDerivedError
     """
     Dynamically derived exception class.
 
