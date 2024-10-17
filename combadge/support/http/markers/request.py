@@ -117,6 +117,11 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
 
     @override
     def __call__(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
+        if isinstance(value, list):
+            for sub_value in value:
+                request.query_params.append((self.name, sub_value.value if isinstance(sub_value, Enum) else sub_value))
+            return
+
         request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 

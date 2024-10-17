@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{}'
+    body: ''
     headers:
       accept:
       - '*/*'
@@ -8,25 +8,21 @@ interactions:
       - gzip, deflate
       connection:
       - keep-alive
-      content-length:
-      - '2'
-      content-type:
-      - application/json
       host:
       - httpbin.org
       user-agent:
-      - python-httpx/0.23.3
+      - python-httpx/0.25.2
     method: GET
-    uri: https://httpbin.org/anything?foobar=100500&foobar=100501
+    uri: https://httpbin.org/anything?foobar=100500&foobar=100501&multivalue=value1&multivalue=value2
   response:
     content: "{\n  \"args\": {\n    \"foobar\": [\n      \"100500\", \n      \"100501\"\n
-      \   ]\n  }, \n  \"data\": \"{}\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\":
+      \   ], \n    \"multivalue\": [\n      \"value1\", \n      \"value2\"\n    ]\n
+      \ }, \n  \"data\": \"\", \n  \"files\": {}, \n  \"form\": {}, \n  \"headers\":
       {\n    \"Accept\": \"*/*\", \n    \"Accept-Encoding\": \"gzip, deflate\", \n
-      \   \"Content-Length\": \"2\", \n    \"Content-Type\": \"application/json\",
-      \n    \"Host\": \"httpbin.org\", \n    \"User-Agent\": \"python-httpx/0.23.3\",
-      \n    \"X-Amzn-Trace-Id\": \"Root=1-6408b26f-2f167e16119c85211f5273ad\"\n  },
-      \n  \"json\": {}, \n  \"method\": \"GET\", \n  \"origin\": \"86.94.162.190\",
-      \n  \"url\": \"https://httpbin.org/anything?foobar=100500&foobar=100501\"\n}\n"
+      \   \"Host\": \"httpbin.org\", \n    \"User-Agent\": \"python-httpx/0.25.2\",
+      \n    \"X-Amzn-Trace-Id\": \"Root=1-67110318-43fea4d527e15c1c6985b29d\"\n  },
+      \n  \"json\": null, \n  \"method\": \"GET\", \n  \"origin\": \"199.103.8.49\",
+      \n  \"url\": \"https://httpbin.org/anything?foobar=100500&foobar=100501&multivalue=value1&multivalue=value2\"\n}\n"
     headers:
       Access-Control-Allow-Credentials:
       - 'true'
@@ -35,11 +31,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '546'
+      - '572'
       Content-Type:
       - application/json
       Date:
-      - Wed, 08 Mar 2023 16:06:08 GMT
+      - Thu, 17 Oct 2024 12:29:12 GMT
       Server:
       - gunicorn/19.9.0
     http_version: HTTP/1.1
