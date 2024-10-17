@@ -1,14 +1,14 @@
 """Mixins for HTTP-related request and response classes."""
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 
 @dataclass
 class ContainsHeaders:
     """HTTP request headers."""
 
-    headers: List[Tuple[str, Any]] = field(default_factory=list)
+    headers: list[tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -41,7 +41,7 @@ class ContainsMethod:
 class ContainsQueryParams:
     """HTTP request query parameters."""
 
-    query_params: List[Tuple[str, Any]] = field(default_factory=list)
+    query_params: list[tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -52,7 +52,7 @@ class ContainsFormData:
     [1]: https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data
     """
 
-    form_data: Dict[str, List[Any]] = field(default_factory=dict)
+    form_data: dict[str, list[Any]] = field(default_factory=dict)
     """
     Used with [FormData][combadge.support.http.markers.FormData]
     and [FormField][combadge.support.http.markers.FormField].

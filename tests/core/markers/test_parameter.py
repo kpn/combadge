@@ -1,7 +1,6 @@
-from typing import Any, List, Type
+from typing import Annotated, Any
 
 import pytest
-from typing_extensions import Annotated
 
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.support.http.markers import CustomHeader, Payload
@@ -15,5 +14,5 @@ from combadge.support.http.markers import CustomHeader, Payload
         (Annotated[str, CustomHeader("X-Header")], [CustomHeader("X-Header")]),
     ],
 )
-def test_extract_parameter_marks(type_: Type[Any], expected: List[ParameterMarker]) -> None:
+def test_extract_parameter_marks(type_: type[Any], expected: list[ParameterMarker]) -> None:
     assert list(ParameterMarker.extract(type_)) == expected

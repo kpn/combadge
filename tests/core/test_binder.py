@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Callable, Protocol, Tuple
+from typing import Any, Callable, Protocol
 from unittest.mock import Mock
 
 from typing_extensions import assert_type
@@ -45,20 +45,20 @@ def test_enumerate_private_methods() -> None:
 def test_decorator_ordering() -> None:
     """Verify that `@decorator` does not reverse the decorator execution order."""
 
-    def decorate_1(what: Callable[[], Tuple[Any, ...]]) -> Callable[[], Tuple[Any, ...]]:
+    def decorate_1(what: Callable[[], tuple[Any, ...]]) -> Callable[[], tuple[Any, ...]]:
         return lambda: (1, *what())
 
-    def decorate_2(what: Callable[[], Tuple[Any, ...]]) -> Callable[[], Tuple[Any, ...]]:
+    def decorate_2(what: Callable[[], tuple[Any, ...]]) -> Callable[[], tuple[Any, ...]]:
         return lambda: (2, *what())
 
     @wrap_with(decorate_1)
     @wrap_with(decorate_2)
-    def get_actual() -> Tuple[Any, ...]:
+    def get_actual() -> tuple[Any, ...]:
         return ()
 
     @decorate_1
     @decorate_2
-    def get_expected() -> Tuple[Any, ...]:
+    def get_expected() -> tuple[Any, ...]:
         return ()
 
     assert _wrap(get_actual, MethodMarker.ensure_markers(get_actual))() == get_expected()

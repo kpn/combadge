@@ -1,4 +1,4 @@
-from typing import Any, Dict, Type
+from typing import Any
 
 from combadge.core.binder import bind
 from combadge.core.interfaces import ProvidesBinder
@@ -7,9 +7,9 @@ from combadge.core.typevars import ServiceProtocolT
 
 class ServiceContainer(ProvidesBinder):  # noqa: D101
     def __init__(self) -> None:  # noqa: D107
-        self._service_cache: Dict[Type, Any] = {}
+        self._service_cache: dict[type, Any] = {}
 
-    def __getitem__(self, protocol: Type[ServiceProtocolT]) -> ServiceProtocolT:
+    def __getitem__(self, protocol: type[ServiceProtocolT]) -> ServiceProtocolT:
         """
         Bind the protocol to the current backend and return the service instance.
 
@@ -30,7 +30,7 @@ class ServiceContainer(ProvidesBinder):  # noqa: D101
             service = self._service_cache[protocol] = bind(protocol, self)
         return service  # noqa: RET504
 
-    def __delitem__(self, protocol: Type) -> None:
+    def __delitem__(self, protocol: type) -> None:
         """
         Delete the cached service instance for the specified protocol.
 

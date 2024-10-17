@@ -1,6 +1,6 @@
 import inspect
 from http import HTTPStatus
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import pytest
 from httpx import Response
@@ -18,7 +18,7 @@ from combadge.support.http.markers import Header, Path, ReasonPhrase, StatusCode
         ("/{positional}", (), {"positional": "positional_as_kwarg", "keyword": "keyword"}, "/positional_as_kwarg"),
     ],
 )
-def test_path_format(format_: str, call_args: Tuple[Any, ...], call_kwargs: Dict[str, Any], expected_path: str) -> None:
+def test_path_format(format_: str, call_args: tuple[Any, ...], call_kwargs: dict[str, Any], expected_path: str) -> None:
     mark = Path[Any](format_)
     request = ContainsUrlPath()
     mark.prepare_request(request, _example_signature.bind(*call_args, **call_kwargs))

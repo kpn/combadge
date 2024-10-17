@@ -1,5 +1,5 @@
 from types import TracebackType
-from typing import Any, ClassVar, Generic, Optional, Type
+from typing import Any, ClassVar, Generic, Optional
 
 from typing_extensions import Self
 
@@ -9,7 +9,7 @@ from combadge.core.typevars import BackendT
 class BaseBoundService(Generic[BackendT]):
     """Base for dynamically generated service classes."""
 
-    __combadge_protocol__: ClassVar[Type]
+    __combadge_protocol__: ClassVar[type]
 
     __combadge_backend__: BackendT
     __slots__ = ("__combadge_backend__",)
@@ -23,7 +23,7 @@ class BaseBoundService(Generic[BackendT]):
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
+        exc_type: Optional[type[BaseException]],
         exc_value: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> Any:
@@ -38,7 +38,7 @@ class BaseBoundService(Generic[BackendT]):
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
+        exc_type: Optional[type[BaseException]],
         exc_value: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> Any:

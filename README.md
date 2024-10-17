@@ -18,8 +18,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 ## Sneak peek
 
 ```python title="quickstart_httpx.py"
-from typing import List
-
 from httpx import Client
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated, Protocol
@@ -35,7 +33,7 @@ class CurrentCondition(BaseModel):
 
 
 class Weather(BaseModel):
-    current: Annotated[List[CurrentCondition], Field(alias="current_condition")]
+    current: Annotated[list[CurrentCondition], Field(alias="current_condition")]
 
 
 # 2️⃣ Declare the protocol:

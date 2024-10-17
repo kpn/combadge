@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Collection
 from os import PathLike, fspath
 from types import TracebackType
-from typing import Any, Collection
+from typing import Any
 
 from typing_extensions import Self
 from zeep import Client, Plugin, Transport

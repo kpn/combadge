@@ -39,7 +39,7 @@ class HttpxBackend(BaseHttpxBackend[Client], ServiceContainer):
 
     def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
         backend = self
-        response_type = TypeAdapter(signature.return_type)
+        response_type: TypeAdapter[Any] = TypeAdapter(signature.return_type)
 
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
