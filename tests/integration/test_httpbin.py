@@ -3,7 +3,7 @@ from typing import Annotated, Any, Callable, Protocol, Union
 
 import pytest
 from httpx import AsyncClient, Client
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import SupportsService
@@ -99,9 +99,11 @@ def test_headers_sync() -> None:
 
 @pytest.mark.vcr
 async def test_headers_async() -> None:
-    class Response(BaseModel):
-        headers: dict[str, Any]
-        content_length: int
+    """
+    Test custom headers in an asynchronous call.
+
+    # TODO: I suspect that the separate test for `async` is not needed as the code does not care.
+    """
 
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")
@@ -150,3 +152,21 @@ def test_reraise_backend_error() -> None:
     service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
     with pytest.raises(BackendError):
         service.get_internal_server_error()
+
+
+@pytest.mark.vcr
+def test_callback_protocol() -> None:
+    """Test that the `__call__()` method can actually be used."""
+
+    class Response(BaseModel):
+        user_agent: Annotated[str, Field(validation_alias="user-agent")]
+
+    class SupportsHttpbin(Protocol):
+        @http_method("GET")
+        @path("/user-agent")
+        @abstractmethod
+        def __call__(self) -> Response:
+            raise NotImplementedError
+
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
+    assert service().user_agent == "python-httpx/0.27.2"
