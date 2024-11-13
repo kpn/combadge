@@ -72,7 +72,7 @@ def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
     """Enumerate the service protocol methods."""
 
     for name, method in get_members(of_protocol, callable):
-        if name.startswith("_"):
+        if name.startswith("_") and name != "__call__":
             continue
         parameters = get_signature(method).parameters
         if "self" not in parameters:

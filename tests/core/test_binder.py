@@ -18,7 +18,14 @@ def test_enumerate_bindable_methods() -> None:
         def invoke(self) -> None:
             raise NotImplementedError
 
-    assert list(_enumerate_methods(TestService)) == [("invoke", TestService.invoke)]
+        @abstractmethod
+        def __call__(self) -> None:
+            raise NotImplementedError
+
+    assert list(_enumerate_methods(TestService)) == [
+        ("__call__", TestService.__call__),
+        ("invoke", TestService.invoke),
+    ]
 
 
 def test_enumerate_class_methods() -> None:
