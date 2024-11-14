@@ -30,7 +30,7 @@ class NumberTooLargeResponse(RootModel, ErrorResponse):
     root: Literal["number too large"]
 
 
-class _TestFault(BaseSoapFault):
+class _TestFault(BaseSoapFault):  # type: ignore[override]
     code: Literal["SOAP-ENV:Server"]
     message: Literal["Test Fault"]
 
