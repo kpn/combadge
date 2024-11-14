@@ -5,6 +5,7 @@ from typing import Annotated, Literal, Protocol, Union
 
 import pytest
 from pydantic import BaseModel, Field, RootModel
+from pydantic_core import Url
 from typing_extensions import assert_type
 from zeep import AsyncClient, Client
 
@@ -14,7 +15,7 @@ from combadge.support.http.markers import Payload
 from combadge.support.soap.markers import operation_name
 from combadge.support.soap.response import BaseSoapFault
 from combadge.support.zeep.backends.async_ import ZeepBackend as AsyncZeepBackend
-from combadge.support.zeep.backends.base import ByServiceName
+from combadge.support.zeep.backends.base import ByBindingName, ByServiceName
 from combadge.support.zeep.backends.sync import ZeepBackend as SyncZeepBackend
 
 
@@ -108,10 +109,22 @@ async def test_happy_path_scalar_response_async(number_conversion_service_async:
 
 
 @pytest.mark.vcr
-def test_happy_path_with_params() -> None:
+@pytest.mark.parametrize(
+    "service",
+    [
+        ByServiceName(port_name="NumberConversionSoap"),
+        ByBindingName(
+            binding_name="{http://www.dataaccess.com/webservicesserver/}NumberConversionSoapBinding",
+            address=Url(
+                "https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
+            ),
+        ),
+    ],
+)
+def test_happy_path_with_params_sync(service: Union[ByServiceName, ByBindingName]) -> None:
     backend = SyncZeepBackend.with_params(
         Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
-        service=ByServiceName(port_name="NumberConversionSoap"),
+        service=service,
         operation_timeout=1,
     )
     service = SupportsNumberConversion.bind(backend)
@@ -120,10 +133,22 @@ def test_happy_path_with_params() -> None:
 
 
 @pytest.mark.vcr
-async def test_happy_path_with_params_async() -> None:
+@pytest.mark.parametrize(
+    "service",
+    [
+        ByServiceName(port_name="NumberConversionSoap"),
+        ByBindingName(
+            binding_name="{http://www.dataaccess.com/webservicesserver/}NumberConversionSoapBinding",
+            address=Url(
+                "https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
+            ),
+        ),
+    ],
+)
+async def test_happy_path_with_params_async(service: Union[ByServiceName, ByBindingName]) -> None:
     backend = AsyncZeepBackend.with_params(
         Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
-        service=ByServiceName(port_name="NumberConversionSoap"),
+        service=service,
         operation_timeout=1,
     )
     service = SupportsNumberConversionAsync.bind(backend)

@@ -78,7 +78,7 @@ class ZeepBackend(
             service_proxy = AsyncServiceProxy(
                 client,
                 client.wsdl.bindings[service.binding_name],
-                address=service.address,
+                address=service.address_string,
             )
         else:
             raise TypeError(type(service))

@@ -61,7 +61,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ServiceContaine
         elif isinstance(service, ByServiceName):
             service_proxy = client.bind(service.service_name, service.port_name)
         elif isinstance(service, ByBindingName):
-            service_proxy = client.create_service(service.binding_name, service.address)
+            service_proxy = client.create_service(service.binding_name, service.address_string)
         else:
             raise TypeError(type(service))
         return cls(service_proxy)
