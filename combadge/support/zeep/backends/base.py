@@ -112,7 +112,15 @@ class ByBindingName:
 
 @dataclass(**SLOTS)
 class ByServiceName:
-    """Create service by service and port names."""
+    """
+    Create service by service and port names.
+
+    Examples:
+        >>> backend = SyncZeepBackend.with_params(
+        >>>     "NumberConversion.wsdl",
+        >>>     service=ByServiceName(port_name="NumberConversionSoap"),
+        >>> )
+    """
 
     service_name: str | None = None
     port_name: str | None = None
