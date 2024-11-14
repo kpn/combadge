@@ -4,6 +4,8 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar, Union
 
+from pydantic_core import Url
+
 from combadge._helpers.dataclasses import SLOTS
 from combadge.core.errors import BackendError
 
@@ -13,7 +15,7 @@ except ImportError:
     # Before Python 3.10:
     UnionType = type(Union[int, str])  # type: ignore[assignment, misc]
 
-from pydantic import TypeAdapter
+from pydantic import HttpUrl, TypeAdapter
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
@@ -104,10 +106,26 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
 
 @dataclass(**SLOTS)
 class ByBindingName:
-    """Create service by binding name and address."""
+    """
+    Create service by binding name and address.
+
+    Examples:
+        >>> ByBindingName(
+        >>>     binding_name="{http://www.dataaccess.com/webservicesserver/}NumberConversionSoapBinding",
+        >>>     address=Url("https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
+        >>> )
+    )
+    """
 
     binding_name: str
-    address: str
+    address: HttpUrl | str
+
+    @property
+    def address_string(self) -> str:
+        """Return the service address as a plain `#!python str`."""
+        if isinstance(self.address, Url):
+            return str(self.address)
+        return self.address
 
 
 @dataclass(**SLOTS)
@@ -116,10 +134,7 @@ class ByServiceName:
     Create service by service and port names.
 
     Examples:
-        >>> backend = SyncZeepBackend.with_params(
-        >>>     "NumberConversion.wsdl",
-        >>>     service=ByServiceName(port_name="NumberConversionSoap"),
-        >>> )
+        >>> ByServiceName(port_name="NumberConversionSoap")
     """
 
     service_name: str | None = None

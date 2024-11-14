@@ -1,0 +1,68 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Body><ns0:NumberToWords
+      xmlns:ns0="http://www.dataaccess.com/webservicesserver/"><ns0:ubiNum>42</ns0:ubiNum></ns0:NumberToWords></soap-env:Body></soap-env:Envelope>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '291'
+      Content-Type:
+      - text/xml; charset=utf-8
+      SOAPAction:
+      - '""'
+      User-Agent:
+      - Zeep/4.3.1 (www.python-zeep.org)
+    method: POST
+    uri: https://www.dataaccess.com/webservicesserver/NumberConversion.wso
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Ih7/Hu8W
+        ZXqZ101RLT/7aHe881GaL6fVrFhefPbRuj3fPvjo9zj6jZPHTZWtHp0uL/OyWuUpvbRsHuGzzz6a
+        t+3q0d27zXSeL7JmTF/h83FVX9zFL3dzfenuRwQnTQXSk2p2zX/SB4tHL9aLSV6/qb5b1bPmVd6s
+        qmVjOlnYHq6ursazrM2y6TRvmvG0Wty9yidNXl8W+IB+5rV2gicCd122R+dV3V6n7VWVPr4bbyEA
+        Yt8yXvz9Yx6bGYb+Zchz9P8A3rWog1YBAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Cache-Control:
+      - private, max-age=0
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '311'
+      Content-Security-Policy:
+      - 'default-src * data: ''unsafe-inline'' ''unsafe-eval''; form-action ''self'';
+        frame-ancestors ''self'';'
+      Content-Type:
+      - text/xml; charset=utf-8
+      Date:
+      - Thu, 14 Nov 2024 15:27:54 GMT
+      Permissions-Policy:
+      - interest-cohort=(); fullscreen=(self)
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Server:
+      - Server
+      Strict-Transport-Security:
+      - max-age=15768000;includeSubdomains
+      Vary:
+      - Accept-Encoding
+      Web-Service:
+      - DataFlex 19.1
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1
