@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from typing import Any, ClassVar, Generic, NoReturn
+from typing import Any, ClassVar, Generic
 
 from pydantic import BaseModel
-from typing_extensions import Self
+from typing_extensions import Never, Self
 
 from combadge.core.errors import CombadgeError
 from combadge.core.typevars import ResponseT
@@ -25,7 +25,7 @@ class BaseResponse(ABC, BaseModel):
     """
 
     @abstractmethod
-    def raise_for_result(self, exception: BaseException | None = None) -> None | NoReturn:
+    def raise_for_result(self, exception: BaseException | None = None) -> None | Never:
         """
         Raise an exception if the service call has failed.
 
@@ -33,7 +33,7 @@ class BaseResponse(ABC, BaseModel):
             ErrorResponse.Error: an error derived from `ErrorResponse`
 
         Returns:
-            always `None`
+            always `#!python None`
 
         Tip: Calling `raise_for_result()` is always possible
             `#!python BaseResponse`, `#!python SuccessfulResponse`, and
@@ -43,12 +43,12 @@ class BaseResponse(ABC, BaseModel):
         raise NotImplementedError
 
     @abstractmethod
-    def unwrap(self) -> Self | NoReturn:
+    def unwrap(self) -> Self | Never:
         """
-        Return itself if the call was successful, raises an exception otherwise.
+        Return a response if the call was successful, raise an exception otherwise.
 
         This method allows «unpacking» a response with proper type hinting.
-        The trick here is that all error responses' `unwrap()` are annotated with `NoReturn`,
+        The trick here is that all error responses' `unwrap()` are annotated with `Never`,
         which suggests a type linter, that `unwrap()` may never return an error.
 
         Tip: Calling `unwrap()` is always possible
@@ -75,7 +75,7 @@ class BaseResponse(ABC, BaseModel):
             ErrorResponse.Error: an error derived from `ErrorResponse`
 
         Returns:
-            always returns `Self`
+            returns `self` by default, may be overridden in user response models
         """
         raise NotImplementedError
 
@@ -91,11 +91,11 @@ class SuccessfulResponse(BaseResponse):
         """
         Do nothing.
 
-        This call is a no-op since the response is successful.
+        This call is a no-op since the response is successful by definition.
         """
 
     def unwrap(self) -> Self:
-        """Return itself since there's no error."""
+        """Return the response since there's no error by definition."""
         return self
 
 
@@ -178,19 +178,27 @@ class ErrorResponse(BaseResponse, ABC):
         DerivedException.__doc__ = cls.__doc__ or DerivedException.__doc__
         cls.Error = DerivedException
 
-    def raise_for_result(self, exception: BaseException | None = None) -> NoReturn:
+    def raise_for_result(self, exception: BaseException | None = None) -> Never:
         """
         Raise the derived exception.
 
         Args:
             exception: if set, raise the specified exception instead of the derived one.
+
+        Raises:
+            Self.Error: derived error
         """
         if not exception:
             raise self.Error(self)
         raise exception from self.as_exception()
 
-    def unwrap(self) -> NoReturn:
-        """Raise the derived exception."""
+    def unwrap(self) -> Never:
+        """
+        Raise the derived exception.
+
+        Raises:
+            Self.Error: derived error
+        """
         raise self.as_exception()
 
     def as_exception(self) -> _BaseDerivedError:

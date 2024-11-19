@@ -1,6 +1,9 @@
-import pytest
+from typing import TYPE_CHECKING
 
-from combadge.core.response import ErrorResponse, _BaseDerivedError
+import pytest
+from typing_extensions import assert_type
+
+from combadge.core.response import BaseResponse, ErrorResponse, SuccessfulResponse, _BaseDerivedError
 
 
 def test_error_inheritance() -> None:
@@ -54,3 +57,12 @@ def test_derived_error_magic_attributes() -> None:
     assert CustomError.Error.__module__ == "tests.core.test_response"
     assert CustomError.Error.__name__ == "CustomError.Error"
     assert CustomError.Error.__qualname__ == "test_derived_error_magic_attributes.<locals>.CustomError.Error"
+
+
+if TYPE_CHECKING:
+
+    def test_unwrap_type() -> None:
+        class Response(SuccessfulResponse):
+            pass
+
+        assert_type(BaseResponse.unwrap(Response()), Response)
