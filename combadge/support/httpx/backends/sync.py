@@ -50,7 +50,7 @@ class HttpxBackend(BaseHttpxBackend[Client], ServiceContainer):
                     json=request.payload,
                     data=request.form_data,
                     params=request.query_params,
-                    headers=request.headers,
+                    headers=request.http_headers,
                 )
                 payload = backend._parse_payload(response)
             return signature.apply_response_markers(response, payload, response_type)
