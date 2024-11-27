@@ -5,10 +5,10 @@ from typing import Any, Optional
 
 
 @dataclass
-class ContainsHeaders:
+class ContainsHttpHeaders:
     """HTTP request headers."""
 
-    headers: list[tuple[str, Any]] = field(default_factory=list)
+    http_headers: list[tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -64,6 +64,6 @@ class ContainsFormData:
 
 @dataclass
 class ContainsPayload:
-    """SOAP request payload."""
+    """HTTP request payload."""
 
     payload: Optional[Any] = None

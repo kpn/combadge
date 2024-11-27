@@ -87,7 +87,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ServiceContaine
             request = signature.build_request(Request, self, args, kwargs)
             operation = backend._get_operation(request.get_operation_name())
             try:
-                response = operation(**(request.payload or {}))
+                response = operation(**(request.payload or {}), _soapheaders=request.soap_header)
             except Fault as e:
                 return backend._parse_soap_fault(e, fault_type)
             except Exception as e:

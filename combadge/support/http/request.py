@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from combadge._helpers.dataclasses import SLOTS
 from combadge.support.http.abc import (
     ContainsFormData,
-    ContainsHeaders,
+    ContainsHttpHeaders,
     ContainsMethod,
     ContainsPayload,
     ContainsQueryParams,
@@ -19,7 +19,7 @@ class Request(
     ContainsPayload,
     ContainsQueryParams,
     ContainsFormData,
-    ContainsHeaders,
+    ContainsHttpHeaders,
     BaseBackendRequest,
 ):
     """Backend-agnostic HTTP request."""

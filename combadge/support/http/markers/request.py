@@ -14,7 +14,7 @@ from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.http.abc import (
     ContainsFormData,
-    ContainsHeaders,
+    ContainsHttpHeaders,
     ContainsMethod,
     ContainsPayload,
     ContainsQueryParams,
@@ -25,7 +25,7 @@ _T = TypeVar("_T")
 
 
 @dataclass(**SLOTS)
-class CustomHeader(ParameterMarker[ContainsHeaders]):
+class CustomHeader(ParameterMarker[ContainsHttpHeaders]):
     """
     Mark a parameter as a header value. Argument is passed «as is» during a service call.
 
@@ -38,8 +38,8 @@ class CustomHeader(ParameterMarker[ContainsHeaders]):
     name: str
 
     @override
-    def __call__(self, request: ContainsHeaders, value: Any) -> None:  # noqa: D102
-        request.headers.append((self.name, value))
+    def __call__(self, request: ContainsHttpHeaders, value: Any) -> None:  # noqa: D102
+        request.http_headers.append((self.name, value))
 
 
 @dataclass(init=False, **SLOTS)
@@ -148,7 +148,9 @@ if not TYPE_CHECKING:
     @dataclass(**SLOTS)
     class Payload(ParameterMarker[ContainsPayload]):
         """
-        Mark parameter as a request payload. An argument gets converted to a dictionary and passed over to a backend.
+        Mark parameter as a request payload.
+
+        An argument gets converted to a dictionary and passed over to a backend.
 
         Examples:
             Simple usage:
@@ -177,7 +179,7 @@ if not TYPE_CHECKING:
             elif isinstance(request.payload, dict):
                 request.payload.update(value)  # merge into the existing payload
             else:
-                raise ValueError(f"attempting to merge {type(value)} into {type(request.payload)}")
+                raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.payload)}`")
 
         def __class_getitem__(cls, item: type[Any]) -> Any:
             return Annotated[item, cls()]
