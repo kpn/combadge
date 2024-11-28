@@ -38,13 +38,12 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
         ServiceContainer.__init__(self)
 
     def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
-        backend = self
         response_type: TypeAdapter[Any] = TypeAdapter(signature.return_type)
 
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
             with BackendError:
-                response: Response = await backend._client.request(
+                response: Response = await self.__combadge_backend__._client.request(
                     request.get_method(),
                     request.get_url_path(),
                     json=request.payload,
@@ -52,7 +51,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
                     params=request.query_params,
                     headers=request.http_headers,
                 )
-                payload = backend._parse_payload(response)
+                payload = self.__combadge_backend__._parse_payload(response)
             return signature.apply_response_markers(response, payload, response_type)
 
         return bound_method  # type: ignore[return-value]
