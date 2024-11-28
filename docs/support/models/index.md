@@ -18,7 +18,7 @@ from httpx import Client
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Payload[int]) -> Annotated[int, Extract("data")]:
+    def post_anything(self, foo: Annotated[int, Payload()]) -> Annotated[int, Extract("data")]:
         ...
 
 
@@ -31,7 +31,7 @@ assert backend[Httpbin].post_anything(42) == 42
 ```python title="dataclasses.py" hl_lines="10-12 15-17 23 28"
 from dataclasses import dataclass
 
-from typing_extensions import Protocol
+from typing_extensions import Protocol, Annotated
 
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
@@ -51,7 +51,7 @@ class Response:
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Payload[Request]) -> Response:
+    def post_anything(self, foo: Annotated[Request, Payload()]) -> Response:
         ...
 
 
@@ -62,7 +62,7 @@ assert backend[Httpbin].post_anything(Request(42)) == Response(data='{"foo": 42}
 ## [Typed dictionaries](https://docs.python.org/3/library/typing.html#typing.TypedDict)
 
 ```python title="typed_dict.py" hl_lines="8-9 12-13 19 24"
-from typing_extensions import Protocol, TypedDict
+from typing_extensions import Protocol, TypedDict, Annotated
 
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
@@ -80,7 +80,7 @@ class Response(TypedDict):
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Payload[Request]) -> Response:
+    def post_anything(self, foo: Annotated[Request, Payload()]) -> Response:
         ...
 
 
