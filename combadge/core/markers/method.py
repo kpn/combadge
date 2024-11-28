@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from inspect import BoundArguments
 from typing import Any, Callable, Generic
 
-# noinspection PyUnresolvedReferences
 from typing_extensions import override
 
 from combadge._helpers.dataclasses import SLOTS

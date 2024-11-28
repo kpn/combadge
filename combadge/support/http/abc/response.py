@@ -5,7 +5,7 @@ from collections.abc import Mapping
 from typing_extensions import Protocol
 
 
-class SupportsHeaders(Protocol):
+class HttpResponseHeaders(Protocol):
     """Supports read-only case-insensitive mapping of headers."""
 
     @property
@@ -13,7 +13,7 @@ class SupportsHeaders(Protocol):
         raise NotImplementedError
 
 
-class SupportsStatusCode(Protocol):
+class HttpResponseStatusCode(Protocol):
     """Supports a read-only status code attribute or property."""
 
     @property
@@ -21,7 +21,7 @@ class SupportsStatusCode(Protocol):
         raise NotImplementedError
 
 
-class SupportsReasonPhrase(Protocol):
+class HttpResponseReasonPhrase(Protocol):
     """Supports a read-only reason phrase attribute or property."""
 
     @property
@@ -29,9 +29,10 @@ class SupportsReasonPhrase(Protocol):
         raise NotImplementedError
 
 
-class SupportsText(Protocol):
+class HttpResponseText(Protocol):
     """Supports a read-only text attribute or property."""
 
     @property
     def text(self) -> str:  # noqa: D102
+        """Get the response body as text."""
         raise NotImplementedError

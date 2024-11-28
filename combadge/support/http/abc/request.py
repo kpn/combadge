@@ -5,15 +5,15 @@ from typing import Any, Optional
 
 
 @dataclass
-class ContainsHttpHeaders:
+class HttpRequestHeaders:
     """HTTP request headers."""
 
     http_headers: list[tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
-class ContainsUrlPath:
-    """Request URL path."""
+class HttpRequestUrlPath:
+    """HTTP request URL path."""
 
     url_path: Optional[str] = None
 
@@ -25,7 +25,7 @@ class ContainsUrlPath:
 
 
 @dataclass
-class ContainsMethod:
+class HttpRequestMethod:
     """HTTP request method."""
 
     method: Optional[str] = None
@@ -38,14 +38,14 @@ class ContainsMethod:
 
 
 @dataclass
-class ContainsQueryParams:
+class HttpRequestQueryParams:
     """HTTP request query parameters."""
 
     query_params: list[tuple[str, Any]] = field(default_factory=list)
 
 
 @dataclass
-class ContainsFormData:
+class HttpRequestFormData:
     """
     HTTP request [form data][1].
 
@@ -63,7 +63,7 @@ class ContainsFormData:
 
 
 @dataclass
-class ContainsPayload:
+class HttpRequestPayload:
     """HTTP request payload."""
 
     payload: Optional[Any] = None
