@@ -14,19 +14,19 @@ from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.http.abc import (
-    ContainsFormData,
-    ContainsHttpHeaders,
-    ContainsMethod,
-    ContainsPayload,
-    ContainsQueryParams,
-    ContainsUrlPath,
+    HttpRequestFormData,
+    HttpRequestHeaders,
+    HttpRequestMethod,
+    HttpRequestPayload,
+    HttpRequestQueryParams,
+    HttpRequestUrlPath,
 )
 
 _T = TypeVar("_T")
 
 
 @dataclass(**SLOTS)
-class CustomHeader(ParameterMarker[ContainsHttpHeaders]):
+class CustomHeader(ParameterMarker[HttpRequestHeaders]):
     """
     Mark a parameter as a header value. Argument is passed «as is» during a service call.
 
@@ -39,12 +39,12 @@ class CustomHeader(ParameterMarker[ContainsHttpHeaders]):
     name: str
 
     @override
-    def __call__(self, request: ContainsHttpHeaders, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestHeaders, value: Any) -> None:  # noqa: D102
         request.http_headers.append((self.name, value))
 
 
 @dataclass(init=False, **SLOTS)
-class Path(Generic[FunctionT], MethodMarker[ContainsUrlPath, FunctionT]):  # noqa: D101
+class Path(Generic[FunctionT], MethodMarker[HttpRequestUrlPath, FunctionT]):  # noqa: D101
     _factory: Callable[[BoundArguments], str]
 
     def __init__(self, path_or_factory: str | Callable[[BoundArguments], str]) -> None:  # noqa: D107
@@ -60,7 +60,7 @@ class Path(Generic[FunctionT], MethodMarker[ContainsUrlPath, FunctionT]):  # noq
             self._factory = factory
 
     @override
-    def prepare_request(self, request: ContainsUrlPath, arguments: BoundArguments) -> None:  # noqa: D102
+    def prepare_request(self, request: HttpRequestUrlPath, arguments: BoundArguments) -> None:  # noqa: D102
         request.url_path = self._factory(arguments)
 
 
@@ -85,11 +85,11 @@ def path(path_or_factory: str | Callable[..., str]) -> Callable[[FunctionT], Fun
 
 
 @dataclass(**SLOTS)
-class HttpMethod(Generic[FunctionT], MethodMarker[ContainsMethod, FunctionT]):  # noqa: D101
+class HttpMethod(Generic[FunctionT], MethodMarker[HttpRequestMethod, FunctionT]):  # noqa: D101
     method: str
 
     @override
-    def prepare_request(self, request: ContainsMethod, _arguments: BoundArguments) -> None:  # noqa: D102
+    def prepare_request(self, request: HttpRequestMethod, _arguments: BoundArguments) -> None:  # noqa: D102
         request.method = self.method
 
 
@@ -105,7 +105,7 @@ def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
 
 
 @dataclass(**SLOTS)
-class QueryParam(ParameterMarker[ContainsQueryParams]):
+class QueryParam(ParameterMarker[HttpRequestQueryParams]):
     """
     Mark parameter as a query parameter.
 
@@ -117,12 +117,12 @@ class QueryParam(ParameterMarker[ContainsQueryParams]):
     name: str
 
     @override
-    def __call__(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestQueryParams, value: Any) -> None:  # noqa: D102
         request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 
 @dataclass(**SLOTS)
-class QueryArrayParam(ParameterMarker[ContainsQueryParams]):
+class QueryArrayParam(ParameterMarker[HttpRequestQueryParams]):
     """
     Mark parameter as an array-like query parameter.
 
@@ -139,13 +139,13 @@ class QueryArrayParam(ParameterMarker[ContainsQueryParams]):
     name: str
 
     @override
-    def __call__(self, request: ContainsQueryParams, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestQueryParams, value: Any) -> None:  # noqa: D102
         for sub_value in value:
             request.query_params.append((self.name, sub_value.value if isinstance(sub_value, Enum) else sub_value))
 
 
 @dataclass(**SLOTS)
-class Payload(ParameterMarker[ContainsPayload]):
+class Payload(ParameterMarker[HttpRequestPayload]):
     """
     Mark parameter as a request payload.
 
@@ -160,7 +160,7 @@ class Payload(ParameterMarker[ContainsPayload]):
     by_alias: bool = False
 
     @override
-    def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestPayload, value: Any) -> None:  # noqa: D102
         value = get_type_adapter(cast(Hashable, type(value))).dump_python(
             value,
             by_alias=self.by_alias,
@@ -178,7 +178,7 @@ class Payload(ParameterMarker[ContainsPayload]):
 
 
 @dataclass(**SLOTS)
-class Field(ParameterMarker[ContainsPayload]):
+class Field(ParameterMarker[HttpRequestPayload]):
     """
     Mark a parameter as a value of a separate payload field.
 
@@ -193,14 +193,14 @@ class Field(ParameterMarker[ContainsPayload]):
     name: str
 
     @override
-    def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestPayload, value: Any) -> None:  # noqa: D102
         if request.payload is None:
             request.payload = {}
         request.payload[self.name] = value.value if isinstance(value, Enum) else value
 
 
 @dataclass(**SLOTS)
-class FormData(ParameterMarker[ContainsFormData]):
+class FormData(ParameterMarker[HttpRequestFormData]):
     """
     Mark parameter as a request form data.
 
@@ -212,7 +212,7 @@ class FormData(ParameterMarker[ContainsFormData]):
     """
 
     @override
-    def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestFormData, value: Any) -> None:  # noqa: D102
         value = get_type_adapter(cast(Hashable, type(value))).dump_python(value, by_alias=True)
         if not isinstance(value, dict):
             raise TypeError(f"form data requires a dictionary, got {type(value)}")
@@ -224,7 +224,7 @@ class FormData(ParameterMarker[ContainsFormData]):
 
 
 @dataclass(**SLOTS)
-class FormField(ParameterMarker[ContainsFormData]):
+class FormField(ParameterMarker[HttpRequestFormData]):
     """
     Mark a parameter as a separate form field value.
 
@@ -241,5 +241,5 @@ class FormField(ParameterMarker[ContainsFormData]):
     name: str
 
     @override
-    def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: HttpRequestFormData, value: Any) -> None:  # noqa: D102
         request.append_form_field(self.name, value.value if isinstance(value, Enum) else value)

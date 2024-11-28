@@ -5,7 +5,7 @@ from combadge._helpers.dataclasses import SLOTS
 
 
 @dataclass(**SLOTS)
-class ContainsSoapOperationName:
+class SoapOperationName:
     """SOAP operation name."""
 
     operation_name: Optional[str] = None
@@ -18,7 +18,7 @@ class ContainsSoapOperationName:
 
 
 @dataclass
-class ContainsSoapHeader:
+class SoapHeader:
     """SOAP request header."""
 
     soap_header: Optional[Any] = None
