@@ -36,7 +36,7 @@ def test_form_data() -> None:
         @abstractmethod
         def post_anything(
             self,
-            data: FormData[Data],
+            data: Annotated[Data, FormData()],
             bar: Annotated[int, FormField("barqux")],
             qux: Annotated[int, FormField("barqux")],
         ) -> Response: ...
