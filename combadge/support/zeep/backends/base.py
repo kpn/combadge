@@ -112,18 +112,18 @@ class ByBindingName:
     Examples:
         >>> ByBindingName(
         >>>     binding_name="{http://www.dataaccess.com/webservicesserver/}NumberConversionSoapBinding",
-        >>>     address=Url("https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
+        >>>     address=HttpUrl("https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
         >>> )
     )
     """
 
     binding_name: str
-    address: HttpUrl | str
+    address: HttpUrl | Url | str
 
     @property
     def address_string(self) -> str:
         """Return the service address as a plain `#!python str`."""
-        if isinstance(self.address, Url):
+        if isinstance(self.address, (HttpUrl, Url)):
             return str(self.address)
         return self.address
 

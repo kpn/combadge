@@ -4,8 +4,7 @@ from pathlib import Path
 from typing import Annotated, Literal, Protocol, Union
 
 import pytest
-from pydantic import BaseModel, Field, RootModel
-from pydantic_core import Url
+from pydantic import BaseModel, Field, HttpUrl, RootModel
 from typing_extensions import assert_type
 from zeep import AsyncClient, Client
 
@@ -115,7 +114,7 @@ async def test_happy_path_scalar_response_async(number_conversion_service_async:
         ByServiceName(port_name="NumberConversionSoap"),
         ByBindingName(
             binding_name="{http://www.dataaccess.com/webservicesserver/}NumberConversionSoapBinding",
-            address=Url(
+            address=HttpUrl(
                 "https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
             ),
         ),
@@ -139,7 +138,7 @@ def test_happy_path_with_params_sync(service: Union[ByServiceName, ByBindingName
         ByServiceName(port_name="NumberConversionSoap"),
         ByBindingName(
             binding_name="{http://www.dataaccess.com/webservicesserver/}NumberConversionSoapBinding",
-            address=Url(
+            address=HttpUrl(
                 "https://www.dataaccess.com/webservicesserver/NumberConversion.wso",
             ),
         ),
