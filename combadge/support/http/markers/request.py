@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Hashable
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Generic, TypeVar, cast
 
-from typing_extensions import TypeAlias, override
+from typing_extensions import override
 
 from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter
@@ -143,55 +144,37 @@ class QueryArrayParam(ParameterMarker[ContainsQueryParams]):
             request.query_params.append((self.name, sub_value.value if isinstance(sub_value, Enum) else sub_value))
 
 
-if not TYPE_CHECKING:
+@dataclass(**SLOTS)
+class Payload(ParameterMarker[ContainsPayload]):
+    """
+    Mark parameter as a request payload.
 
-    @dataclass(**SLOTS)
-    class Payload(ParameterMarker[ContainsPayload]):
-        """
-        Mark parameter as a request payload.
+    An argument gets converted to a dictionary and passed over to a backend.
 
-        An argument gets converted to a dictionary and passed over to a backend.
+    Examples:
+        >>> def call(body: Annotated[BodyModel, Payload()]) -> ...:
+        >>>     ...
+    """
 
-        Examples:
-            Simple usage:
+    exclude_unset: bool = False
+    by_alias: bool = False
 
-            >>> def call(body: Payload[BodyModel]) -> ...:
-            >>>     ...
+    @override
+    def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
+        value = get_type_adapter(cast(Hashable, type(value))).dump_python(
+            value,
+            by_alias=self.by_alias,
+            exclude_unset=self.exclude_unset,
+        )
+        if request.payload is None:
+            request.payload = value
+        elif isinstance(request.payload, dict):
+            request.payload.update(value)  # merge into the existing payload
+        else:
+            raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.payload)}`")
 
-            Equivalent expanded usage:
-
-            >>> def call(body: Annotated[BodyModel, Payload()]) -> ...:
-            >>>     ...
-        """
-
-        exclude_unset: bool = False
-        by_alias: bool = False
-
-        @override
-        def __call__(self, request: ContainsPayload, value: Any) -> None:  # noqa: D102
-            value = get_type_adapter(type(value)).dump_python(
-                value,
-                by_alias=self.by_alias,
-                exclude_unset=self.exclude_unset,
-            )
-            if request.payload is None:
-                request.payload = value
-            elif isinstance(request.payload, dict):
-                request.payload.update(value)  # merge into the existing payload
-            else:
-                raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.payload)}`")
-
-        def __class_getitem__(cls, item: type[Any]) -> Any:
-            return Annotated[item, cls()]
-
-else:
-    # Abandon hope all ye who enter here 👋
-    #
-    # Mypy still does not support `__class_getitem__`, although it was introduced in Python 3.7:
-    # https://github.com/python/mypy/issues/11501.
-    # This line allows to treat `Payload[T]` simply as `T` itself, that is consistent
-    # with `Annotated[T, Payload()]` annotation.
-    Payload: TypeAlias = _T
+    def __class_getitem__(cls, item: type[Any]) -> Any:
+        raise NotImplementedError("the shortcut is no longer supported, use `Annotated[..., Payload()]`")
 
 
 @dataclass(**SLOTS)
@@ -216,36 +199,28 @@ class Field(ParameterMarker[ContainsPayload]):
         request.payload[self.name] = value.value if isinstance(value, Enum) else value
 
 
-if not TYPE_CHECKING:
+@dataclass(**SLOTS)
+class FormData(ParameterMarker[ContainsFormData]):
+    """
+    Mark parameter as a request form data.
 
-    @dataclass(**SLOTS)
-    class FormData(ParameterMarker[ContainsFormData]):
-        """
-        Mark parameter as a request form data.
+    An argument gets converted to a dictionary and passed over to a backend.
 
-        An argument gets converted to a dictionary and passed over to a backend.
+    Examples:
+        >>> def call(body: Annotated[FormModel, FormData()]) -> ...:
+        >>>     ...
+    """
 
-        Examples:
-            >>> def call(body: FormData[FormModel]) -> ...:
-            >>>     ...
+    @override
+    def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
+        value = get_type_adapter(cast(Hashable, type(value))).dump_python(value, by_alias=True)
+        if not isinstance(value, dict):
+            raise TypeError(f"form data requires a dictionary, got {type(value)}")
+        for item_name, item_value in value.items():
+            request.append_form_field(item_name, item_value)
 
-            >>> def call(body: Annotated[FormModel, FormData()]) -> ...:
-            >>>     ...
-        """
-
-        @override
-        def __call__(self, request: ContainsFormData, value: Any) -> None:  # noqa: D102
-            value = get_type_adapter(type(value)).dump_python(value, by_alias=True)
-            if not isinstance(value, dict):
-                raise TypeError(f"form data requires a dictionary, got {type(value)}")
-            for item_name, item_value in value.items():
-                request.append_form_field(item_name, item_value)
-
-        def __class_getitem__(cls, item: type[Any]) -> Any:
-            return Annotated[item, FormData()]
-
-else:
-    FormData: TypeAlias = _T
+    def __class_getitem__(cls, item: type[Any]) -> Any:
+        raise NotImplementedError("the shortcut is no longer supported, use `Annotated[..., FormData()]`")
 
 
 @dataclass(**SLOTS)
