@@ -81,15 +81,14 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ServiceContaine
 
     def bind_method(self, signature: Signature) -> ServiceMethod[ZeepBackend]:  # noqa: D102
         response_type, fault_type = self._adapt_response_type(signature.return_type)
-        backend = self
 
         def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
-            operation = backend._get_operation(request.get_operation_name())
+            operation = self.__combadge_backend__._get_operation(request.get_operation_name())
             try:
                 response = operation(**(request.payload or {}), _soapheaders=request.soap_header)
             except Fault as e:
-                return backend._parse_soap_fault(e, fault_type)
+                return self.__combadge_backend__._parse_soap_fault(e, fault_type)
             except Exception as e:
                 raise BackendError(e) from e
             else:
