@@ -8,6 +8,7 @@ from typing import Any, Callable, Generic
 
 from pydantic import BaseModel, TypeAdapter
 
+from combadge._helpers.dataclasses import SLOTS
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.markers.response import ResponseMarker
@@ -20,12 +21,12 @@ except ImportError:
     from get_annotations import get_annotations  # type: ignore[no-redef, import-not-found, import-untyped]
 
 
-@dataclass
+@dataclass(**SLOTS)
 class Signature:
     """Extracted information about a service method."""
 
-    request_preparers: Iterable[RequestPreparer]
-    """Request preparers constructed from the parameter markers."""
+    parameters_infos: Iterable[ParameterInfo]
+    """All method parameters with the needed information."""
 
     method_markers: list[MethodMarker]
     """Extracted method markers."""
@@ -39,16 +40,14 @@ class Signature:
     bind_arguments: Callable[..., BoundArguments]
     """A callable that binds the method's arguments, it is cached here to improve performance."""
 
-    __slots__ = ("bind_arguments", "method_markers", "request_preparers", "return_type", "response_markers")
-
     @classmethod
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         annotations_ = get_annotations(method, eval_str=True)
-        return_type = Signature._extract_return_type(annotations_)
-        return Signature(
+        return_type = cls._extract_return_type(annotations_)
+        return cls(
             bind_arguments=get_signature(method).bind,
-            request_preparers=Signature._build_request_preparers(annotations_),
+            parameters_infos=cls._extract_parameter_infos(annotations_),
             method_markers=MethodMarker.ensure_markers(method),
             return_type=return_type,
             response_markers=ResponseMarker.extract(return_type),
@@ -76,22 +75,23 @@ class Signature:
         request = request_type()
 
         # Apply the method markers: they receive all the arguments at once.
-        for marker in self.method_markers:
-            marker.prepare_request(request, bound_arguments)
+        for method_marker in self.method_markers:
+            method_marker.prepare_request(request, bound_arguments)
 
         # Apply the parameter markers: they receive their respective values.
         all_arguments = bound_arguments.arguments
-        for preparer in self.request_preparers:
+        for parameter_info in self.parameters_infos:
             try:
-                value = all_arguments[preparer.parameter_name]
+                value = all_arguments[parameter_info.name]
             except KeyError:
-                # The parameter is not provided, skip the marker.
+                # The parameter is not provided – skipping it.
                 continue
             if callable(value):
                 # Allow for lazy loaded default parameters.
+                # TODO: we could potentially support async here.
                 value = value()
-            for prepare_request in preparer.prepare_request:
-                prepare_request(request, value)
+            for parameter_marker in parameter_info.markers:
+                parameter_marker(request, value)
 
         return request
 
@@ -106,19 +106,19 @@ class Signature:
         """
         for marker in self.response_markers:
             payload = marker(response, payload)
-        if not isinstance(payload, BaseModel):
+        if not isinstance(payload, BaseModel):  # TODO: this `if` may no needed anymore.
             # Implicitly parse a Pydantic model.
-            # Need to come up with something smarter to uncouple Combadge from Pydantic.
+            # TODO: come up with something smarter to better uncouple Combadge from Pydantic.
             payload = response_type.validate_python(payload)
         return payload
 
     @staticmethod
-    def _build_request_preparers(annotations_: dict[str, Any]) -> Iterable[RequestPreparer]:
-        """Extract the parameter descriptors: separate item for each parameter ⨯ marker combination."""
+    def _extract_parameter_infos(annotations_: dict[str, Any]) -> Iterable[ParameterInfo]:
+        """Extract all the parameters with the needed associated information."""
         return tuple(
-            RequestPreparer(
-                parameter_name=name,
-                prepare_request=ParameterMarker.extract(annotation),
+            ParameterInfo(
+                name=name,
+                markers=ParameterMarker.extract(annotation),
             )
             for name, annotation in annotations_.items()
         )
@@ -131,11 +131,10 @@ class Signature:
             return None
 
 
-@dataclass
-class RequestPreparer(Generic[BackendRequestT]):  # noqa: D101
-    __slots__ = ("parameter_name", "prepare_request")
+@dataclass(**SLOTS)
+class ParameterInfo(Generic[BackendRequestT]):  # noqa: D101
+    name: str
+    """The parameter's name."""
 
-    parameter_name: str
-
-    prepare_request: Iterable[Callable[[BackendRequestT, Any], None]]
-    """Collection of callables, which modify the request based on the parameter's value."""
+    markers: Iterable[ParameterMarker[BackendRequestT]]
+    """The parameter's markers used to build request with the runtime parameter value."""
