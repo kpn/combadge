@@ -10,17 +10,17 @@ from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
-from combadge.support.soap.abc import ContainsSoapHeader, ContainsSoapOperationName
+from combadge.support.soap.abc import SoapHeader, SoapOperationName
 
 _T = TypeVar("_T")
 
 
 @dataclass(**SLOTS)
-class OperationName(Generic[FunctionT], MethodMarker[ContainsSoapOperationName, FunctionT]):  # noqa: D101
+class OperationName(Generic[FunctionT], MethodMarker[SoapOperationName, FunctionT]):  # noqa: D101
     name: str
 
     @override
-    def prepare_request(self, request: ContainsSoapOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
+    def prepare_request(self, request: SoapOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
         request.operation_name = self.name
 
 
@@ -41,7 +41,7 @@ def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
 
 
 @dataclass(**SLOTS)
-class Header(ParameterMarker[ContainsSoapHeader]):
+class Header(ParameterMarker[SoapHeader]):
     """
     Mark parameter as a request header.
 
@@ -56,7 +56,7 @@ class Header(ParameterMarker[ContainsSoapHeader]):
     by_alias: bool = False
 
     @override
-    def __call__(self, request: ContainsSoapHeader, value: Any) -> None:  # noqa: D102
+    def __call__(self, request: SoapHeader, value: Any) -> None:  # noqa: D102
         value = get_type_adapter(cast(Hashable, type(value))).dump_python(
             value,
             by_alias=self.by_alias,
