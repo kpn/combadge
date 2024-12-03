@@ -81,4 +81,4 @@ if not TYPE_CHECKING:
             return Annotated[item, cls()]
 
 else:
-    FormData: TypeAlias = _T
+    Header: TypeAlias = _T
