@@ -3,8 +3,10 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Annotated, Any
 
-from typing_extensions import Self, TypeAliasType, get_origin
+from typing_extensions import Self, get_origin
 from typing_extensions import get_args as get_type_args
+
+from combadge._helpers.typing import drop_type_alias
 
 
 class AnnotatedMarker:
@@ -19,8 +21,7 @@ class AnnotatedMarker:
     @classmethod
     def extract(cls, type_: type[Any] | None) -> Iterable[Self]:
         """Extract all parameter markers from the type annotation, which are instances of the current class."""
-        if isinstance(type_, TypeAliasType):
-            type_ = type_.__value__
+        type_ = drop_type_alias(type_)
         if get_origin(type_) is Annotated:
             return tuple(arg for arg in get_type_args(type_) if isinstance(arg, cls))
         return ()

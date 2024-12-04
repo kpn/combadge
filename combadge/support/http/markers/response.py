@@ -4,9 +4,9 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import Any
 
+from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge.core.markers.response import ResponseMarker
 from combadge.support.http.abc import (
     HttpResponseHeaders,

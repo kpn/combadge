@@ -5,6 +5,9 @@ from typing import Any, Callable, TypeVar
 BackendT = TypeVar("BackendT")
 """Backend type."""
 
+BackendMethodMetaT = TypeVar("BackendMethodMetaT")
+"""Backend-specific metadata attached to a service method."""
+
 BackendRequestT = TypeVar("BackendRequestT")
 """Backend-specific request type."""
 
@@ -18,4 +21,4 @@ ServiceProtocolT = TypeVar("ServiceProtocolT")
 """User-defined service protocol type."""
 
 FunctionT = TypeVar("FunctionT", bound=Callable[..., Any])
-"""Generic function type without specific purpose."""
+"""Generic function type."""

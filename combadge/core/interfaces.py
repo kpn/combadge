@@ -5,11 +5,11 @@ from types import TracebackType
 from typing import Any, Protocol
 
 from pydantic import BaseModel
-from typing_extensions import Self
+from typing_extensions import Self, deprecated
 
 from combadge.core.binder import BaseBoundService, bind
 from combadge.core.signature import Signature
-from combadge.core.typevars import BackendT
+from combadge.core.typevars import BackendMethodMetaT, BackendRequestT, BackendT
 
 
 class SupportsService(Protocol):
@@ -50,6 +50,33 @@ class SupportsService(Protocol):
         return None
 
 
+class SupportsBackend(Protocol[BackendRequestT, BackendMethodMetaT]):
+    """Backend protocol."""
+
+    REQUEST_TYPE: type[BackendRequestT]
+
+    @classmethod
+    @abstractmethod
+    def inspect(cls, signature: Signature) -> BackendMethodMetaT:
+        """Extract metadata needed by the backend to execute the specific service method."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def __call__(self, request: BackendRequestT, meta: BackendMethodMetaT) -> Any:  # TODO: should be generic return type?
+        """
+        Call the backend.
+
+        Args:
+            request: request to be executed by the backend
+            meta: metadata attached to the service method
+
+        Returns:
+            Non-validated unprocessed response. Async backend should return
+            an [awaitable object](https://docs.python.org/3/library/asyncio-task.html#awaitables).
+        """
+        raise NotImplementedError
+
+
 class MethodBinder(Protocol[BackendT]):  # noqa: D101
     @staticmethod
     @abstractmethod
@@ -67,6 +94,7 @@ class MethodBinder(Protocol[BackendT]):  # noqa: D101
         raise NotImplementedError
 
 
+@deprecated("being re-written into `SupportsBackend`")
 class ProvidesBinder(Protocol):
     """
     Provides a default binder for itself.

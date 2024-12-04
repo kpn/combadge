@@ -6,9 +6,10 @@ from inspect import BoundArguments
 from inspect import signature as get_signature
 from typing import Any, Callable, Generic
 
+from annotated_types import KW_ONLY, SLOTS
 from pydantic import BaseModel, TypeAdapter
 
-from combadge._helpers.dataclasses import SLOTS
+from combadge._helpers.typing import drop_annotated, drop_type_alias
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.markers.response import ResponseMarker
@@ -21,7 +22,7 @@ except ImportError:
     from get_annotations import get_annotations  # type: ignore[no-redef, import-not-found, import-untyped]
 
 
-@dataclass(**SLOTS)
+@dataclass(**SLOTS, **KW_ONLY)
 class Signature:
     """Extracted information about a service method."""
 
@@ -32,7 +33,7 @@ class Signature:
     """Extracted method markers."""
 
     return_type: type[Any] | None
-    """Extracted method return type."""
+    """Extracted method return type, clear of any annotations."""
 
     response_markers: Iterable[ResponseMarker]
     """Response markers extracted from the return type"""
@@ -44,13 +45,13 @@ class Signature:
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         annotations_ = get_annotations(method, eval_str=True)
-        return_type = cls._extract_return_type(annotations_)
+        raw_return_type = cls._extract_raw_return_type(annotations_)
         return cls(
             bind_arguments=get_signature(method).bind,
             parameters_infos=cls._extract_parameter_infos(annotations_),
             method_markers=MethodMarker.ensure_markers(method),
-            return_type=return_type,
-            response_markers=ResponseMarker.extract(return_type),
+            return_type=drop_annotated(drop_type_alias(raw_return_type)),
+            response_markers=ResponseMarker.extract(raw_return_type),
         )
 
     def build_request(
@@ -124,7 +125,7 @@ class Signature:
         )
 
     @staticmethod
-    def _extract_return_type(annotations_: dict[str, Any]) -> type[Any] | None:
+    def _extract_raw_return_type(annotations_: dict[str, Any]) -> type[Any] | None:
         try:
             return annotations_["return"]
         except KeyError:

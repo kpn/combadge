@@ -4,10 +4,13 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar, Union
 
+from annotated_types import KW_ONLY, SLOTS
 from pydantic_core import Url
 
-from combadge._helpers.dataclasses import SLOTS
+from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.errors import BackendError
+from combadge.core.signature import Signature
+from combadge.support.soap.request import Request
 
 try:
     from types import GenericAlias, UnionType  # type: ignore[attr-defined]
@@ -21,7 +24,7 @@ from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
-from combadge.core.interfaces import ProvidesBinder
+from combadge.core.interfaces import ProvidesBinder, SupportsBackend
 from combadge.support.soap.response import BaseSoapFault
 
 _ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
@@ -40,26 +43,42 @@ _SoapFaultT = TypeVar("_SoapFaultT")
 _UNSET = object()
 
 
-class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationProxyT]):
+@dataclass(**SLOTS, **KW_ONLY)
+class MethodMeta:  # noqa: D101
+    response_type: TypeAdapter[Any]
+    """Extracted response type _excluding_ SOAP faults."""
+
+    fault_type: TypeAdapter[Any]
+    """Extracted SOAP fault type."""
+
+
+class BaseZeepBackend(
+    ABC,
+    ProvidesBinder,
+    SupportsBackend[Request, MethodMeta],
+    Generic[_ServiceProxyT, _OperationProxyT],
+):
     """Base class for the sync and async backends. Not intended for a direct use."""
+
+    REQUEST_TYPE = Request
 
     def __init__(self, service: _ServiceProxyT) -> None:
         """Instantiate the backend."""
         self._service = service
 
     @staticmethod
-    def _split_response_type(response_type: Any) -> tuple[Any, Any]:
+    def _split_return_type(return_type: Any) -> tuple[Any, Any]:
         """
-        Split the response type into non-faults and faults.
+        Split the return type into non-faults and faults.
 
         SOAP faults are handled separately, so we need to extract them from the annotated
         response type.
         """
 
-        if get_type_origin(response_type) in (Union, UnionType):
-            return_types = get_type_args(response_type)
+        if get_type_origin(return_type) in (Union, UnionType):
+            return_types = get_type_args(return_type)
         else:
-            return_types = (response_type,)
+            return_types = (return_type,)
 
         response_type: Any = _UNSET
         fault_type: Any = _UNSET
@@ -86,10 +105,12 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
         return response_type, Union[fault_type, BaseSoapFault]
 
     @classmethod
-    def _adapt_response_type(cls, response_type: Any) -> tuple[TypeAdapter[Any], TypeAdapter[Any]]:
-        """Split the response type into non-faults and faults, and wrap them into the adapters."""
-        response_type, fault_type = cls._split_response_type(response_type)
-        return TypeAdapter(response_type), TypeAdapter(fault_type)
+    def inspect(cls, signature: Signature) -> MethodMeta:  # noqa: D102
+        response_type, fault_type = cls._split_return_type(signature.return_type)
+        return MethodMeta(
+            response_type=get_type_adapter(response_type),
+            fault_type=get_type_adapter(fault_type),
+        )
 
     def _get_operation(self, name: str) -> _OperationProxyT:
         """Get an operation by its name."""

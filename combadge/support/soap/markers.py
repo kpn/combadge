@@ -1,11 +1,11 @@
 from collections.abc import Hashable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, TypeVar, cast
+from typing import Any, Callable, Generic, TypeVar
 
+from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
@@ -57,7 +57,9 @@ class Header(ParameterMarker[SoapHeader]):
 
     @override
     def __call__(self, request: SoapHeader, value: Any) -> None:  # noqa: D102
-        value = get_type_adapter(cast(Hashable, type(value))).dump_python(
+        value_type = type(value)
+        assert isinstance(value_type, Hashable)
+        value = get_type_adapter(value_type).dump_python(
             value,
             by_alias=self.by_alias,
             exclude_unset=self.exclude_unset,

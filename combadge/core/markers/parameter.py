@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic
 
-from combadge._helpers.dataclasses import SLOTS
+from annotated_types import SLOTS
+
 from combadge.core.markers.base import AnnotatedMarker
 from combadge.core.typevars import BackendRequestT
 

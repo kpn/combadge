@@ -4,11 +4,11 @@ from collections.abc import Hashable
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, TypeVar, cast
+from typing import Any, Callable, Generic, TypeVar
 
+from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
@@ -161,7 +161,9 @@ class Payload(ParameterMarker[HttpRequestPayload]):
 
     @override
     def __call__(self, request: HttpRequestPayload, value: Any) -> None:  # noqa: D102
-        value = get_type_adapter(cast(Hashable, type(value))).dump_python(
+        value_type = type(value)
+        assert isinstance(value_type, Hashable)
+        value = get_type_adapter(value_type).dump_python(
             value,
             by_alias=self.by_alias,
             exclude_unset=self.exclude_unset,
@@ -171,7 +173,7 @@ class Payload(ParameterMarker[HttpRequestPayload]):
         elif isinstance(request.payload, dict):
             request.payload.update(value)  # merge into the existing payload
         else:
-            raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.payload)}`")
+            raise ValueError(f"attempting to merge `{value_type}` into `{type(request.payload)}`")
 
     def __class_getitem__(cls, item: type[Any]) -> Any:
         raise NotImplementedError("the shortcut is no longer supported, use `Annotated[..., Payload()]`")
@@ -213,7 +215,9 @@ class FormData(ParameterMarker[HttpRequestFormData]):
 
     @override
     def __call__(self, request: HttpRequestFormData, value: Any) -> None:  # noqa: D102
-        value = get_type_adapter(cast(Hashable, type(value))).dump_python(value, by_alias=True)
+        value_type = type(value)
+        assert isinstance(value_type, Hashable)
+        value = get_type_adapter(value_type).dump_python(value, by_alias=True)
         if not isinstance(value, dict):
             raise TypeError(f"form data requires a dictionary, got {type(value)}")
         for item_name, item_value in value.items():

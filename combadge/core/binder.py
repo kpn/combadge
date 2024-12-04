@@ -32,6 +32,7 @@ def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> S
         to_backend: backend which should perform the service requests
     """
 
+    # TODO: this potentially becomes simpler with introducing a `SupportsBackend` protocol.
     return bind_class(from_protocol, to_backend.binder)(to_backend)
 
 

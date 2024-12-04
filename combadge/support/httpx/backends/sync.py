@@ -4,7 +4,6 @@ from types import TracebackType
 from typing import Any
 
 from httpx import Client, Response
-from pydantic import TypeAdapter
 from typing_extensions import Self
 
 from combadge.core.backend import ServiceContainer
@@ -13,7 +12,7 @@ from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
 from combadge.support.http.request import Request
-from combadge.support.httpx.backends.base import BaseHttpxBackend
+from combadge.support.httpx.backends.base import BaseHttpxBackend, MethodMeta
 
 
 class HttpxBackend(BaseHttpxBackend[Client], ServiceContainer):
@@ -32,13 +31,13 @@ class HttpxBackend(BaseHttpxBackend[Client], ServiceContainer):
 
         Args:
             client: [HTTPX client](https://www.python-httpx.org/advanced/#client-instances)
-            raise_for_status: automatically call `raise_for_status()`
+            raise_for_status: if `True`, automatically call `raise_for_status()`
         """
         BaseHttpxBackend.__init__(self, client, raise_for_status=raise_for_status)
         ServiceContainer.__init__(self)
 
     def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
-        response_type: TypeAdapter[Any] = TypeAdapter(signature.return_type)
+        response_type = self.inspect(signature).response_type
 
         def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)

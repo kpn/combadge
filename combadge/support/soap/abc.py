@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from combadge._helpers.dataclasses import SLOTS
+from annotated_types import SLOTS
 
 
 @dataclass(**SLOTS)
