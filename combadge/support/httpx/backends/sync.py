@@ -12,7 +12,7 @@ from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
 from combadge.support.http.request import Request
-from combadge.support.httpx.backends.base import BaseHttpxBackend, MethodMeta
+from combadge.support.httpx.backends.base import BaseHttpxBackend
 
 
 class HttpxBackend(BaseHttpxBackend[Client], ServiceContainer):

@@ -127,6 +127,8 @@ async def test_headers_async() -> None:
 
 @pytest.mark.vcr
 def test_non_dict_json() -> None:
+    """Verify that the client is able to parse a non-dictionary kind of response."""
+
     class SupportsHttpbin(SupportsService, Protocol):
         @http_method("GET")
         @path("/get")
@@ -137,6 +139,22 @@ def test_non_dict_json() -> None:
     # I manually patched the recorded VCR.py response.
     service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     assert service.get_non_dict() == [42, 43]
+
+
+@pytest.mark.vcr
+def test_return_scalar() -> None:
+    """Verify that the client is able to parse a primitive scalar kind of response."""
+
+    class SupportsHttpbin(SupportsService, Protocol):
+        @http_method("GET")
+        @path("/get")
+        @abstractmethod
+        def get_non_dict(self) -> str: ...
+
+    # Since httpbin.org is not capable of returning a non-dict JSON,
+    # I manually patched the recorded VCR.py response.
+    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
+    assert service.get_non_dict() == "ok"
 
 
 @pytest.mark.vcr

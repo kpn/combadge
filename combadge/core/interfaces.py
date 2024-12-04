@@ -62,7 +62,9 @@ class SupportsBackend(Protocol[BackendRequestT, BackendMethodMetaT]):
         raise NotImplementedError
 
     @abstractmethod
-    def __call__(self, request: BackendRequestT, meta: BackendMethodMetaT) -> Any:  # TODO: should be generic return type?
+    def __call__(
+        self, request: BackendRequestT, meta: BackendMethodMetaT,
+    ) -> Any:  # TODO: should be generic return type?
         """
         Call the backend.
 

@@ -66,6 +66,9 @@ class BaseZeepBackend(
         """Instantiate the backend."""
         self._service = service
 
+    def __call__(self, *args, **kwargs) -> Any:
+        raise NotImplementedError
+
     @staticmethod
     def _split_return_type(return_type: Any) -> tuple[Any, Any]:
         """
