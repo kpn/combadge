@@ -3,21 +3,21 @@ from typing import Annotated, Any, Callable, Protocol, Union
 
 import pytest
 from httpx import AsyncClient, Client
-from pydantic import BaseModel, Field
+from pydantic import AliasPath, BaseModel, Field
 
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import SupportsService
-from combadge.core.markers import Mixin
+from combadge.support.common.response import Body
 from combadge.support.http.markers import (
     CustomHeader,
     FormData,
     FormField,
-    Header,
     QueryArrayParam,
     QueryParam,
     http_method,
     path,
 )
+from combadge.support.http.response import HTTP_HEADERS_PATH, HttpHeaders
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
@@ -39,7 +39,7 @@ def test_form_data() -> None:
             data: Annotated[Data, FormData()],
             bar: Annotated[int, FormField("barqux")],
             qux: Annotated[int, FormField("barqux")],
-        ) -> Response: ...
+        ) -> Body[Response]: ...
 
     service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     response = service.post_anything(data=Data(foo=42), bar=100500, qux=100501)
@@ -61,7 +61,7 @@ def test_query_params() -> None:
             foo: Annotated[int, QueryParam("foobar")],
             bar: Annotated[int, QueryParam("foobar")],
             multivalue: Annotated[list[str], QueryArrayParam("multivalue")],
-        ) -> Response: ...
+        ) -> Body[Response]: ...
 
     service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     response = service.get_anything(foo=100500, bar=100501, multivalue=["value1", "value2"])
@@ -69,10 +69,10 @@ def test_query_params() -> None:
     assert response == Response(args={"foobar": ["100500", "100501"], "multivalue": ["value1", "value2"]})
 
 
-class _HeadersResponse(BaseModel):
-    headers: dict[str, Any]
-    content_length: int
-    missing_header: int = 42
+class _HeadersResponse(BaseModel, extra="allow"):
+    headers: HttpHeaders
+    content_length: Annotated[int, Field(validation_alias=AliasPath(*HTTP_HEADERS_PATH.path, "Content-Length"))]
+    missing_header: Annotated[int, Field(validation_alias=AliasPath(*HTTP_HEADERS_PATH.path, "X-Missing-Header"))] = 42
 
 
 @pytest.mark.vcr
@@ -86,7 +86,7 @@ def test_headers_sync() -> None:
             foo: Annotated[str, CustomHeader("x-foo")],
             bar: Annotated[str, CustomHeader("x-bar")] = "barval",
             baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
-        ) -> Annotated[_HeadersResponse, Mixin(Header("content-length", "content_length"))]: ...
+        ) -> _HeadersResponse: ...
 
     service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
     response = service.get_headers(foo="fooval")
@@ -133,7 +133,7 @@ def test_non_dict_json() -> None:
         @http_method("GET")
         @path("/get")
         @abstractmethod
-        def get_non_dict(self) -> list[int]: ...
+        def get_non_dict(self) -> Body[list[int]]: ...
 
     # Since httpbin.org is not capable of returning a non-dict JSON,
     # I manually patched the recorded VCR.py response.
@@ -149,7 +149,7 @@ def test_return_scalar() -> None:
         @http_method("GET")
         @path("/get")
         @abstractmethod
-        def get_non_dict(self) -> str: ...
+        def get_non_dict(self) -> Body[str]: ...
 
     # Since httpbin.org is not capable of returning a non-dict JSON,
     # I manually patched the recorded VCR.py response.
@@ -183,7 +183,7 @@ def test_callback_protocol() -> None:
         @http_method("GET")
         @path("/user-agent")
         @abstractmethod
-        def __call__(self) -> Response:
+        def __call__(self) -> Body[Response]:
             raise NotImplementedError
 
     service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]

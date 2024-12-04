@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, ValidationError, validate_call
 
 from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import wrap_with
+from combadge.support.common.response import Body
 from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
@@ -31,7 +32,7 @@ def test_weather_sync() -> None:
             *,
             in_: Annotated[str, Field(min_length=1)],
             format_: Annotated[str, Field(min_length=1), QueryParam("format")] = "j1",
-        ) -> Weather:
+        ) -> Body[Weather]:
             raise NotImplementedError
 
     backend = SyncHttpxBackend(Client(base_url="https://wttr.in"))
@@ -56,7 +57,7 @@ async def test_weather_async() -> None:
             *,
             in_: Annotated[str, Field(min_length=1)],
             format_: Annotated[str, Field(min_length=1), QueryParam("format")] = "j1",
-        ) -> Weather:
+        ) -> Body[Weather]:
             raise NotImplementedError
 
     backend = AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in"))

@@ -4,8 +4,7 @@ from abc import abstractmethod
 from types import TracebackType
 from typing import Any, Protocol
 
-from pydantic import BaseModel
-from typing_extensions import Self, deprecated
+from typing_extensions import Self
 
 from combadge.core.binder import BaseBoundService, bind
 from combadge.core.signature import Signature
@@ -23,7 +22,7 @@ class SupportsService(Protocol):
     """
 
     @classmethod
-    def bind(cls, to_backend: ProvidesBinder, /) -> Self:
+    def bind(cls, to_backend: SupportsBackend[Any, Any], /) -> Self:
         """Bind the current protocol to the specified backend."""
         return bind(cls, to_backend)
 
@@ -62,27 +61,7 @@ class SupportsBackend(Protocol[BackendRequestT, BackendMethodMetaT]):
         raise NotImplementedError
 
     @abstractmethod
-    def __call__(
-        self, request: BackendRequestT, meta: BackendMethodMetaT,
-    ) -> Any:  # TODO: should be generic return type?
-        """
-        Call the backend.
-
-        Args:
-            request: request to be executed by the backend
-            meta: metadata attached to the service method
-
-        Returns:
-            Non-validated unprocessed response. Async backend should return
-            an [awaitable object](https://docs.python.org/3/library/asyncio-task.html#awaitables).
-        """
-        raise NotImplementedError
-
-
-class MethodBinder(Protocol[BackendT]):  # noqa: D101
-    @staticmethod
-    @abstractmethod
-    def __call__(signature: Signature, /) -> ServiceMethod[BackendT]:
+    def bind_method(self, signature: Signature, /) -> ServiceMethod[Self]:
         """
         Bind the method by its signature (for example, a backend).
 
@@ -95,17 +74,20 @@ class MethodBinder(Protocol[BackendT]):  # noqa: D101
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def __call__(self, request: BackendRequestT, meta: BackendMethodMetaT) -> Any:
+        """
+        Call the backend.
 
-@deprecated("being re-written into `SupportsBackend`")
-class ProvidesBinder(Protocol):
-    """
-    Provides a default binder for itself.
+        Args:
+            request: request to be executed by the backend
+            meta: metadata attached to the service method
 
-    This is a convenience protocol that allows implementing a shortcut `bind` method instead of
-    forcing a user to bind the class manually.
-    """
-
-    binder: MethodBinder[Self]
+        Returns:
+            Validated response. Async backend should return
+            an [awaitable object](https://docs.python.org/3/library/asyncio-task.html#awaitables).
+        """
+        raise NotImplementedError
 
 
 class ServiceMethod(Protocol[BackendT]):
@@ -116,7 +98,7 @@ class ServiceMethod(Protocol[BackendT]):
     """
 
     @abstractmethod
-    def __call__(self, service: BaseBoundService[BackendT], /, *args: Any, **kwargs: Any) -> BaseModel:
+    def __call__(self, service: BaseBoundService[BackendT], /, *args: Any, **kwargs: Any) -> Any:
         """
         Call the service method.
 

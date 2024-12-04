@@ -4,7 +4,7 @@ from collections.abc import Hashable
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Generic
 
 from annotated_types import SLOTS
 from typing_extensions import override
@@ -21,8 +21,6 @@ from combadge.support.http.abc import (
     HttpRequestQueryParams,
     HttpRequestUrlPath,
 )
-
-_T = TypeVar("_T")
 
 
 @dataclass(**SLOTS)

@@ -7,14 +7,11 @@ from inspect import signature as get_signature
 from typing import Any, Callable, Generic
 
 from annotated_types import KW_ONLY, SLOTS
-from pydantic import BaseModel, TypeAdapter
 
-from combadge._helpers.typing import drop_annotated, drop_type_alias
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.markers.response import ResponseMarker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import BackendRequestT, ResponseT
+from combadge.core.typevars import BackendRequestT
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -32,11 +29,8 @@ class Signature:
     method_markers: list[MethodMarker]
     """Extracted method markers."""
 
-    return_type: type[Any] | None
-    """Extracted method return type, clear of any annotations."""
-
-    response_markers: Iterable[ResponseMarker]
-    """Response markers extracted from the return type"""
+    return_type: Any | None
+    """Extracted method return type."""
 
     bind_arguments: Callable[..., BoundArguments]
     """A callable that binds the method's arguments, it is cached here to improve performance."""
@@ -45,13 +39,12 @@ class Signature:
     def from_method(cls, method: Any) -> Signature:
         """Create a signature from the specified method."""
         annotations_ = get_annotations(method, eval_str=True)
-        raw_return_type = cls._extract_raw_return_type(annotations_)
+        return_type = cls._extract_raw_return_type(annotations_)
         return cls(
             bind_arguments=get_signature(method).bind,
             parameters_infos=cls._extract_parameter_infos(annotations_),
             method_markers=MethodMarker.ensure_markers(method),
-            return_type=drop_annotated(drop_type_alias(raw_return_type)),
-            response_markers=ResponseMarker.extract(raw_return_type),
+            return_type=return_type,
         )
 
     def build_request(
@@ -95,23 +88,6 @@ class Signature:
                 parameter_marker(request, value)
 
         return request
-
-    def apply_response_markers(self, response: Any, payload: Any, response_type: TypeAdapter[ResponseT]) -> ResponseT:
-        """
-        Apply the response markers to the payload sequentially.
-
-        Args:
-            response: original backend response
-            payload: parsed response payload
-            response_type: user response type (we require type adapter because the inner type may be anything)
-        """
-        for marker in self.response_markers:
-            payload = marker(response, payload)
-        if not isinstance(payload, BaseModel):  # TODO: this `if` may no needed anymore.
-            # Implicitly parse a Pydantic model.
-            # TODO: come up with something smarter to better uncouple Combadge from Pydantic.
-            payload = response_type.validate_python(payload)
-        return payload
 
     @staticmethod
     def _extract_parameter_infos(annotations_: dict[str, Any]) -> Iterable[ParameterInfo]:

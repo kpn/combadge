@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol
 
 from combadge.core.binder import bind
+from combadge.support.common.response import Body
 from combadge.support.http.markers import Field, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
@@ -27,7 +28,7 @@ class SupportsHttpbin(Protocol):
         self,
         *,
         foo: Annotated[str, Field("foobar")] = "quuuuux",
-    ) -> Response:
+    ) -> Body[Response]:
         raise NotImplementedError
 
 

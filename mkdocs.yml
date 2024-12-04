@@ -23,7 +23,6 @@ nav:
           - core/markers/index.md
           - core/markers/method.md
           - core/markers/parameter.md
-          - core/markers/response.md
       - core/service-container.md
       - core/exceptions.md
   - Cookbook:
@@ -31,7 +30,6 @@ nav:
       - cookbook/do-not-repeat-response-annotations.md
       - cookbook/fields-for-simple-requests.md
       - cookbook/parameter-validation.md
-  - tags.md
 
 theme:
   icon:
@@ -92,8 +90,6 @@ plugins:
   - search:
       lang: en
   - social
-  - tags:
-      tags_file: tags.md
   - git-committers:
       repository: kpn/combadge
       branch: main

@@ -15,7 +15,7 @@ from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import MethodBinder, ProvidesBinder, ServiceMethod
+    from combadge.core.interfaces import ServiceMethod, SupportsBackend
 
     def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]: ...
 
@@ -23,7 +23,7 @@ else:
     from functools import lru_cache
 
 
-def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
+def bind(from_protocol: type[ServiceProtocolT], to_backend: SupportsBackend) -> ServiceProtocolT:
     """
     Create a service instance which implements the specified protocol by calling the specified backend.
 
@@ -32,14 +32,14 @@ def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> S
         to_backend: backend which should perform the service requests
     """
 
-    # TODO: this potentially becomes simpler with introducing a `SupportsBackend` protocol.
-    return bind_class(from_protocol, to_backend.binder)(to_backend)
+    # TODO: having `to_backend` 2 times here kinda hints that I might wanna split `SupportsBackend`.
+    return bind_class(from_protocol, to_backend)(to_backend)
 
 
 @lru_cache(maxsize=100)
 def bind_class(
     from_protocol: type[ServiceProtocolT],
-    bind_method: MethodBinder[BackendT],
+    backend: BackendT,
 ) -> Callable[[BackendT], ServiceProtocolT]:
     """Create a class which implements the specified protocol, but not yet parametrized with a backend."""
 
@@ -52,7 +52,7 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        bound_method: ServiceMethod = bind_method(signature)  # generate implementation by the backend
+        bound_method: ServiceMethod = backend.bind_method(signature)  # generate implementation by the backend
         update_wrapper(bound_method, method)
         bound_method = _wrap(bound_method, signature.method_markers)
         bound_method = override(bound_method)  # no functional change, just possibly setting `__override__`

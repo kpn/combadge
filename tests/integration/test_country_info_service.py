@@ -9,6 +9,7 @@ from zeep import Client
 
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import SupportsService
+from combadge.support.common.response import Body
 from combadge.support.soap.markers import operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 
@@ -21,7 +22,7 @@ class Continent(BaseModel):
 class SupportsCountryInfo(SupportsService, Protocol):
     @operation_name("ListOfContinentsByName")
     @abstractmethod
-    def list_of_continents_by_name(self) -> list[Continent]:
+    def list_of_continents_by_name(self) -> Body[list[Continent]]:
         raise NotImplementedError
 
     @operation_name("InvalidOperation")

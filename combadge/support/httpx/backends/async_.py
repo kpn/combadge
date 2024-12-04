@@ -3,19 +3,19 @@ from __future__ import annotations
 from types import TracebackType
 from typing import Any
 
-from httpx import AsyncClient, Response
+from httpx import AsyncClient
 from typing_extensions import Self
 
-from combadge.core.backend import ServiceContainer
+from combadge.core.backend import ServiceContainerMixin
 from combadge.core.binder import BaseBoundService
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
 from combadge.support.http.request import Request
-from combadge.support.httpx.backends.base import BaseHttpxBackend
+from combadge.support.httpx.backends.base import BaseHttpxBackend, MethodMeta
 
 
-class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
+class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainerMixin):
     """Async HTTPX backend."""
 
     __slots__ = ("_client", "_service_cache", "_raise_for_status")
@@ -34,28 +34,28 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
             raise_for_status: if `True`, automatically call `raise_for_status()`
         """
         BaseHttpxBackend.__init__(self, client, raise_for_status=raise_for_status)
-        ServiceContainer.__init__(self)
+        ServiceContainerMixin.__init__(self)
 
-    def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
-        response_type = self.inspect(signature).response_type
+    def bind_method(self, signature: Signature) -> ServiceMethod[Self]:  # noqa: D102
+        meta = self.inspect(signature)
 
-        async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
+        async def bound_method(self: BaseBoundService[Self], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
             with BackendError:
-                response: Response = await self.__combadge_backend__._client.request(
-                    request.get_method(),
-                    request.get_url_path(),
-                    json=request.payload,
-                    data=request.form_data,
-                    params=request.query_params,
-                    headers=request.http_headers,
-                )
-                payload = self.__combadge_backend__._parse_payload(response)
-            return signature.apply_response_markers(response, payload, response_type)
+                return await self.__combadge_backend__(request, meta)
 
         return bound_method  # type: ignore[return-value]
 
-    binder = bind_method  # type: ignore[assignment]
+    async def __call__(self, request: Request, meta: MethodMeta) -> Any:  # noqa: D102
+        response = await self._client.request(
+            request.get_method(),
+            request.get_url_path(),
+            json=request.payload,
+            data=request.form_data,
+            params=request.query_params,
+            headers=request.http_headers,
+        )
+        return self._parse_response(meta, response)
 
     async def __aenter__(self) -> Self:
         self._client = await self._client.__aenter__()

@@ -10,23 +10,22 @@ import httpx
 from typing_extensions import Self
 from zeep import AsyncClient, Plugin
 from zeep.exceptions import Fault
-from zeep.helpers import serialize_object
 from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 from zeep.transports import AsyncTransport
 from zeep.wsse import UsernameToken
 
-from combadge.core.backend import ServiceContainer
+from combadge.core.backend import ServiceContainerMixin
 from combadge.core.binder import BaseBoundService
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
 from combadge.support.soap.request import Request
-from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName
+from combadge.support.zeep.backends.base import BaseZeepBackend, ByBindingName, ByServiceName, MethodMeta
 
 
 class ZeepBackend(
     BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy],
-    ServiceContainer,
+    ServiceContainerMixin,
 ):
     """Asynchronous Zeep service."""
 
@@ -95,30 +94,27 @@ class ZeepBackend(
             service: [service proxy object](https://docs.python-zeep.org/en/master/client.html#the-serviceproxy-object)
         """
         BaseZeepBackend.__init__(self, service)
-        ServiceContainer.__init__(self)
+        ServiceContainerMixin.__init__(self)
 
-    def bind_method(self, signature: Signature) -> ServiceMethod[ZeepBackend]:  # noqa: D102
+    def bind_method(self, signature: Signature) -> ServiceMethod[Self]:  # noqa: D102
         meta = self.inspect(signature)
 
-        async def bound_method(self: BaseBoundService[ZeepBackend], *args: Any, **kwargs: Any) -> Any:
+        async def bound_method(self: BaseBoundService[Self], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
-            operation = self.__combadge_backend__._get_operation(request.get_operation_name())
-            try:
-                response = await operation(**(request.payload or {}), _soapheaders=request.soap_header)
-            except Fault as e:
-                return self.__combadge_backend__._parse_soap_fault(e, meta.fault_type)
-            except Exception as e:
-                raise BackendError(e) from e
-            else:
-                return signature.apply_response_markers(
-                    response,
-                    serialize_object(response, dict),
-                    meta.response_type,
-                )
+            return await self.__combadge_backend__(request, meta)
 
         return bound_method  # type: ignore[return-value]
 
-    binder = bind_method  # type: ignore[assignment]
+    async def __call__(self, request: Request, meta: MethodMeta) -> Any:  # noqa: D102
+        operation = self._get_operation(request.get_operation_name())
+        try:
+            response = await operation(**(request.payload or {}), _soapheaders=request.soap_header)
+        except Fault as e:
+            return self._parse_soap_fault(e, meta.fault_type)
+        except Exception as e:
+            raise BackendError(e) from e
+        else:
+            return meta.validate_response(response)
 
     async def __aenter__(self) -> Self:
         self._service = await self._service.__aenter__()

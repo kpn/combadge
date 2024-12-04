@@ -9,16 +9,19 @@ However, thanks to the Pydantic's [`TypeAdapter`](https://docs.pydantic.dev/late
 ```python title="builtin.py" hl_lines="12 17"
 from typing_extensions import Annotated, Protocol
 
-from combadge.core.markers import Extract
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
 from httpx import Client
+from pydantic import AliasPath, Field
 
 
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Annotated[int, Payload()]) -> Annotated[int, Extract("data")]:
+    def post_anything(self, foo: Annotated[int, Payload()]) -> Annotated[
+        int,
+        Field(validation_alias=AliasPath("body", "data")),
+    ]:
         ...
 
 
@@ -33,6 +36,7 @@ from dataclasses import dataclass
 
 from typing_extensions import Protocol, Annotated
 
+from combadge.support.common.response import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
 from httpx import Client
@@ -51,7 +55,7 @@ class Response:
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Annotated[Request, Payload()]) -> Response:
+    def post_anything(self, foo: Annotated[Request, Payload()]) -> Body[Response]:
         ...
 
 
@@ -64,6 +68,7 @@ assert backend[Httpbin].post_anything(Request(42)) == Response(data='{"foo": 42}
 ```python title="typed_dict.py" hl_lines="8-9 12-13 19 24"
 from typing_extensions import Protocol, TypedDict, Annotated
 
+from combadge.support.common.response import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
 from httpx import Client
@@ -80,7 +85,7 @@ class Response(TypedDict):
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Annotated[Request, Payload()]) -> Response:
+    def post_anything(self, foo: Annotated[Request, Payload()]) -> Body[Response]:
         ...
 
 

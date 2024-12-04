@@ -22,6 +22,7 @@ from httpx import Client
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated, Protocol
 
+from combadge.support.common.response import Body
 from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
@@ -45,7 +46,7 @@ class SupportsWttrIn(Protocol):
         *,
         in_: str,
         format_: Annotated[str, QueryParam("format")] = "j1",
-    ) -> Weather:
+    ) -> Body[Weather]:
         raise NotImplementedError
 
 

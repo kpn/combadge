@@ -21,7 +21,7 @@ tags:
       heading_level: 3
       show_submodules: true
 
-## Binding specification
+## SOAP binding specification
 
 ::: combadge.support.zeep.backends.base
     options:

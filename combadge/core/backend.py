@@ -1,11 +1,13 @@
+from abc import ABCMeta
 from typing import Any
 
 from combadge.core.binder import bind
-from combadge.core.interfaces import ProvidesBinder
+from combadge.core.interfaces import SupportsBackend
 from combadge.core.typevars import ServiceProtocolT
 
 
-class ServiceContainer(ProvidesBinder):  # noqa: D101
+# TODO: move documentation to the docstring here, and refer to this class in the docs instead.
+class ServiceContainerMixin(SupportsBackend, metaclass=ABCMeta):  # noqa: D101
     def __init__(self) -> None:  # noqa: D107
         self._service_cache: dict[type, Any] = {}
 

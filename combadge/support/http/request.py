@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from annotated_types import SLOTS
 
+from combadge.support.common.request import BaseBackendRequest
 from combadge.support.http.abc import (
     HttpRequestFormData,
     HttpRequestHeaders,
@@ -10,7 +11,6 @@ from combadge.support.http.abc import (
     HttpRequestQueryParams,
     HttpRequestUrlPath,
 )
-from combadge.support.shared.request import BaseBackendRequest
 
 
 @dataclass(**SLOTS)

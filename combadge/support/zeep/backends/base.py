@@ -6,9 +6,11 @@ from typing import Any, Generic, TypeVar, Union
 
 from annotated_types import KW_ONLY, SLOTS
 from pydantic_core import Url
+from zeep.helpers import serialize_object
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.errors import BackendError
+from combadge.core.response import _BaseWrappedModel
 from combadge.core.signature import Signature
 from combadge.support.soap.request import Request
 
@@ -24,7 +26,7 @@ from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
-from combadge.core.interfaces import ProvidesBinder, SupportsBackend
+from combadge.core.interfaces import SupportsBackend
 from combadge.support.soap.response import BaseSoapFault
 
 _ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
@@ -45,16 +47,23 @@ _UNSET = object()
 
 @dataclass(**SLOTS, **KW_ONLY)
 class MethodMeta:  # noqa: D101
-    response_type: TypeAdapter[Any]
+    response_type: type[_BaseWrappedModel[Any]] | None
     """Extracted response type _excluding_ SOAP faults."""
 
     fault_type: TypeAdapter[Any]
     """Extracted SOAP fault type."""
 
+    def validate_response(self, response: Any) -> Any:
+        """Validate the raw response returned by Zeep."""
+        if (response_type := self.response_type) is not None:
+            # TODO: do I really need `serialize_object` here?
+            return response_type.model_validate({"body": serialize_object(response, dict)}).inner
+        else:
+            return None
+
 
 class BaseZeepBackend(
     ABC,
-    ProvidesBinder,
     SupportsBackend[Request, MethodMeta],
     Generic[_ServiceProxyT, _OperationProxyT],
 ):
@@ -65,9 +74,6 @@ class BaseZeepBackend(
     def __init__(self, service: _ServiceProxyT) -> None:
         """Instantiate the backend."""
         self._service = service
-
-    def __call__(self, *args, **kwargs) -> Any:
-        raise NotImplementedError
 
     @staticmethod
     def _split_return_type(return_type: Any) -> tuple[Any, Any]:
@@ -111,7 +117,7 @@ class BaseZeepBackend(
     def inspect(cls, signature: Signature) -> MethodMeta:  # noqa: D102
         response_type, fault_type = cls._split_return_type(signature.return_type)
         return MethodMeta(
-            response_type=get_type_adapter(response_type),
+            response_type=_BaseWrappedModel.wrap(response_type),
             fault_type=get_type_adapter(fault_type),
         )
 
