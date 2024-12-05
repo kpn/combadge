@@ -6,8 +6,8 @@ from typing import Any
 from httpx import AsyncClient
 from typing_extensions import Self
 
-from combadge.core.backend import ServiceContainerMixin
 from combadge.core.binder import BaseBoundService
+from combadge.core.container import ServiceContainerMixin
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature

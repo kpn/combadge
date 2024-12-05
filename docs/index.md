@@ -25,7 +25,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from pydantic import BaseModel, Field, validate_call
     from typing_extensions import Annotated, Protocol
 
-    from combadge.core.binder import bind
     from combadge.core.markers.method import wrap_with
     from combadge.support.common.response import Body
     from combadge.support.http.markers import QueryParam, http_method, path
@@ -76,7 +75,6 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from pytest import raises
     from typing_extensions import Annotated
 
-    from combadge.core.interfaces import SupportsService
     from combadge.core.response import ErrorResponse, SuccessfulResponse
     from combadge.support.common.response import Body
     from combadge.support.http.markers import Payload
@@ -100,7 +98,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
 
 
     # 4️⃣ Declare the interface:
-    class SupportsNumberConversion(SupportsService, Protocol):
+    class SupportsNumberConversion(Protocol):
         @operation_name("NumberToWords")
         def number_to_words(
             self,

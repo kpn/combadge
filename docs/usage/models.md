@@ -1,5 +1,7 @@
 # Models
 
+In service interfaces, parameter and return types are _models_, which are used to forward arguments and validate responses.
+
 Combadge is built on top of [Pydantic](https://docs.pydantic.dev/), hence Pydantic models are natively supported in service protocols.
 
 However, thanks to the Pydantic's [`TypeAdapter`](https://docs.pydantic.dev/latest/api/type_adapter/), Combadge automatically supports:
@@ -9,7 +11,7 @@ However, thanks to the Pydantic's [`TypeAdapter`](https://docs.pydantic.dev/late
 ```python title="dataclasses.py" hl_lines="11-13 16-18 24 29"
 from dataclasses import dataclass
 
-from typing_extensions import Protocol, Annotated
+from typing_extensions import Annotated, Protocol
 
 from combadge.support.common.response import Body
 from combadge.support.httpx.backends.sync import HttpxBackend

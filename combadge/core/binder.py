@@ -15,7 +15,7 @@ from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import ServiceMethod, SupportsBackend
+    from combadge.core.interfaces import ServiceMethod
 
     def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]: ...
 
@@ -23,25 +23,12 @@ else:
     from functools import lru_cache
 
 
-def bind(from_protocol: type[ServiceProtocolT], to_backend: SupportsBackend) -> ServiceProtocolT:
-    """
-    Create a service instance which implements the specified protocol by calling the specified backend.
-
-    Args:
-        from_protocol: service protocol description, used to extract request and response types etc.
-        to_backend: backend which should perform the service requests
-    """
-
-    # TODO: having `to_backend` 2 times here kinda hints that I might wanna split `SupportsBackend`.
-    return bind_class(from_protocol, to_backend)(to_backend)
-
-
 @lru_cache(maxsize=100)
 def bind_class(
     from_protocol: type[ServiceProtocolT],
     backend: BackendT,
 ) -> Callable[[BackendT], ServiceProtocolT]:
-    """Create a class which implements the specified protocol, but not yet parametrized with a backend."""
+    """Create a class which implements the given protocol over the given backend."""
 
     from combadge.core.signature import Signature
 

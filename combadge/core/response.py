@@ -18,10 +18,13 @@ class BaseResponse(ABC, BaseModel):
     Base model representing any possible service response.
 
     It's got a few abstract methods, which are then implemented by `SuccessfulResponse` and `ErrorResponse`.
+    [`BaseResponse`][combadge.core.response.BaseResponse] makes it possible to handle responses
+    in the unified way and convert errors into actual exceptions.
 
-    Notes:
-        - `#!python BaseResponse` is the lower-level API,
-          users should consider inheriting from `#!python SuccessfulResponse` and `#!python ErrorResponse`.
+    Note:
+        `#!python BaseResponse` is the lower-level API,
+        users should consider inheriting from `#!python SuccessfulResponse` and `#!python ErrorResponse`.
+        However, it is useful to understand how to use it.
     """
 
     @abstractmethod
@@ -131,6 +134,11 @@ class ErrorResponse(BaseResponse, ABC):
     For each model inherited from `ErrorResponse` Combadge generates an exception
     class, which is accessible through the `<ModelClass>.Error` attribute.
 
+    Note: Why dynamically constructed class?
+        The problem with Pydantic is that you can't inherit from `BaseModel` and `Exception`
+        at the same time. Thus, Combadge dynamically constructs a derived exception class,
+        which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
+
     Examples:
         >>> class InvalidInput(ErrorResponse):
         >>>     code: Literal["INVALID_INPUT"]
@@ -140,10 +148,10 @@ class ErrorResponse(BaseResponse, ABC):
         >>> except InvalidInput.Error:
         >>>     ...
 
-    Note: Why dynamically constructed class?
-        The problem with Pydantic is that you can't inherit from `BaseModel` and `Exception`
-        at the same time. Thus, Combadge dynamically constructs a derived exception class,
-        which is available via the class attribute and raised by `raise_for_result()` and `unwrap()`.
+        It is possible to specify custom exception bases:
+
+        >>> class InvalidInput(ErrorResponse, exception_bases=(MyBaseError,)):
+        >>>     code: Literal["INVALID_INPUT"]
     """
 
     def __init_subclass__(cls, exception_bases: Iterable[type[BaseException]] = (), **kwargs: Any) -> None:

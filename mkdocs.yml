@@ -5,12 +5,13 @@ site_description: "Generic API client based on Pydantic"
 
 nav:
   - index.md
+  - how-it-works.md
   - Usage:
+      - usage/models.md
+      - usage/errors.md
+      - usage/binding.md
       - usage/cookbook.md
   - Support:
-      - Models:
-          - support/models/index.md
-          - support/models/errors.md
       - Application protocols:
           - support/http.md
           - support/soap.md
@@ -19,14 +20,12 @@ nav:
           - support/backends/httpx.md
           - support/backends/zeep.md
   - Core:
-      - core/service-protocol.md
-      - core/binding.md
       - Markers:
           - core/markers/index.md
           - core/markers/method.md
           - core/markers/parameter.md
-      - core/service-container.md
-      - core/exceptions.md
+  - Migration:
+      - migration/v5.md
 
 theme:
   icon:
@@ -107,6 +106,11 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 repo_url: https://github.com/kpn/combadge
 edit_uri: edit/main/docs/

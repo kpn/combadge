@@ -14,8 +14,8 @@ from zeep.proxy import AsyncOperationProxy, AsyncServiceProxy
 from zeep.transports import AsyncTransport
 from zeep.wsse import UsernameToken
 
-from combadge.core.backend import ServiceContainerMixin
 from combadge.core.binder import BaseBoundService
+from combadge.core.container import ServiceContainerMixin
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature

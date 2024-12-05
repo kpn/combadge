@@ -51,7 +51,8 @@ class SupportsWttrIn(Protocol):
 
 
 # 3️⃣ Bind the service:
-with HttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn] as service:
+with HttpxBackend(Client(base_url="https://wttr.in")) as backend:
+    service = backend[SupportsWttrIn]
     # 🚀 Call the service:
     response = service.get_weather(in_="amsterdam")
 

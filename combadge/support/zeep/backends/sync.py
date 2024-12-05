@@ -11,8 +11,8 @@ from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 from zeep.wsse import UsernameToken
 
-from combadge.core.backend import ServiceContainerMixin
 from combadge.core.binder import BaseBoundService
+from combadge.core.container import ServiceContainerMixin
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature

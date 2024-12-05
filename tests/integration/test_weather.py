@@ -1,10 +1,9 @@
-from typing import Annotated
+from typing import Annotated, Protocol
 
 import pytest
 from httpx import AsyncClient, Client
 from pydantic import BaseModel, Field, ValidationError, validate_call
 
-from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import wrap_with
 from combadge.support.common.response import Body
 from combadge.support.http.markers import QueryParam, http_method, path
@@ -23,7 +22,7 @@ class Weather(BaseModel):
 
 @pytest.mark.vcr
 def test_weather_sync() -> None:
-    class SupportsWttrIn(SupportsService):
+    class SupportsWttrIn(Protocol):
         @http_method("GET")
         @path("/{in_}")
         @wrap_with(validate_call)
@@ -35,10 +34,9 @@ def test_weather_sync() -> None:
         ) -> Body[Weather]:
             raise NotImplementedError
 
-    backend = SyncHttpxBackend(Client(base_url="https://wttr.in"))
-    with backend[SupportsWttrIn] as service:
-        response = service.get_weather(in_="amsterdam")
+    service = SyncHttpxBackend(Client(base_url="https://wttr.in"))[SupportsWttrIn]  # type: ignore[type-abstract]
 
+    response = service.get_weather(in_="amsterdam")
     assert response.current[0].humidity == 93
     assert response.current[0].temperature == 2
 
@@ -48,7 +46,7 @@ def test_weather_sync() -> None:
 
 @pytest.mark.vcr
 async def test_weather_async() -> None:
-    class SupportsWttrIn(SupportsService):
+    class SupportsWttrIn(Protocol):
         @http_method("GET")
         @path("/{in_}")
         @wrap_with(validate_call)
@@ -60,11 +58,10 @@ async def test_weather_async() -> None:
         ) -> Body[Weather]:
             raise NotImplementedError
 
-    backend = AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in"))
-    async with backend[SupportsWttrIn] as service:
-        with pytest.raises(ValidationError):
-            await service.get_weather(in_="")
-        response = await service.get_weather(in_="amsterdam")
+    service = AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in"))[SupportsWttrIn]  # type: ignore[type-abstract]
+    with pytest.raises(ValidationError):
+        await service.get_weather(in_="")
+    response = await service.get_weather(in_="amsterdam")
 
     assert response.current[0].humidity == 71
     assert response.current[0].temperature == 8.0

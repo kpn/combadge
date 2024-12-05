@@ -6,7 +6,7 @@ from types import TracebackType
 
 
 class CombadgeError(Exception):
-    """Base error for any Combadge error."""
+    """Base error for all Combadge errors."""
 
 
 class _BackendErrorMeta(type, AbstractContextManager):
@@ -27,6 +27,11 @@ class _BackendErrorMeta(type, AbstractContextManager):
 class BackendError(CombadgeError, metaclass=_BackendErrorMeta):
     """
     Base error for any backend errors.
+
+    The idea behind this class is to unify exceptions from different 3rd-party clients.
+    Every backend wraps the client call into `BackendError`.
+
+    In future, specific child errors may be introduced for common client errors (for example, timeout error).
 
     Examples:
         Handling inner error:

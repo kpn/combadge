@@ -1,13 +1,25 @@
+"""
+In Combadge, all backends implement sort of a _service container_:
+the backend caches all service instances that have been bound to the backend.
+
+That makes binding as simple as:
+
+```python
+my_service = my_backend[MyServiceProtocol]
+```
+"""  # noqa: D205
+
 from abc import ABCMeta
 from typing import Any
 
-from combadge.core.binder import bind
+from combadge.core.binder import bind_class
 from combadge.core.interfaces import SupportsBackend
 from combadge.core.typevars import ServiceProtocolT
 
 
-# TODO: move documentation to the docstring here, and refer to this class in the docs instead.
-class ServiceContainerMixin(SupportsBackend, metaclass=ABCMeta):  # noqa: D101
+class ServiceContainerMixin(SupportsBackend, metaclass=ABCMeta):
+    """Service container implementation for backend classes."""
+
     def __init__(self) -> None:  # noqa: D107
         self._service_cache: dict[type, Any] = {}
 
@@ -29,7 +41,8 @@ class ServiceContainerMixin(SupportsBackend, metaclass=ABCMeta):  # noqa: D101
         """
         service = self._service_cache.get(protocol)
         if service is None:
-            service = self._service_cache[protocol] = bind(protocol, self)
+            # FIXME: I shouldn't have to pass `self` two times here.
+            service = self._service_cache[protocol] = bind_class(protocol, self)(self)
         return service  # noqa: RET504
 
     def __delitem__(self, protocol: type) -> None:
