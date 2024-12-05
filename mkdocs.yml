@@ -5,6 +5,8 @@ site_description: "Generic API client based on Pydantic"
 
 nav:
   - index.md
+  - Usage:
+      - usage/cookbook.md
   - Support:
       - Models:
           - support/models/index.md
@@ -25,11 +27,6 @@ nav:
           - core/markers/parameter.md
       - core/service-container.md
       - core/exceptions.md
-  - Cookbook:
-      - cookbook/capturing-http-status-code.md
-      - cookbook/do-not-repeat-response-annotations.md
-      - cookbook/fields-for-simple-requests.md
-      - cookbook/parameter-validation.md
 
 theme:
   icon:
