@@ -22,8 +22,9 @@ class SupportsBackend(Protocol[BackendRequestT, BackendMethodMetaT]):
         """Extract metadata needed by the backend to execute the specific service method."""
         raise NotImplementedError
 
+    @classmethod
     @abstractmethod
-    def bind_method(self, signature: Signature, /) -> ServiceMethod[Self]:
+    def bind_method(cls, signature: Signature, /) -> ServiceMethod[Self]:
         """
         Bind the method by its signature (for example, a backend).
 

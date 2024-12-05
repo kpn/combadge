@@ -26,9 +26,9 @@ else:
 @lru_cache(maxsize=100)
 def bind_class(
     from_protocol: type[ServiceProtocolT],
-    backend: BackendT,
+    backend_type: type[BackendT],
 ) -> Callable[[BackendT], ServiceProtocolT]:
-    """Create a class which implements the given protocol over the given backend."""
+    """Create a class which implements the given protocol over the given backend type."""
 
     from combadge.core.signature import Signature
 
@@ -39,7 +39,7 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        bound_method: ServiceMethod = backend.bind_method(signature)  # generate implementation by the backend
+        bound_method: ServiceMethod = backend_type.bind_method(signature)  # generate implementation by the backend
         update_wrapper(bound_method, method)
         bound_method = _wrap(bound_method, signature.method_markers)
         bound_method = override(bound_method)  # no functional change, just possibly setting `__override__`

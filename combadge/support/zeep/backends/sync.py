@@ -78,8 +78,9 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ServiceContaine
         BaseZeepBackend.__init__(self, service)
         ServiceContainerMixin.__init__(self)
 
-    def bind_method(self, signature: Signature) -> ServiceMethod[Self]:  # noqa: D102
-        meta = self.inspect(signature)
+    @classmethod
+    def bind_method(cls, signature: Signature) -> ServiceMethod[Self]:  # noqa: D102
+        meta = cls.inspect(signature)
 
         def bound_method(self: BaseBoundService[Self], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)

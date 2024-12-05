@@ -41,8 +41,7 @@ class ServiceContainerMixin(SupportsBackend, metaclass=ABCMeta):
         """
         service = self._service_cache.get(protocol)
         if service is None:
-            # FIXME: I shouldn't have to pass `self` two times here.
-            service = self._service_cache[protocol] = bind_class(protocol, self)(self)
+            service = self._service_cache[protocol] = bind_class(protocol, type(self))(self)
         return service  # noqa: RET504
 
     def __delitem__(self, protocol: type) -> None:
