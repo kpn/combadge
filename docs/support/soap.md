@@ -9,7 +9,7 @@
       heading_level: 3
       show_bases: true
 
-## Responses
+## Response
 
 ::: combadge.support.soap.response
     options:

@@ -9,6 +9,7 @@ nav:
   - Usage:
       - usage/models.md
       - usage/errors.md
+      - usage/markers.md
       - usage/binding.md
       - usage/cookbook.md
   - Support:
@@ -19,11 +20,6 @@ nav:
           - support/backends/index.md
           - support/backends/httpx.md
           - support/backends/zeep.md
-  - Core:
-      - Markers:
-          - core/markers/index.md
-          - core/markers/method.md
-          - core/markers/parameter.md
   - Migration:
       - migration/v5.md
 

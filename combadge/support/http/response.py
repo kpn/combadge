@@ -1,4 +1,4 @@
-"""HTTP backend response dictionaries."""
+"""HTTP response types."""
 
 from collections.abc import Mapping
 from http import HTTPStatus
@@ -8,7 +8,12 @@ from typing_extensions import ReadOnly, TypeVar
 
 
 class HttpResponseDict(TypedDict):
-    """HTTP-specific values."""
+    """
+    HTTP-specific values under the `http` entry.
+
+    This typed dictionary defines sane defaults for HTTP backends, but they are free to extend it
+    and specify a concrete specification in the `HttpResponseMixinDict` generic parameter.
+    """
 
     status: ReadOnly[HTTPStatus]
     """HTTP response status."""

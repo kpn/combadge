@@ -1,4 +1,4 @@
-"""Response extensions for SOAP."""
+"""SOAP response types."""
 
 from typing import NoReturn, Optional
 
