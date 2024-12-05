@@ -1,11 +1,6 @@
-from typing_extensions import Annotated---
-tags:
-  - HTTP
----
-
 # Capturing HTTP status code
 
-```python title="status_code.py" hl_lines="20 26"
+```python title="status_code.py" hl_lines="19 25 32"
 import pytest
 import sys
 

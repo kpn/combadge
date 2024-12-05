@@ -6,7 +6,7 @@ However, thanks to the Pydantic's [`TypeAdapter`](https://docs.pydantic.dev/late
 
 ## Standard [dataclasses](https://docs.python.org/3/library/dataclasses.html)
 
-```python title="dataclasses.py" hl_lines="10-12 15-17 23 28"
+```python title="dataclasses.py" hl_lines="11-13 16-18 24 29"
 from dataclasses import dataclass
 
 from typing_extensions import Protocol, Annotated
@@ -40,7 +40,7 @@ assert backend[Httpbin].post_anything(Request(42)) == Response(data='{"foo": 42}
 
 ## [Typed dictionaries](https://docs.python.org/3/library/typing.html#typing.TypedDict)
 
-```python title="typed_dict.py" hl_lines="8-9 12-13 19 24"
+```python title="typed_dict.py" hl_lines="9-10 13-14 20 25"
 from typing_extensions import Protocol, TypedDict, Annotated
 
 from combadge.support.common.response import Body

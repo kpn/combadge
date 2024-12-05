@@ -6,7 +6,7 @@ parameters of scalar types.
 You can map such parameters with the [`Field`][combadge.support.http.markers.Field] marker,
 which would mark them as separate root fields of the payload:
 
-```python title="field.py" hl_lines="20"
+```python title="field.py" hl_lines="21"
 from httpx import Client
 from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol

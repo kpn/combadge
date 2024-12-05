@@ -1,10 +1,3 @@
----
-tags:
-  - HTTP
-  - SOAP
-  - Markers
----
-
 # SOAP
 
 ::: combadge.support.soap

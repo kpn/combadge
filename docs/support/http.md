@@ -1,9 +1,3 @@
----
-tags:
-  - HTTP
-  - Markers
----
-
 # HTTP
 
 ## Request markers
