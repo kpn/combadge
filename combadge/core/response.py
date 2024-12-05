@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from typing import TYPE_CHECKING, Any, ClassVar, Generic
+from typing import Any, ClassVar, Generic
 
-from pydantic import BaseModel, Field, create_model
+from pydantic import BaseModel
 from typing_extensions import Never, Self
 
 from combadge.core.errors import CombadgeError
-from combadge.core.typevars import AnyType, ResponseT
+from combadge.core.typevars import ResponseT
 
 
 class BaseResponse(ABC, BaseModel):
@@ -208,16 +208,3 @@ class ErrorResponse(BaseResponse, ABC):
         Convenience wrapper around `self.Error(self)` as the exception class requires the response as an argument.
         """
         return self.Error(self)
-
-
-class _BaseWrappedModel(BaseModel, Generic[AnyType]):
-    """Wrapped model to work around https://github.com/pydantic/pydantic/issues/10088."""
-
-    if TYPE_CHECKING:
-        inner: AnyType
-
-    @classmethod
-    def wrap(cls, inner_type: Any) -> type[Self] | None:
-        if inner_type is not None:
-            return create_model("WrappedModel", inner=(inner_type, Field(...)), __base__=cls)
-        return None

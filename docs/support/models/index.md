@@ -4,31 +4,6 @@ Combadge is built on top of [Pydantic](https://docs.pydantic.dev/), hence Pydant
 
 However, thanks to the Pydantic's [`TypeAdapter`](https://docs.pydantic.dev/latest/api/type_adapter/), Combadge automatically supports:
 
-## Built-in Python types
-
-```python title="builtin.py" hl_lines="12 17"
-from typing_extensions import Annotated, Protocol
-
-from combadge.support.httpx.backends.sync import HttpxBackend
-from combadge.support.http.markers import Payload, http_method, path
-from httpx import Client
-from pydantic import AliasPath, Field
-
-
-class Httpbin(Protocol):
-    @http_method("POST")
-    @path("/anything")
-    def post_anything(self, foo: Annotated[int, Payload()]) -> Annotated[
-        int,
-        Field(validation_alias=AliasPath("body", "data")),
-    ]:
-        ...
-
-
-backend = HttpxBackend(Client(base_url="https://httpbin.org"))
-assert backend[Httpbin].post_anything(42) == 42
-```
-
 ## Standard [dataclasses](https://docs.python.org/3/library/dataclasses.html)
 
 ```python title="dataclasses.py" hl_lines="10-12 15-17 23 28"

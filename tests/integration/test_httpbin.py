@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from collections.abc import Mapping
 from typing import Annotated, Any, Callable, Protocol, Union
 
 import pytest
@@ -17,7 +18,6 @@ from combadge.support.http.markers import (
     http_method,
     path,
 )
-from combadge.support.http.response import HTTP_HEADERS_PATH, HttpHeaders
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend
 
@@ -70,11 +70,12 @@ def test_query_params() -> None:
 
 
 class _HeadersResponse(BaseModel, extra="allow"):
-    headers: HttpHeaders
-    content_length: Annotated[int, Field(validation_alias=AliasPath(*HTTP_HEADERS_PATH.path, "Content-Length"))]
-    missing_header: Annotated[int, Field(validation_alias=AliasPath(*HTTP_HEADERS_PATH.path, "X-Missing-Header"))] = 42
+    headers: Annotated[Mapping[str, str], Field(validation_alias=AliasPath("body", "headers"))]
+    content_length: Annotated[int, Field(validation_alias=AliasPath("http", "headers", "Content-Length"))]
+    missing_header: Annotated[int, Field(validation_alias=AliasPath("http", "headers", "X-Missing-Header"))] = 42
 
 
+# TODO: move to documentation tests.
 @pytest.mark.vcr
 def test_headers_sync() -> None:
     class SupportsHttpbin(SupportsService, Protocol):
@@ -114,7 +115,7 @@ async def test_headers_async() -> None:
             foo: Annotated[str, CustomHeader("x-foo")],
             bar: Annotated[str, CustomHeader("x-bar")] = "barval",
             baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
-        ) -> Annotated[_HeadersResponse, Mixin(Header("content-length", "content_length"))]: ...
+        ) -> _HeadersResponse: ...
 
     service = SupportsHttpbin.bind(AsyncHttpxBackend(AsyncClient(base_url="https://httpbin.org")))
     response = await service.get_headers(foo="fooval")

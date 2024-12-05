@@ -10,7 +10,6 @@ from zeep.helpers import serialize_object
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.errors import BackendError
-from combadge.core.response import _BaseWrappedModel
 from combadge.core.signature import Signature
 from combadge.support.soap.request import Request
 
@@ -47,7 +46,7 @@ _UNSET = object()
 
 @dataclass(**SLOTS, **KW_ONLY)
 class MethodMeta:  # noqa: D101
-    response_type: type[_BaseWrappedModel[Any]] | None
+    response_adapter: TypeAdapter[Any]
     """Extracted response type _excluding_ SOAP faults."""
 
     fault_type: TypeAdapter[Any]
@@ -55,11 +54,10 @@ class MethodMeta:  # noqa: D101
 
     def validate_response(self, response: Any) -> Any:
         """Validate the raw response returned by Zeep."""
-        if (response_type := self.response_type) is not None:
+        if (response_type := self.response_adapter) is not None:
             # TODO: do I really need `serialize_object` here?
-            return response_type.model_validate({"body": serialize_object(response, dict)}).inner
-        else:
-            return None
+            return response_type.validate_python({"body": serialize_object(response, dict)})
+        return None
 
 
 class BaseZeepBackend(
@@ -117,7 +115,7 @@ class BaseZeepBackend(
     def inspect(cls, signature: Signature) -> MethodMeta:  # noqa: D102
         response_type, fault_type = cls._split_return_type(signature.return_type)
         return MethodMeta(
-            response_type=_BaseWrappedModel.wrap(response_type),
+            response_adapter=get_type_adapter(response_type),
             fault_type=get_type_adapter(fault_type),
         )
 
