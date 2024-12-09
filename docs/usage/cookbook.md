@@ -136,7 +136,7 @@ from httpx import Client
 from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol
 
-from combadge.support.common.response import Body
+from combadge.support.common import Body
 from combadge.support.http.markers import Field, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 

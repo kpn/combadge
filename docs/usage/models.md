@@ -4,11 +4,17 @@ In service interfaces, parameter and return types are _models_, which are used t
 
 ## Response validation
 
-As Combadge is aimed to support different 3rd-party clients, the backend classes convert raw responses into well-known intermediate representation, which could then be validated into a final response model. The representation is a typed dictionary, which depends on a specific application-level protocol. For example, HTTP backends normally provide such values as status code or body. See the application protocol documentation for available keys.
+As Combadge is aimed to support different 3rd-party clients, the backend classes convert raw responses into well-known intermediate representation, which could then be parsed and validated into a final response model.
+
+The representation is a typed dictionary, which depends on a specific application-level protocol. For example, HTTP backends normally provide such values as status code or body. See the application protocol documentation for available keys.
 
 As Combadge is about API calls, there is a few fields that should be supported by any backend:
 
 ::: combadge.support.common.response
+    options:
+      heading_level: 3
+
+::: combadge.support.common
     options:
       heading_level: 3
 
@@ -18,6 +24,29 @@ Combadge is built on top of [Pydantic](https://docs.pydantic.dev/), hence Pydant
 
 However, thanks to the Pydantic's [`TypeAdapter`](https://docs.pydantic.dev/latest/api/type_adapter/), Combadge automatically supports:
 
+### Basic Python types
+
+```python title="non_dict.py"
+from typing_extensions import Protocol
+
+from combadge.support.common import Body
+from combadge.support.httpx.backends.sync import HttpxBackend
+from combadge.support.http.markers import http_method, path
+from httpx import Client
+
+
+class SupportsHttpbin(Protocol):
+    # Note: this is not how HTTPBin normally works,
+    # but let's imagine it returns a plain text response:
+    @http_method("GET")
+    @path("/get")
+    def get_non_dict(self) -> Body[str]: ...
+
+
+service = HttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
+assert service.get_non_dict() == "ok"
+```
+
 ### Standard [dataclasses](https://docs.python.org/3/library/dataclasses.html)
 
 ```python title="dataclasses.py" hl_lines="11-13 16-18 24 29"
@@ -25,7 +54,7 @@ from dataclasses import dataclass
 
 from typing_extensions import Annotated, Protocol
 
-from combadge.support.common.response import Body
+from combadge.support.common import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
 from httpx import Client
@@ -57,7 +86,7 @@ assert backend[Httpbin].post_anything(Request(42)) == Response(data='{"foo": 42}
 ```python title="typed_dict.py" hl_lines="9-10 13-14 20 25"
 from typing_extensions import Protocol, TypedDict, Annotated
 
-from combadge.support.common.response import Body
+from combadge.support.common import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
 from combadge.support.http.markers import Payload, http_method, path
 from httpx import Client

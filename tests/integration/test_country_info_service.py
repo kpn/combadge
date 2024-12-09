@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from zeep import Client
 
 from combadge.core.errors import BackendError
-from combadge.support.common.response import Body
+from combadge.support.common import Body
 from combadge.support.soap.markers import operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 

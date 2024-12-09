@@ -1,9 +1,7 @@
-from typing import Annotated, Any, TypeAlias, TypedDict
+from typing import Any, TypedDict
 
-from pydantic import ValidatorFunctionWrapHandler, WrapValidator
+from pydantic import ValidatorFunctionWrapHandler
 from typing_extensions import ReadOnly
-
-from combadge.core.typevars import AnyType
 
 
 class ResponseBodyMixinDict(TypedDict):
@@ -20,25 +18,17 @@ class ResponseBodyMixinDict(TypedDict):
 
 
 def _validate_body(value: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+    """
+    Delegate validation to the `body` value validator.
+
+    Note:
+        This is only needed because Pydantic does not handle `validation_alias` in `TypeAdapter`
+        nor in `RootModel`. So, user would not be able to do `-> Annotated[..., Field(validation_alias="body")]`
+        for primitive types.
+    """
     try:
         body = value["body"]
     except KeyError as e:
         raise ValueError("`Body[...]` annotation is only applicable at the root level") from e
     else:
         return handler(body)
-
-
-Body: TypeAlias = Annotated[AnyType, WrapValidator(_validate_body)]
-"""
-Shortcut to simplify protocol definition when a return model should be parsed from a response body.
-
-It extracts the `"body"` value from
-[`ResponseBodyMixinDict`][combadge.support.common.response.ResponseBodyMixinDict]
-and forwards it to the model validator.
-
-Examples:
-    >>> class SupportsWttrIn(Protocol):
-    >>>     @http_method("GET")
-    >>>     @path("/{in_}")
-    >>>     def get_weather(self, *, in_: str) -> Body[Weather]: ...
-"""

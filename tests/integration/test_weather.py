@@ -5,7 +5,7 @@ from httpx import AsyncClient, Client
 from pydantic import BaseModel, Field, ValidationError, validate_call
 
 from combadge.core.markers.method import wrap_with
-from combadge.support.common.response import Body
+from combadge.support.common import Body
 from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
 from combadge.support.httpx.backends.sync import HttpxBackend as SyncHttpxBackend

@@ -7,7 +7,7 @@ from httpx import AsyncClient, Client
 from pydantic import AliasPath, BaseModel, Field
 
 from combadge.core.errors import BackendError
-from combadge.support.common.response import Body
+from combadge.support.common import Body
 from combadge.support.http.markers import (
     CustomHeader,
     FormData,
@@ -139,22 +139,6 @@ def test_non_dict_json() -> None:
     # I manually patched the recorded VCR.py response.
     service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
     assert service.get_non_dict() == [42, 43]
-
-
-@pytest.mark.vcr
-def test_return_scalar() -> None:
-    """Verify that the client is able to parse a primitive scalar kind of response."""
-
-    class SupportsHttpbin(Protocol):
-        @http_method("GET")
-        @path("/get")
-        @abstractmethod
-        def get_non_dict(self) -> Body[str]: ...
-
-    # Since httpbin.org is not capable of returning a non-dict JSON,
-    # I manually patched the recorded VCR.py response.
-    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
-    assert service.get_non_dict() == "ok"
 
 
 @pytest.mark.vcr

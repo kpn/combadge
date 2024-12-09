@@ -26,7 +26,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from typing_extensions import Annotated, Protocol
 
     from combadge.core.markers.method import wrap_with
-    from combadge.support.common.response import Body
+    from combadge.support.common import Body
     from combadge.support.http.markers import QueryParam, http_method, path
     from combadge.support.httpx.backends.sync import HttpxBackend
 
@@ -76,7 +76,7 @@ declared by a [protocol](https://peps.python.org/pep-0544/) class or an abstract
     from typing_extensions import Annotated
 
     from combadge.core.response import ErrorResponse, SuccessfulResponse
-    from combadge.support.common.response import Body
+    from combadge.support.common import Body
     from combadge.support.http.markers import Payload
     from combadge.support.soap.markers import operation_name
     from combadge.support.zeep.backends.sync import ZeepBackend
