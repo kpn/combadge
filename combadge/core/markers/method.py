@@ -59,7 +59,7 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
 
 
 @dataclass(**SLOTS)
-class WrapWith(Generic[FunctionT], MethodMarker[Any, FunctionT]):  # noqa: D101
+class WrapWith(MethodMarker[Any, FunctionT], Generic[FunctionT]):  # noqa: D101
     decorator: Callable[[FunctionT], FunctionT]
 
     @override

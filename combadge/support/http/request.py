@@ -43,7 +43,7 @@ class CustomHeader(ParameterMarker[HttpRequestHeaders]):
 
 
 @dataclass(init=False, **SLOTS)
-class Path(Generic[FunctionT], MethodMarker[HttpRequestUrlPath, FunctionT]):  # noqa: D101
+class Path(MethodMarker[HttpRequestUrlPath, FunctionT], Generic[FunctionT]):  # noqa: D101
     _factory: Callable[[BoundArguments], str]
 
     def __init__(self, path_or_factory: str | Callable[[BoundArguments], str]) -> None:  # noqa: D107
@@ -84,7 +84,7 @@ def path(path_or_factory: str | Callable[..., str]) -> Callable[[FunctionT], Fun
 
 
 @dataclass(**SLOTS)
-class HttpMethod(Generic[FunctionT], MethodMarker[HttpRequestMethod, FunctionT]):  # noqa: D101
+class HttpMethod(MethodMarker[HttpRequestMethod, FunctionT], Generic[FunctionT]):  # noqa: D101
     method: str
 
     @override

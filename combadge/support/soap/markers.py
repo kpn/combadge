@@ -14,7 +14,7 @@ from combadge.support.soap.abc import SoapHeader, SoapOperationName
 
 
 @dataclass(**SLOTS)
-class OperationName(Generic[FunctionT], MethodMarker[SoapOperationName, FunctionT]):  # noqa: D101
+class OperationName(MethodMarker[SoapOperationName, FunctionT], Generic[FunctionT]):  # noqa: D101
     name: str
 
     @override
