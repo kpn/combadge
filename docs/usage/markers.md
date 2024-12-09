@@ -8,8 +8,8 @@
 
 Examples:
 
-- [HTTP method][combadge.support.http.markers.http_method]
-- [HTTP endpoint path][combadge.support.http.markers.path]
+- [HTTP method][combadge.support.http.request.http_method]
+- [HTTP endpoint path][combadge.support.http.request.path]
 - [SOAP operation name][combadge.support.soap.markers.operation_name]
 
 !!! info ""

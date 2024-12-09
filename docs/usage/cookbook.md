@@ -17,7 +17,7 @@ from http import HTTPStatus
 from httpx import Client
 from pydantic import BaseModel
 
-from combadge.support.http.markers import http_method, path
+from combadge.support.http.request import http_method, path
 from combadge.support.http.response import Status
 from combadge.support.httpx.backends.sync import HttpxBackend
 
@@ -128,7 +128,7 @@ class Service(Protocol):
 There are cases when having a request model is undesired. For example, when a call takes a handful of simple
 parameters of scalar types.
 
-You can map such parameters with the [`Field`][combadge.support.http.markers.Field] marker,
+You can map such parameters with the [`Field`][combadge.support.http.request.Field] marker,
 which would mark them as separate root fields of the payload:
 
 ```python title="field.py" hl_lines="20"
@@ -137,7 +137,7 @@ from pydantic import BaseModel
 from typing_extensions import Annotated, Protocol
 
 from combadge.support.common import Body
-from combadge.support.http.markers import Field, http_method, path
+from combadge.support.http.request import Field, http_method, path
 from combadge.support.httpx.backends.sync import HttpxBackend
 
 

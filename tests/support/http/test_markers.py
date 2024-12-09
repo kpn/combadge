@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 
 from combadge.support.http.abc import HttpRequestUrlPath
-from combadge.support.http.markers import Path
+from combadge.support.http.request import Path
 
 
 @pytest.mark.parametrize(

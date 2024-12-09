@@ -8,7 +8,7 @@ from pydantic import AliasPath, BaseModel, Field
 
 from combadge.core.errors import BackendError
 from combadge.support.common import Body
-from combadge.support.http.markers import (
+from combadge.support.http.request import (
     CustomHeader,
     FormData,
     FormField,

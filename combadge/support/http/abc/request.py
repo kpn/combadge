@@ -54,8 +54,8 @@ class HttpRequestFormData:
 
     form_data: dict[str, list[Any]] = field(default_factory=dict)
     """
-    Used with [FormData][combadge.support.http.markers.FormData]
-    and [FormField][combadge.support.http.markers.FormField].
+    Used with [FormData][combadge.support.http.request.FormData]
+    and [FormField][combadge.support.http.request.FormField].
     """
 
     def append_form_field(self, name: str, value: Any) -> None:  # noqa: D102

@@ -31,7 +31,7 @@ from typing_extensions import Protocol
 
 from combadge.support.common import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
-from combadge.support.http.markers import http_method, path
+from combadge.support.http.request import http_method, path
 from httpx import Client
 
 
@@ -56,7 +56,7 @@ from typing_extensions import Annotated, Protocol
 
 from combadge.support.common import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
-from combadge.support.http.markers import Payload, http_method, path
+from combadge.support.http.request import Payload, http_method, path
 from httpx import Client
 
 
@@ -88,7 +88,7 @@ from typing_extensions import Protocol, TypedDict, Annotated
 
 from combadge.support.common import Body
 from combadge.support.httpx.backends.sync import HttpxBackend
-from combadge.support.http.markers import Payload, http_method, path
+from combadge.support.http.request import Payload, http_method, path
 from httpx import Client
 
 

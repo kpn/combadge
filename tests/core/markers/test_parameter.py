@@ -3,7 +3,7 @@ from typing import Annotated, Any
 import pytest
 
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.support.http.markers import CustomHeader
+from combadge.support.http.request import CustomHeader
 
 
 @pytest.mark.parametrize(

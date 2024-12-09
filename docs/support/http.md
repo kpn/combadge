@@ -2,7 +2,7 @@
 
 ## Request markers
 
-::: combadge.support.http.markers.request
+::: combadge.support.http.request
     options:
       heading_level: 3
 
