@@ -32,7 +32,9 @@ Body: TypeAlias = Annotated[AnyType, WrapValidator(_validate_body)]
 """
 Shortcut to simplify protocol definition when a return model should be parsed from a response body.
 
-It extract the `"body"` value from [`ResponseBodyMixinDict`][combadge.support.common.response.ResponseBodyMixinDict] and forwards it to the model validator.
+It extracts the `"body"` value from
+[`ResponseBodyMixinDict`][combadge.support.common.response.ResponseBodyMixinDict]
+and forwards it to the model validator.
 
 Examples:
     >>> class SupportsWttrIn(Protocol):

@@ -4,25 +4,26 @@ This page contains various specific examples for some common problems:
 
 ## Capturing HTTP status code
 
-```python title="status_code.py" hl_lines="18 24 31"
+```python title="status_code.py" hl_lines="14 19 25 32"
 import pytest
 import sys
 
 if sys.version_info < (3, 9):
     pytest.skip("HTTP 418 requires Python 3.9 or higher")
 
-from typing import Annotated, Protocol
+from typing import Protocol
 from http import HTTPStatus
 
 from httpx import Client
-from pydantic import AliasPath, BaseModel, Field
+from pydantic import BaseModel
 
 from combadge.support.http.markers import http_method, path
+from combadge.support.http.response import Status
 from combadge.support.httpx.backends.sync import HttpxBackend
 
 
 class Response(BaseModel):
-    my_status_code: Annotated[HTTPStatus, Field(validation_alias=AliasPath("http", "status"))]
+    my_status_code: Status
 
 
 class SupportsHttpbin(Protocol):

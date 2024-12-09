@@ -2,8 +2,9 @@
 
 from collections.abc import Mapping
 from http import HTTPStatus
-from typing import Generic, TypedDict
+from typing import Annotated, Generic, TypeAlias, TypedDict
 
+from pydantic import AliasPath, Field
 from typing_extensions import ReadOnly, TypeVar
 
 
@@ -34,3 +35,22 @@ class HttpResponseMixinDict(TypedDict, Generic[_HttpDictT]):
 
     http: ReadOnly[_HttpDictT]
     """HTTP-specific response values."""
+
+
+Status: TypeAlias = Annotated[HTTPStatus, Field(validation_alias=AliasPath("http", "status"))]
+"""
+Shortcut for HTTP response status code.
+
+Examples:
+    >>> class Response(BaseModel):
+    >>>     my_status_code: Status
+"""
+
+Reason: TypeAlias = Annotated[str, Field(validation_alias=AliasPath("http", "reason"))]
+"""
+Shortcut for HTTP reason phrase.
+
+Examples:
+    >>> class Response(BaseModel):
+    >>>     reason_phrase: Reason
+"""
