@@ -11,8 +11,7 @@ from combadge.core.container import ServiceContainerMixin
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
 from combadge.core.signature import Signature
-from combadge.support.http.request import Request
-from combadge.support.httpx.backends.base import BaseHttpxBackend, MethodMeta
+from combadge.support.httpx.backends.base import BaseHttpxBackend, ResponseValidator
 
 
 class HttpxBackend(BaseHttpxBackend[Client], ServiceContainerMixin):
@@ -47,7 +46,7 @@ class HttpxBackend(BaseHttpxBackend[Client], ServiceContainerMixin):
 
         return bound_method  # type: ignore[return-value]
 
-    def __call__(self, request: Request, meta: MethodMeta) -> Any:  # noqa: D102
+    def __call__(self, request: Request, meta: ResponseValidator) -> Any:  # noqa: D102
         response = self._client.request(
             request.get_method(),
             request.get_url_path(),

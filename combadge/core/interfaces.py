@@ -7,47 +7,30 @@ from typing_extensions import Self
 
 from combadge.core.binder import BaseBoundService
 from combadge.core.signature import Signature
-from combadge.core.typevars import BackendMethodMetaT, BackendRequestT, BackendT
+from combadge.core.typevars import BackendRequestSpecificationT, BackendT, BackendResponseSpecificationT, \
+    BackendResponseValidatorT
 
 
 # TODO: possibly, make it an abstract class with included service container.
-class SupportsBackend(Protocol[BackendRequestT, BackendMethodMetaT]):
+class SupportsBackend(Protocol[BackendRequestSpecificationT, BackendResponseSpecificationT, BackendResponseValidatorT]):
     """Backend protocol."""
-
-    REQUEST_TYPE: type[BackendRequestT]
 
     @classmethod
     @abstractmethod
-    def inspect(cls, signature: Signature) -> BackendMethodMetaT:
+    def inspect(cls, signature: Signature) -> BackendResponseValidatorT:
         """Extract metadata needed by the backend to execute the specific service method."""
         raise NotImplementedError
 
-    @classmethod
     @abstractmethod
-    def bind_method(cls, signature: Signature, /) -> ServiceMethod[Self]:
-        """
-        Bind the method by its signature (for example, a backend).
-
-        Args:
-            signature: extracted method signature
-
-        Returns:
-            Callable service method which is then fully capable of sending a request and receiving a response
-            via a corresponding backend instance.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def __call__(self, request: BackendRequestT, meta: BackendMethodMetaT) -> Any:
+    def __call__(self, request: BackendRequestSpecificationT) -> BackendResponseSpecificationT:
         """
         Call the backend.
 
         Args:
             request: request to be executed by the backend
-            meta: metadata attached to the service method
 
         Returns:
-            Validated response. Async backend should return
+            Non-validated response. Async backend should naturally return
             an [awaitable object](https://docs.python.org/3/library/asyncio-task.html#awaitables).
         """
         raise NotImplementedError

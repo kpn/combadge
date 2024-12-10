@@ -2,13 +2,13 @@
 
 from collections.abc import Mapping
 from http import HTTPStatus
-from typing import Annotated, Generic, TypeAlias, TypedDict
+from typing import Annotated, TypeAlias, TypedDict
 
 from pydantic import AliasPath, Field
-from typing_extensions import ReadOnly, TypeVar
+from typing_extensions import ReadOnly
 
 
-class HttpResponseDict(TypedDict):
+class HttpResponseSpecification(TypedDict):
     """
     HTTP-specific values under the `http` entry.
 
@@ -24,17 +24,6 @@ class HttpResponseDict(TypedDict):
 
     headers: ReadOnly[Mapping[str, str]]
     """Raw HTTP response headers."""
-
-
-_HttpDictT = TypeVar("_HttpDictT", default=HttpResponseDict)
-"""Concrete type of the HTTP sub-key value."""
-
-
-class HttpResponseMixinDict(TypedDict, Generic[_HttpDictT]):
-    """HTTP-specific values."""
-
-    http: ReadOnly[_HttpDictT]
-    """HTTP-specific response values."""
 
 
 Status: TypeAlias = Annotated[HTTPStatus, Field(validation_alias=AliasPath("http", "status"))]

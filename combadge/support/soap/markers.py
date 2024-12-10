@@ -7,14 +7,14 @@ from annotated_types import SLOTS
 from typing_extensions import override
 
 from combadge._helpers.pydantic import get_type_adapter
-from combadge.core.markers.method import MethodMarker
+from combadge.core.markers import Marker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.soap.abc import SoapHeader, SoapOperationName
 
 
 @dataclass(**SLOTS)
-class OperationName(MethodMarker[SoapOperationName, FunctionT], Generic[FunctionT]):  # noqa: D101
+class OperationName(Marker[SoapOperationName, FunctionT], Generic[FunctionT]):  # noqa: D101
     name: str
 
     @override

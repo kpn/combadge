@@ -17,7 +17,6 @@ nav:
           - support/http.md
           - support/soap.md
       - Backends:
-          - support/backends/index.md
           - support/backends/httpx.md
           - support/backends/zeep.md
   - Migration:

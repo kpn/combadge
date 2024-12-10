@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable
 
 from typing_extensions import override
 
-from combadge.core.markers.method import MethodMarker
+from combadge.core.markers import Marker
 from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 
@@ -50,7 +50,7 @@ def bind_class(
     return BoundService
 
 
-def _wrap(method: Callable[..., Any], with_markers: Iterable[MethodMarker]) -> Callable[..., Any]:
+def _wrap(method: Callable[..., Any], with_markers: Iterable[Marker]) -> Callable[..., Any]:
     """
     Apply method markers.
 

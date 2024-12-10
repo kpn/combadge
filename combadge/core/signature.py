@@ -8,10 +8,9 @@ from typing import Any, Callable, Generic
 
 from annotated_types import KW_ONLY, SLOTS
 
-from combadge.core.markers.method import MethodMarker
-from combadge.core.markers.parameter import ParameterMarker
+from combadge.core.markers import Marker
 from combadge.core.service import BaseBoundService
-from combadge.core.typevars import BackendRequestT
+from combadge.core.typevars import BackendRequestSpecificationT
 
 try:
     from inspect import get_annotations  # type: ignore[attr-defined]
@@ -49,11 +48,11 @@ class Signature:
 
     def build_request(
         self,
-        request_type: type[BackendRequestT],
+        request_type: type[BackendRequestSpecificationT],
         service: BaseBoundService,
         call_args: Iterable[Any],
         call_kwargs: Mapping[str, Any],
-    ) -> BackendRequestT:
+    ) -> BackendRequestSpecificationT:
         """
         Build a request using the provided request type, marks, and service call arguments.
 
@@ -109,9 +108,9 @@ class Signature:
 
 
 @dataclass(**SLOTS)
-class ParameterInfo(Generic[BackendRequestT]):  # noqa: D101
+class ParameterInfo(Generic[BackendRequestSpecificationT]):  # noqa: D101
     name: str
     """The parameter's name."""
 
-    markers: Iterable[ParameterMarker[BackendRequestT]]
+    markers: Iterable[ParameterMarker[BackendRequestSpecificationT]]
     """The parameter's markers used to build request with the runtime parameter value."""

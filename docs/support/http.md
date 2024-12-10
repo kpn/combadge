@@ -1,6 +1,6 @@
 # HTTP
 
-## Request markers
+## Markers
 
 ::: combadge.support.http.request
     options:

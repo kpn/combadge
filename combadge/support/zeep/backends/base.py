@@ -11,7 +11,6 @@ from zeep.helpers import serialize_object
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.errors import BackendError
 from combadge.core.signature import Signature
-from combadge.support.soap.request import Request
 
 try:
     from types import GenericAlias, UnionType  # type: ignore[attr-defined]

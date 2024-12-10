@@ -127,7 +127,7 @@ class ErrorResponse(BaseResponse, ABC):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    Error: ClassVar[type[_BaseDerivedError]] = _BaseDerivedError
+    Error: ClassVar[type[_BaseDerivedError[Self]]] = _BaseDerivedError
     """
     Dynamically derived exception class.
 

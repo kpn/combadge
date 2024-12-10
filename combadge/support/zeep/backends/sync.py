@@ -65,10 +65,7 @@ class ZeepBackend(BaseZeepBackend[ServiceProxy, OperationProxy], ServiceContaine
             raise TypeError(type(service))
         return cls(service_proxy)
 
-    def __init__(
-        self,
-        service: ServiceProxy,
-    ) -> None:
+    def __init__(self, service: ServiceProxy) -> None:
         """
         Instantiate the backend.
 

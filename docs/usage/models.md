@@ -6,11 +6,12 @@ In service interfaces, parameter and return types are _models_, which are used t
 
 As Combadge is aimed to support different 3rd-party clients, the backend classes convert raw responses into well-known intermediate representation, which could then be parsed and validated into a final response model.
 
-The representation is a typed dictionary, which depends on a specific application-level protocol. For example, HTTP backends normally provide such values as status code or body. See the application protocol documentation for available keys.
+The representation is a typed dictionary, which depends on a specific application-level protocol. For example, HTTP backends normally provide such values as body, status code, or headers.
 
-As Combadge is about API calls, there is a few fields that should be supported by any backend:
+!!! tip
+    See the application protocol documentation for available keys.
 
-::: combadge.support.common.response
+::: combadge.support.common.request
     options:
       heading_level: 3
 

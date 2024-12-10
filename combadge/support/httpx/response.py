@@ -1,6 +1,6 @@
-from combadge.support.common.response import ResponseBodyMixinDict
-from combadge.support.http.response import HttpResponseMixinDict
+from combadge.support.common import BodySpecification
+from combadge.support.http import HttpSpecification
 
 
-class ResponseDict(ResponseBodyMixinDict, HttpResponseMixinDict):
-    """HTTPX backend response dictionary."""
+class RequestSpecification(BodySpecification, HttpSpecification):
+    pass

@@ -8,22 +8,22 @@ from typing import Any, Callable, Generic
 from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge.core.typevars import BackendRequestT, FunctionT
+from combadge.core.typevars import BackendRequestSpecificationT, FunctionT
 
 
 @dataclass(**SLOTS)
-class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
-    """Method marker that modifies an entire request based on all the call arguments."""
+class Marker(ABC, Generic[BackendRequestSpecificationT, FunctionT]):
+    """Method marker that modifies an entire request based on the call arguments and/or user's metadata."""
 
     def mark(self, what: FunctionT) -> FunctionT:
         """
-        Mark the function with itself.
+        Mark the given function with the marker.
 
         Notes:
             - This is not a part of the public interface and is used to derive the decorators.
             - This operates on a source unbound method stub. Any wrappers are applied during the binding stage.
         """
-        MethodMarker.ensure_markers(what).append(self)
+        Marker.ensure_markers(what).append(self)
         return what
 
     def wrap(self, what: FunctionT) -> FunctionT:
@@ -36,7 +36,7 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
         """
         return what
 
-    def prepare_request(self, request: BackendRequestT, arguments: BoundArguments) -> None:
+    def prepare_request(self, request: BackendRequestSpecificationT, arguments: BoundArguments) -> None:
         """
         Modify the request according to the mark.
 
@@ -49,7 +49,7 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
         """
 
     @staticmethod
-    def ensure_markers(in_: Any) -> list[MethodMarker]:
+    def ensure_markers(in_: Any) -> list[Marker]:
         """Ensure that the argument contains the mark list attribute, and return the list."""
         try:
             marks = in_.__combadge_marks__
@@ -59,7 +59,7 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
 
 
 @dataclass(**SLOTS)
-class WrapWith(MethodMarker[Any, FunctionT], Generic[FunctionT]):  # noqa: D101
+class WrapWith(Marker[Any, FunctionT], Generic[FunctionT]):  # noqa: D101
     decorator: Callable[[FunctionT], FunctionT]
 
     @override
