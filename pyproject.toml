@@ -37,6 +37,7 @@ classifiers = [
 allow_redefinition = true
 allow_untyped_globals = true
 check_untyped_defs = true
+disable_error_code = "type-abstract" # https://github.com/python/mypy/issues/4717
 pretty = true
 warn_unused_configs = true
 warn_redundant_casts = true

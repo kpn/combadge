@@ -1,20 +1,48 @@
+from abc import ABC, abstractmethod
 from typing import Any
 
+from typing_extensions import Self
+
 from combadge.core.binder import bind
-from combadge.core.interfaces import ProvidesBinder
+from combadge.core.interfaces import ServiceMethod
+from combadge.core.signature import Signature
 from combadge.core.typevars import ServiceProtocolT
 
 
-class ServiceContainer(ProvidesBinder):  # noqa: D101
+class BaseBackend(ABC):
+    """
+    Abstract base backend class.
+
+    - It provides an entry point for binding a service method to the backend.
+    - It also caches all the service instances bound to the backend via the item protocol.
+    """
+
+    __slots__ = ("_service_cache",)
+
     def __init__(self) -> None:  # noqa: D107
         self._service_cache: dict[type, Any] = {}
 
+    @classmethod
+    @abstractmethod
+    def bind_method(cls, signature: Signature, /) -> ServiceMethod[Self]:
+        """
+        Bind the method by its signature.
+
+        Args:
+            signature: extracted method signature
+
+        Returns:
+            Callable service method which is fully capable of sending a request and receiving a response
+            via this backend.
+        """
+        raise NotImplementedError
+
     def __getitem__(self, protocol: type[ServiceProtocolT]) -> ServiceProtocolT:
         """
-        Bind the protocol to the current backend and return the service instance.
+        Bind the given protocol to this backend and return the bound service instance.
 
         This method caches the service instances, and so may be used repeatedly
-        without a performance impact.
+        without a huge performance impact.
 
         Examples:
             >>> class ServiceProtocolA(Protocol): ...
