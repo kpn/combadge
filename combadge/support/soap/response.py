@@ -29,5 +29,5 @@ class BaseSoapFault(ErrorResponse):
     def raise_for_result(self, exception: Optional[BaseException] = None) -> NoReturn:
         """Raise the derived error for this fault."""
         if not exception:
-            raise self.Error(self)
-        raise exception from self.Error(self)
+            raise self.Error(self)  # type: ignore[arg-type]
+        raise exception from self.Error(self)  # type: ignore[arg-type]
