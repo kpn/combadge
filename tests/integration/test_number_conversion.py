@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field, HttpUrl, RootModel
 from typing_extensions import assert_type
 from zeep import AsyncClient, Client
 
-from combadge.core.interfaces import SupportsService
 from combadge.core.response import ErrorResponse, SuccessfulResponse
 from combadge.support.http.markers import Payload
 from combadge.support.soap.markers import operation_name
@@ -35,7 +34,7 @@ class _TestFault(BaseSoapFault):  # type: ignore[override]
     message: Literal["Test Fault"]
 
 
-class SupportsNumberConversion(SupportsService, Protocol):
+class SupportsNumberConversion(Protocol):
     @operation_name("NumberToWords")
     @abstractmethod
     def number_to_words(
@@ -45,7 +44,7 @@ class SupportsNumberConversion(SupportsService, Protocol):
         raise NotImplementedError
 
 
-class SupportsNumberConversionAsync(SupportsService, Protocol):
+class SupportsNumberConversionAsync(Protocol):
     @operation_name("NumberToWords")
     @abstractmethod
     async def number_to_words(
@@ -61,7 +60,7 @@ def number_conversion_service() -> Iterable[SupportsNumberConversion]:
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
         port_name="NumberConversionSoap",
     ) as client:
-        yield SupportsNumberConversion.bind(SyncZeepBackend(client.service))
+        yield SyncZeepBackend(client.service)[SupportsNumberConversion]
 
 
 @pytest.fixture
@@ -70,7 +69,7 @@ def number_conversion_service_async() -> Iterable[SupportsNumberConversionAsync]
         wsdl=str(Path(__file__).parent / "wsdl" / "NumberConversion.wsdl"),
         port_name="NumberConversionSoap",
     ) as client:
-        yield SupportsNumberConversionAsync.bind(AsyncZeepBackend(client.service))
+        yield AsyncZeepBackend(client.service)[SupportsNumberConversionAsync]
 
 
 @pytest.mark.vcr(decode_compressed_response=True)
@@ -126,7 +125,7 @@ def test_happy_path_with_params_sync(service: Union[ByServiceName, ByBindingName
         service=service,
         operation_timeout=1,
     )
-    service = SupportsNumberConversion.bind(backend)
+    service = backend[SupportsNumberConversion]
     response = service.number_to_words(NumberToWordsRequest(number=42)).unwrap()
     assert response.root == "forty two "
 
@@ -150,6 +149,6 @@ async def test_happy_path_with_params_async(service: Union[ByServiceName, ByBind
         service=service,
         operation_timeout=1,
     )
-    service = SupportsNumberConversionAsync.bind(backend)
+    service = backend[SupportsNumberConversionAsync]
     response = (await service.number_to_words(NumberToWordsRequest(number=42))).unwrap()
     assert response.root == "forty two "

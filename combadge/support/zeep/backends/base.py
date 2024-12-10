@@ -8,6 +8,7 @@ from annotated_types import SLOTS
 from pydantic_core import Url
 
 from combadge._helpers.pydantic import get_type_adapter
+from combadge.core.backend import BaseBackend
 from combadge.core.errors import BackendError
 
 try:
@@ -22,7 +23,6 @@ from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
-from combadge.core.interfaces import ProvidesBinder
 from combadge.support.soap.response import BaseSoapFault
 
 _ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
@@ -41,11 +41,14 @@ _SoapFaultT = TypeVar("_SoapFaultT")
 _UNSET = object()
 
 
-class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationProxyT]):
+class BaseZeepBackend(BaseBackend, ABC, Generic[_ServiceProxyT, _OperationProxyT]):
     """Base class for the sync and async backends. Not intended for a direct use."""
+
+    __slots__ = ("_service_cache", "_service")
 
     def __init__(self, service: _ServiceProxyT) -> None:
         """Instantiate the backend."""
+        super().__init__()
         self._service = service
 
     @staticmethod

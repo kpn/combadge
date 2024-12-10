@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field
 from zeep import Client
 
 from combadge.core.errors import BackendError
-from combadge.core.interfaces import SupportsService
 from combadge.support.soap.markers import operation_name
 from combadge.support.zeep.backends.sync import ZeepBackend
 
@@ -18,7 +17,7 @@ class Continent(BaseModel):
     name: Annotated[str, Field(alias="sName")]
 
 
-class SupportsCountryInfo(SupportsService, Protocol):
+class SupportsCountryInfo(Protocol):
     @operation_name("ListOfContinentsByName")
     @abstractmethod
     def list_of_continents_by_name(self) -> list[Continent]:
@@ -32,7 +31,7 @@ class SupportsCountryInfo(SupportsService, Protocol):
 @pytest.fixture
 def country_info_service() -> Iterable[SupportsCountryInfo]:
     with Client(wsdl=str(Path(__file__).parent / "wsdl" / "CountryInfoService.wsdl")) as client:
-        yield SupportsCountryInfo.bind(ZeepBackend(client.service))
+        yield ZeepBackend(client.service)[SupportsCountryInfo]
 
 
 @pytest.mark.vcr(decode_compressed_response=True)
