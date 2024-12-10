@@ -4,9 +4,9 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar, Union
 
+from annotated_types import SLOTS
 from pydantic_core import Url
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.errors import BackendError
 

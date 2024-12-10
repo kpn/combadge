@@ -6,9 +6,9 @@ from enum import Enum
 from inspect import BoundArguments
 from typing import Any, Callable, Generic, cast
 
+from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
