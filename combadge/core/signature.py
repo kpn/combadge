@@ -6,9 +6,9 @@ from inspect import BoundArguments
 from inspect import signature as get_signature
 from typing import Any, Callable, Generic
 
+from annotated_types import SLOTS
 from pydantic import BaseModel, TypeAdapter
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.typing import unwrap_annotated, unwrap_type_alias
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
