@@ -124,7 +124,7 @@ class ErrorResponse(BaseResponse, ABC):
     Users should not use it directly, but inherit their response models from it.
     """
 
-    Error: ClassVar[type[_BaseDerivedError]] = _BaseDerivedError
+    Error: ClassVar[type[_BaseDerivedError[Self]]] = _BaseDerivedError[Self]
     """
     Dynamically derived exception class.
 
@@ -189,7 +189,7 @@ class ErrorResponse(BaseResponse, ABC):
             Self.Error: derived error
         """
         if not exception:
-            raise self.Error(self)
+            raise self.Error(self)  # type: ignore[arg-type]
         raise exception from self.as_exception()
 
     def unwrap(self) -> Never:
@@ -207,4 +207,4 @@ class ErrorResponse(BaseResponse, ABC):
 
         Convenience wrapper around `self.Error(self)` as the exception class requires the response as an argument.
         """
-        return self.Error(self)
+        return self.Error(self)  # type: ignore[arg-type]
