@@ -9,6 +9,7 @@ from typing import Any, Callable, Generic
 from pydantic import BaseModel, TypeAdapter
 
 from combadge._helpers.dataclasses import SLOTS
+from combadge._helpers.typing import unwrap_annotated, unwrap_type_alias
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.markers.response import ResponseMarker
@@ -32,7 +33,7 @@ class Signature:
     """Extracted method markers."""
 
     return_type: type[Any] | None
-    """Extracted method return type."""
+    """Extracted method return type, clear of annotations or aliases."""
 
     response_markers: Iterable[ResponseMarker]
     """Response markers extracted from the return type"""
@@ -49,7 +50,7 @@ class Signature:
             bind_arguments=get_signature(method).bind,
             parameters_infos=cls._extract_parameter_infos(annotations_),
             method_markers=MethodMarker.ensure_markers(method),
-            return_type=return_type,
+            return_type=unwrap_annotated(unwrap_type_alias(return_type)),
             response_markers=ResponseMarker.extract(return_type),
         )
 

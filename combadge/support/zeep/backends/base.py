@@ -7,6 +7,7 @@ from typing import Any, Generic, TypeVar, Union
 from pydantic_core import Url
 
 from combadge._helpers.dataclasses import SLOTS
+from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.errors import BackendError
 
 try:
@@ -89,7 +90,7 @@ class BaseZeepBackend(ABC, ProvidesBinder, Generic[_ServiceProxyT, _OperationPro
     def _adapt_response_type(cls, response_type: Any) -> tuple[TypeAdapter[Any], TypeAdapter[Any]]:
         """Split the response type into non-faults and faults, and wrap them into the adapters."""
         response_type, fault_type = cls._split_response_type(response_type)
-        return TypeAdapter(response_type), TypeAdapter(fault_type)
+        return get_type_adapter(response_type), get_type_adapter(fault_type)
 
     def _get_operation(self, name: str) -> _OperationProxyT:
         """Get an operation by its name."""
