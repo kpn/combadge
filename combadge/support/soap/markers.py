@@ -1,7 +1,7 @@
 from collections.abc import Hashable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, TypeVar, cast
+from typing import Any, Callable, Generic, cast
 
 from typing_extensions import override
 
@@ -11,8 +11,6 @@ from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
 from combadge.core.typevars import FunctionT
 from combadge.support.soap.abc import SoapHeader, SoapOperationName
-
-_T = TypeVar("_T")
 
 
 @dataclass(**SLOTS)

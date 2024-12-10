@@ -8,9 +8,6 @@ BackendT = TypeVar("BackendT")
 BackendRequestT = TypeVar("BackendRequestT")
 """Backend-specific request type."""
 
-BackendResponseT = TypeVar("BackendResponseT")
-"""Backend-specific response type."""
-
 ResponseT = TypeVar("ResponseT")
 """User-defined response type of a service call."""
 
