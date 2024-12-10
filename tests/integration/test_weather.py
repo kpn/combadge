@@ -3,8 +3,8 @@ from typing import Annotated
 import pytest
 from httpx import AsyncClient, Client
 from pydantic import BaseModel, Field, ValidationError, validate_call
+from typing_extensions import Protocol
 
-from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import wrap_with
 from combadge.support.http.markers import QueryParam, http_method, path
 from combadge.support.httpx.backends.async_ import HttpxBackend as AsyncHttpxBackend
@@ -22,7 +22,7 @@ class Weather(BaseModel):
 
 @pytest.mark.vcr
 def test_weather_sync() -> None:
-    class SupportsWttrIn(SupportsService):
+    class SupportsWttrIn(Protocol):
         @http_method("GET")
         @path("/{in_}")
         @wrap_with(validate_call)
@@ -34,20 +34,20 @@ def test_weather_sync() -> None:
         ) -> Weather:
             raise NotImplementedError
 
-    backend = SyncHttpxBackend(Client(base_url="https://wttr.in"))
-    with backend[SupportsWttrIn] as service:
+    with SyncHttpxBackend(Client(base_url="https://wttr.in")) as backend:
+        service = backend[SupportsWttrIn]
+
         response = service.get_weather(in_="amsterdam")
+        assert response.current[0].humidity == 93
+        assert response.current[0].temperature == 2
 
-    assert response.current[0].humidity == 93
-    assert response.current[0].temperature == 2
-
-    with pytest.raises(ValidationError):
-        service.get_weather(in_="")
+        with pytest.raises(ValidationError):
+            service.get_weather(in_="")
 
 
 @pytest.mark.vcr
 async def test_weather_async() -> None:
-    class SupportsWttrIn(SupportsService):
+    class SupportsWttrIn(Protocol):
         @http_method("GET")
         @path("/{in_}")
         @wrap_with(validate_call)
@@ -59,8 +59,8 @@ async def test_weather_async() -> None:
         ) -> Weather:
             raise NotImplementedError
 
-    backend = AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in"))
-    async with backend[SupportsWttrIn] as service:
+    async with AsyncHttpxBackend(AsyncClient(base_url="https://wttr.in")) as backend:
+        service = backend[SupportsWttrIn]
         with pytest.raises(ValidationError):
             await service.get_weather(in_="")
         response = await service.get_weather(in_="amsterdam")

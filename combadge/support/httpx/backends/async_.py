@@ -6,10 +6,9 @@ from typing import Any, cast
 
 from httpx import AsyncClient, Response
 from pydantic import TypeAdapter
-from typing_extensions import Self
+from typing_extensions import Self, override
 
 from combadge._helpers.pydantic import get_type_adapter
-from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.errors import BackendError
 from combadge.core.interfaces import ServiceMethod
@@ -18,7 +17,7 @@ from combadge.support.http.request import Request
 from combadge.support.httpx.backends.base import BaseHttpxBackend
 
 
-class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
+class HttpxBackend(BaseHttpxBackend[AsyncClient]):
     """Async HTTPX backend."""
 
     __slots__ = ("_client", "_service_cache", "_raise_for_status")
@@ -37,9 +36,10 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
             raise_for_status: automatically call `raise_for_status()`
         """
         BaseHttpxBackend.__init__(self, client, raise_for_status=raise_for_status)
-        ServiceContainer.__init__(self)
 
-    def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
+    @classmethod
+    @override
+    def bind_method(cls, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
         response_type: TypeAdapter[Any] = get_type_adapter(cast(Hashable, signature.return_type))
 
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
@@ -57,8 +57,6 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
             return signature.apply_response_markers(response, payload, response_type)
 
         return bound_method  # type: ignore[return-value]
-
-    binder = bind_method  # type: ignore[assignment]
 
     async def __aenter__(self) -> Self:
         self._client = await self._client.__aenter__()

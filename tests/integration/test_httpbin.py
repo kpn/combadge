@@ -6,7 +6,6 @@ from httpx import AsyncClient, Client
 from pydantic import BaseModel, Field
 
 from combadge.core.errors import BackendError
-from combadge.core.interfaces import SupportsService
 from combadge.core.markers import Mixin
 from combadge.support.http.markers import (
     CustomHeader,
@@ -30,7 +29,7 @@ def test_form_data() -> None:
     class Response(BaseModel):
         form: dict[str, Any]
 
-    class SupportsHttpbin(SupportsService, Protocol):
+    class SupportsHttpbin(Protocol):
         @http_method("POST")
         @path("/anything")
         @abstractmethod
@@ -41,7 +40,7 @@ def test_form_data() -> None:
             qux: Annotated[int, FormField("barqux")],
         ) -> Response: ...
 
-    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
     response = service.post_anything(data=Data(foo=42), bar=100500, qux=100501)
 
     assert response == Response(form={"foo": "42", "barqux": ["100500", "100501"]})
@@ -52,7 +51,7 @@ def test_query_params() -> None:
     class Response(BaseModel):
         args: dict[str, Any]
 
-    class SupportsHttpbin(SupportsService, Protocol):
+    class SupportsHttpbin(Protocol):
         @http_method("GET")
         @path("/anything")
         @abstractmethod
@@ -63,7 +62,7 @@ def test_query_params() -> None:
             multivalue: Annotated[list[str], QueryArrayParam("multivalue")],
         ) -> Response: ...
 
-    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
     response = service.get_anything(foo=100500, bar=100501, multivalue=["value1", "value2"])
 
     assert response == Response(args={"foobar": ["100500", "100501"], "multivalue": ["value1", "value2"]})
@@ -77,7 +76,7 @@ class _HeadersResponse(BaseModel):
 
 @pytest.mark.vcr
 def test_headers_sync() -> None:
-    class SupportsHttpbin(SupportsService, Protocol):
+    class SupportsHttpbin(Protocol):
         @http_method("GET")
         @path("/headers")
         @abstractmethod
@@ -88,7 +87,7 @@ def test_headers_sync() -> None:
             baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
         ) -> Annotated[_HeadersResponse, Mixin(Header("content-length", "content_length"))]: ...
 
-    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
     response = service.get_headers(foo="fooval")
     assert response.headers["X-Foo"] == "fooval"
     assert response.headers["X-Bar"] == "barval"
@@ -105,7 +104,7 @@ async def test_headers_async() -> None:
     # TODO: I suspect that the separate test for `async` is not needed as the code does not care.
     """
 
-    class SupportsHttpbin(SupportsService, Protocol):
+    class SupportsHttpbin(Protocol):
         @http_method("GET")
         @path("/headers")
         @abstractmethod
@@ -116,7 +115,7 @@ async def test_headers_async() -> None:
             baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
         ) -> Annotated[_HeadersResponse, Mixin(Header("content-length", "content_length"))]: ...
 
-    service = SupportsHttpbin.bind(AsyncHttpxBackend(AsyncClient(base_url="https://httpbin.org")))
+    service = AsyncHttpxBackend(AsyncClient(base_url="https://httpbin.org"))[SupportsHttpbin]
     response = await service.get_headers(foo="fooval")
     assert response.headers["X-Foo"] == "fooval"
     assert response.headers["X-Bar"] == "barval"
@@ -127,7 +126,7 @@ async def test_headers_async() -> None:
 
 @pytest.mark.vcr
 def test_non_dict_json() -> None:
-    class SupportsHttpbin(SupportsService, Protocol):
+    class SupportsHttpbin(Protocol):
         @http_method("GET")
         @path("/get")
         @abstractmethod
@@ -135,7 +134,7 @@ def test_non_dict_json() -> None:
 
     # Since httpbin.org is not capable of returning a non-dict JSON,
     # I manually patched the recorded VCR.py response.
-    service = SupportsHttpbin.bind(SyncHttpxBackend(Client(base_url="https://httpbin.org")))
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
     assert service.get_non_dict() == [42, 43]
 
 
@@ -143,13 +142,13 @@ def test_non_dict_json() -> None:
 def test_reraise_backend_error() -> None:
     """Test that an HTTPX error is properly reraised."""
 
-    class SupportsHttpbin(SupportsService, Protocol):
+    class SupportsHttpbin(Protocol):
         @http_method("GET")
         @path("/status/500")
         @abstractmethod
         def get_internal_server_error(self) -> None: ...
 
-    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
     with pytest.raises(BackendError):
         service.get_internal_server_error()
 
@@ -168,5 +167,5 @@ def test_callback_protocol() -> None:
         def __call__(self) -> Response:
             raise NotImplementedError
 
-    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]  # type: ignore[type-abstract]
+    service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
     assert service().user_agent == "python-httpx/0.27.2"
