@@ -5,10 +5,9 @@ from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass
 from typing import Any, TypeVar
 
-# noinspection PyUnresolvedReferences
+from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge.core.markers.base import AnnotatedMarker
 
 _InputPayloadT = TypeVar("_InputPayloadT")
