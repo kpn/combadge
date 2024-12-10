@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from collections.abc import Hashable
 from types import TracebackType
-from typing import Any
+from typing import Any, cast
 
 from httpx import AsyncClient, Response
 from pydantic import TypeAdapter
 from typing_extensions import Self
 
+from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.backend import ServiceContainer
 from combadge.core.binder import BaseBoundService
 from combadge.core.errors import BackendError
@@ -38,7 +40,7 @@ class HttpxBackend(BaseHttpxBackend[AsyncClient], ServiceContainer):
         ServiceContainer.__init__(self)
 
     def bind_method(self, signature: Signature) -> ServiceMethod[HttpxBackend]:  # noqa: D102
-        response_type: TypeAdapter[Any] = TypeAdapter(signature.return_type)
+        response_type: TypeAdapter[Any] = get_type_adapter(cast(Hashable, signature.return_type))
 
         async def bound_method(self: BaseBoundService[HttpxBackend], *args: Any, **kwargs: Any) -> Any:
             request = signature.build_request(Request, self, args, kwargs)
