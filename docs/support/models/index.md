@@ -18,7 +18,7 @@ from httpx import Client
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Annotated[int, Payload()]) -> Annotated[int, Extract("data")]:
+    def post_anything(self, foo: Payload[int]) -> Annotated[int, Extract("data")]:
         ...
 
 
@@ -51,7 +51,7 @@ class Response:
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Annotated[Request, Payload()]) -> Response:
+    def post_anything(self, foo: Payload[int]) -> Response:
         ...
 
 
@@ -80,7 +80,7 @@ class Response(TypedDict):
 class Httpbin(Protocol):
     @http_method("POST")
     @path("/anything")
-    def post_anything(self, foo: Annotated[Request, Payload()]) -> Response:
+    def post_anything(self, foo: Payload[Request]) -> Response:
         ...
 
 
