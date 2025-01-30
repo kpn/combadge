@@ -4,15 +4,15 @@ from collections.abc import Hashable
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, cast
+from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, cast
 
 from annotated_types import SLOTS
-from typing_extensions import override
+from typing_extensions import TypeAlias, override
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.typevars import FunctionT
+from combadge.core.typevars import AnyT, FunctionT
 from combadge.support.http.abc import (
     HttpRequestFormData,
     HttpRequestHeaders,
@@ -142,37 +142,44 @@ class QueryArrayParam(ParameterMarker[HttpRequestQueryParams]):
             request.query_params.append((self.name, sub_value.value if isinstance(sub_value, Enum) else sub_value))
 
 
-@dataclass(**SLOTS)
-class Payload(ParameterMarker[HttpRequestPayload]):
-    """
-    Mark parameter as a request payload.
+if TYPE_CHECKING:
+    Payload: TypeAlias = Annotated[AnyT, ...]
+else:
 
-    An argument gets converted to a dictionary and passed over to a backend.
+    @dataclass(**SLOTS)
+    class Payload(ParameterMarker[HttpRequestPayload]):
+        """
+        Mark parameter as a request payload.
 
-    Examples:
-        >>> def call(body: Annotated[BodyModel, Payload()]) -> ...:
-        >>>     ...
-    """
+        An argument gets converted to a dictionary and passed over to a backend.
 
-    exclude_unset: bool = False
-    by_alias: bool = False
+        Examples:
+            >>> def call(body: Annotated[BodyModel, Payload()]) -> ...:
+            >>>     ...
 
-    @override
-    def __call__(self, request: HttpRequestPayload, value: Any) -> None:  # noqa: D102
-        value = get_type_adapter(cast(Hashable, type(value))).dump_python(
-            value,
-            by_alias=self.by_alias,
-            exclude_unset=self.exclude_unset,
-        )
-        if request.payload is None:
-            request.payload = value
-        elif isinstance(request.payload, dict):
-            request.payload.update(value)  # merge into the existing payload
-        else:
-            raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.payload)}`")
+            >>> def call(body: Payload[BodyModel]) -> ...:
+            >>>     ...
+        """
 
-    def __class_getitem__(cls, item: type[Any]) -> Any:
-        raise NotImplementedError("the shortcut is no longer supported, use `Annotated[..., Payload()]`")
+        exclude_unset: bool = False
+        by_alias: bool = False
+
+        @override
+        def __call__(self, request: HttpRequestPayload, value: Any) -> None:  # noqa: D102
+            value = get_type_adapter(cast(Hashable, type(value))).dump_python(
+                value,
+                by_alias=self.by_alias,
+                exclude_unset=self.exclude_unset,
+            )
+            if request.payload is None:
+                request.payload = value
+            elif isinstance(request.payload, dict):
+                request.payload.update(value)  # merge into the existing payload
+            else:
+                raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.payload)}`")
+
+        def __class_getitem__(cls, item: type[Any]) -> Any:
+            return Annotated[item, cls()]
 
 
 @dataclass(**SLOTS)
@@ -197,28 +204,35 @@ class Field(ParameterMarker[HttpRequestPayload]):
         request.payload[self.name] = value.value if isinstance(value, Enum) else value
 
 
-@dataclass(**SLOTS)
-class FormData(ParameterMarker[HttpRequestFormData]):
-    """
-    Mark parameter as a request form data.
+if TYPE_CHECKING:
+    FormData: TypeAlias = Annotated[AnyT, ...]
+else:
 
-    An argument gets converted to a dictionary and passed over to a backend.
+    @dataclass(**SLOTS)
+    class FormData(ParameterMarker[HttpRequestFormData]):
+        """
+        Mark parameter as a request form data.
 
-    Examples:
-        >>> def call(body: Annotated[FormModel, FormData()]) -> ...:
-        >>>     ...
-    """
+        An argument gets converted to a dictionary and passed over to a backend.
 
-    @override
-    def __call__(self, request: HttpRequestFormData, value: Any) -> None:  # noqa: D102
-        value = get_type_adapter(cast(Hashable, type(value))).dump_python(value, by_alias=True)
-        if not isinstance(value, dict):
-            raise TypeError(f"form data requires a dictionary, got {type(value)}")
-        for item_name, item_value in value.items():
-            request.append_form_field(item_name, item_value)
+        Examples:
+            >>> def call(body: Annotated[FormModel, FormData()]) -> ...:
+            >>>     ...
 
-    def __class_getitem__(cls, item: type[Any]) -> Any:
-        raise NotImplementedError("the shortcut is no longer supported, use `Annotated[..., FormData()]`")
+            >>> def call(body: FormData[FormModel]) -> ...:
+            >>>     ...
+        """
+
+        @override
+        def __call__(self, request: HttpRequestFormData, value: Any) -> None:  # noqa: D102
+            value = get_type_adapter(cast(Hashable, type(value))).dump_python(value, by_alias=True)
+            if not isinstance(value, dict):
+                raise TypeError(f"form data requires a dictionary, got {type(value)}")
+            for item_name, item_value in value.items():
+                request.append_form_field(item_name, item_value)
+
+        def __class_getitem__(cls, item: type[Any]) -> Any:
+            return Annotated[item, cls()]
 
 
 @dataclass(**SLOTS)

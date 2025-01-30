@@ -3,13 +3,14 @@ from typing import Annotated, Any
 import pytest
 
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.support.http.markers import CustomHeader
+from combadge.support.http.markers import CustomHeader, Payload
 
 
 @pytest.mark.parametrize(
     ("type_", "expected"),
     [
         (int, []),
+        (Payload[int], [Payload()]),
         (Annotated[str, CustomHeader("X-Header")], [CustomHeader("X-Header")]),
     ],
 )

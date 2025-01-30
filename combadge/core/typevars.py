@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING, Any, Callable, TypeVar
 if TYPE_CHECKING:
     from combadge.core.backend import BaseBackend
 
+AnyT = TypeVar("AnyT")
+
 BackendT = TypeVar("BackendT", bound="BaseBackend")
 """Backend type."""
 
