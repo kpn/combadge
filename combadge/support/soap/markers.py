@@ -1,15 +1,15 @@
 from collections.abc import Hashable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import Any, Callable, Generic, cast
+from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, cast
 
 from annotated_types import SLOTS
-from typing_extensions import override
+from typing_extensions import TypeAlias, override
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.typevars import FunctionT
+from combadge.core.typevars import AnyT, FunctionT
 from combadge.support.soap.abc import SoapHeader, SoapOperationName
 
 
@@ -38,34 +38,41 @@ def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
     return OperationName[Any](name).mark
 
 
-@dataclass(**SLOTS)
-class Header(ParameterMarker[SoapHeader]):
-    """
-    Mark parameter as a request header.
+if TYPE_CHECKING:
+    Header: TypeAlias = Annotated[AnyT, ...]
+else:
 
-    An argument gets converted to a dictionary and passed over to a backend.
+    @dataclass(**SLOTS)
+    class Header(ParameterMarker[SoapHeader]):
+        """
+        Mark parameter as a request header.
 
-    Examples:
-        >>> def call(body: Annotated[HeaderModel, Header()]) -> ...:
-        >>>     ...
-    """
+        An argument gets converted to a dictionary and passed over to a backend.
 
-    exclude_unset: bool = False
-    by_alias: bool = False
+        Examples:
+            >>> def call(body: Annotated[HeaderModel, Header()]) -> ...:
+            >>>     ...
 
-    @override
-    def __call__(self, request: SoapHeader, value: Any) -> None:  # noqa: D102
-        value = get_type_adapter(cast(Hashable, type(value))).dump_python(
-            value,
-            by_alias=self.by_alias,
-            exclude_unset=self.exclude_unset,
-        )
-        if request.soap_header is None:
-            request.soap_header = value
-        elif isinstance(request.soap_header, dict):
-            request.soap_header.update(value)  # merge into the existing header
-        else:
-            raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.soap_header)}`")
+            >>> def call(body: Header[HeaderModel]) -> ...:
+            >>>     ...
+        """
 
-    def __class_getitem__(cls, item: type[Any]) -> Any:
-        raise NotImplementedError("the shortcut is no longer supported, use `Annotated[..., Header()]`")
+        exclude_unset: bool = False
+        by_alias: bool = False
+
+        @override
+        def __call__(self, request: SoapHeader, value: Any) -> None:  # noqa: D102
+            value = get_type_adapter(cast(Hashable, type(value))).dump_python(
+                value,
+                by_alias=self.by_alias,
+                exclude_unset=self.exclude_unset,
+            )
+            if request.soap_header is None:
+                request.soap_header = value
+            elif isinstance(request.soap_header, dict):
+                request.soap_header.update(value)  # merge into the existing header
+            else:
+                raise ValueError(f"attempting to merge `{type(value)}` into `{type(request.soap_header)}`")
+
+        def __class_getitem__(cls, item: type[Any]) -> Any:
+            return Annotated[item, cls()]
