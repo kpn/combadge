@@ -14,7 +14,7 @@ _InputPayloadT = TypeVar("_InputPayloadT")
 _OutputPayloadT = TypeVar("_OutputPayloadT")
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class ResponseMarker(AnnotatedMarker, ABC):
     """Response marker: it transforms or contructs a response."""
 
@@ -23,7 +23,7 @@ class ResponseMarker(AnnotatedMarker, ABC):
         """Transform the response."""
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class Map(ResponseMarker):
     """Map a payload to a dictionary under the specified key."""
 
@@ -35,7 +35,7 @@ class Map(ResponseMarker):
         return {self.key: payload}
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class Extract(ResponseMarker):
     """Extract a value from the specified key."""
 
@@ -50,7 +50,7 @@ class Extract(ResponseMarker):
 _MutableMappingT = TypeVar("_MutableMappingT", bound=MutableMapping[Any, Any])
 
 
-@dataclass(init=False)
+@dataclass(frozen=True, init=False)
 class Mixin(ResponseMarker):
     """Mix in the inner marker outputs to the payload."""
 
@@ -65,7 +65,7 @@ class Mixin(ResponseMarker):
         Args:
             *inner: inner markers to apply to a payload
         """
-        self.inner = inner
+        object.__setattr__(self, "inner", inner)
 
     @override
     def __call__(self, response: Any, payload: _MutableMappingT) -> _MutableMappingT:  # noqa: D102

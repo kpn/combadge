@@ -2,27 +2,21 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
+from types import GenericAlias
 from typing import Any, Generic, TypeVar, Union
 
 from annotated_types import SLOTS
-from pydantic_core import Url
-
-from combadge._helpers.pydantic import get_type_adapter
-from combadge.core.backend import BaseBackend
-from combadge.core.errors import BackendError
-
-try:
-    from types import GenericAlias, UnionType  # type: ignore[attr-defined]
-except ImportError:
-    # Before Python 3.10:
-    UnionType = type(Union[int, str])  # type: ignore[assignment, misc]
-
 from pydantic import HttpUrl, TypeAdapter
+from pydantic_core import Url
 from typing_extensions import get_args as get_type_args
 from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
+from combadge._helpers.pydantic import get_type_adapter
+from combadge._helpers.typing import UnionType
+from combadge.core.backend import BaseBackend
+from combadge.core.errors import BackendError
 from combadge.support.soap.response import BaseSoapFault
 
 _ServiceProxyT = TypeVar("_ServiceProxyT", bound=ServiceProxy)
