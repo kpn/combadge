@@ -12,7 +12,7 @@ from combadge.core.markers.response import ResponseMarker
 from combadge.support.http.abc import SupportsHeaders, SupportsReasonPhrase, SupportsStatusCode, SupportsText
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class StatusCode(ResponseMarker):
     """
     Enrich the payload with response status code.
@@ -30,7 +30,7 @@ class StatusCode(ResponseMarker):
         return {self.key: HTTPStatus(response.status_code)}
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class ReasonPhrase(ResponseMarker):
     """Enrich the payload with HTTP reason message."""
 
@@ -42,7 +42,7 @@ class ReasonPhrase(ResponseMarker):
         return {self.key: response.reason_phrase}
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class Text(ResponseMarker):
     """
     Enrich the payload with HTTP response text.
@@ -66,7 +66,7 @@ class Text(ResponseMarker):
         return {self.key: response.text}
 
 
-@dataclass(**SLOTS)
+@dataclass(frozen=True, **SLOTS)
 class Header(ResponseMarker):
     """
     Enrich the payload with the specified HTTP header's value.
