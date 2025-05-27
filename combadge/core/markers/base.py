@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
-from typing import Annotated, Any
+from itertools import chain
+from typing import Annotated, Any, Union
 
-from typing_extensions import Self, get_origin
+from typing_extensions import Self, TypeAliasType, get_origin
 from typing_extensions import get_args as get_type_args
 
-from combadge._helpers.typing import unwrap_type_alias
+from combadge._helpers.typing import UnionType
 
 
 class AnnotatedMarker:
@@ -19,9 +19,21 @@ class AnnotatedMarker:
     __slots__ = ()
 
     @classmethod
-    def extract(cls, type_: type[Any] | None) -> Iterable[Self]:
+    def extract(cls, type_: type[Any] | None) -> list[Self]:
         """Extract all parameter markers from the type annotation, which are instances of the current class."""
-        type_ = unwrap_type_alias(type_)
-        if get_origin(type_) is Annotated:
-            return tuple(arg for arg in get_type_args(type_) if isinstance(arg, cls))
-        return ()
+        if isinstance(type_, TypeAliasType):
+            type_ = type_.__value__
+        type_origin = get_origin(type_)
+        if type_origin is Annotated:
+            return list(
+                chain.from_iterable(
+                    (arg,)
+                    if isinstance(arg, cls)  # it's just a marker then
+                    else cls.extract(arg)  # try and extract markers from the type parameter
+                    for arg in get_type_args(type_)
+                ),
+            )
+        if type_origin in (Union, UnionType):
+            # Extract marker from the union alternatives:
+            return [marker for inner_type in get_type_args(type_) for marker in cls.extract(inner_type)]
+        return []
