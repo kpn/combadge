@@ -3,10 +3,12 @@ name: Check
 on:
   push:
     branches:
-    - main
+    - "main"
+    - "4.x"
   pull_request:
     branches:
-    - main
+    - "main"
+    - "4.x"
 
 env:
   ANSICON: 1
