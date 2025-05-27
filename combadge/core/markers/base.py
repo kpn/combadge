@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from itertools import chain
-from types import UnionType
 from typing import Annotated, Any, Union
 
 from typing_extensions import Self, TypeAliasType, get_origin
 from typing_extensions import get_args as get_type_args
+
+from combadge._helpers.typing import UnionType
 
 
 class AnnotatedMarker:
