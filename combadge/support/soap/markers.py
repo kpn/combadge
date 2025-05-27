@@ -1,25 +1,24 @@
+from collections.abc import Hashable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, cast
 
+from annotated_types import SLOTS
 from typing_extensions import TypeAlias, override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
 from combadge.core.markers.parameter import ParameterMarker
-from combadge.core.typevars import FunctionT
-from combadge.support.soap.abc import ContainsSoapHeader, ContainsSoapOperationName
-
-_T = TypeVar("_T")
+from combadge.core.typevars import AnyT, FunctionT
+from combadge.support.soap.abc import SoapHeader, SoapOperationName
 
 
 @dataclass(**SLOTS)
-class OperationName(Generic[FunctionT], MethodMarker[ContainsSoapOperationName, FunctionT]):  # noqa: D101
+class OperationName(Generic[FunctionT], MethodMarker[SoapOperationName, FunctionT]):  # noqa: D101
     name: str
 
     @override
-    def prepare_request(self, request: ContainsSoapOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
+    def prepare_request(self, request: SoapOperationName, _arguments: BoundArguments) -> None:  # noqa: D102
         request.operation_name = self.name
 
 
@@ -39,24 +38,22 @@ def operation_name(name: str) -> Callable[[FunctionT], FunctionT]:
     return OperationName[Any](name).mark
 
 
-if not TYPE_CHECKING:
+if TYPE_CHECKING:
+    Header: TypeAlias = Annotated[AnyT, ...]
+else:
 
     @dataclass(**SLOTS)
-    class Header(ParameterMarker[ContainsSoapHeader]):
+    class Header(ParameterMarker[SoapHeader]):
         """
         Mark parameter as a request header.
 
         An argument gets converted to a dictionary and passed over to a backend.
 
         Examples:
-            Simple usage:
-
-            >>> def call(body: Header[HeaderModel]) -> ...:
+            >>> def call(body: Annotated[HeaderModel, Header()]) -> ...:
             >>>     ...
 
-            Equivalent expanded usage:
-
-            >>> def call(body: Annotated[HeaderModel, Header()]) -> ...:
+            >>> def call(body: Header[HeaderModel]) -> ...:
             >>>     ...
         """
 
@@ -64,8 +61,8 @@ if not TYPE_CHECKING:
         by_alias: bool = False
 
         @override
-        def __call__(self, request: ContainsSoapHeader, value: Any) -> None:  # noqa: D102
-            value = get_type_adapter(type(value)).dump_python(
+        def __call__(self, request: SoapHeader, value: Any) -> None:  # noqa: D102
+            value = get_type_adapter(cast(Hashable, type(value))).dump_python(
                 value,
                 by_alias=self.by_alias,
                 exclude_unset=self.exclude_unset,
@@ -79,6 +76,3 @@ if not TYPE_CHECKING:
 
         def __class_getitem__(cls, item: type[Any]) -> Any:
             return Annotated[item, cls()]
-
-else:
-    FormData: TypeAlias = _T

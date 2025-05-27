@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 from httpx import Response
 
-from combadge.support.http.abc import ContainsUrlPath
+from combadge.support.http.abc import HttpRequestUrlPath
 from combadge.support.http.markers import Header, Path, ReasonPhrase, StatusCode, Text
 
 
@@ -20,14 +20,14 @@ from combadge.support.http.markers import Header, Path, ReasonPhrase, StatusCode
 )
 def test_path_format(format_: str, call_args: tuple[Any, ...], call_kwargs: dict[str, Any], expected_path: str) -> None:
     mark = Path[Any](format_)
-    request = ContainsUrlPath()
+    request = HttpRequestUrlPath()
     mark.prepare_request(request, _example_signature.bind(*call_args, **call_kwargs))
     assert request.url_path == expected_path
 
 
 def test_path_factory() -> None:
     mark = Path[Any](lambda _arguments: "don't care")
-    request = ContainsUrlPath()
+    request = HttpRequestUrlPath()
     mark.prepare_request(request, _example_signature.bind("positional", keyword="keyword"))
     assert request.url_path == "don't care"
 

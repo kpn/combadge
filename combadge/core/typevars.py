@@ -1,15 +1,17 @@
 """Internal type variables."""
 
-from typing import Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
-BackendT = TypeVar("BackendT")
+if TYPE_CHECKING:
+    from combadge.core.backend import BaseBackend
+
+AnyT = TypeVar("AnyT")
+
+BackendT = TypeVar("BackendT", bound="BaseBackend")
 """Backend type."""
 
 BackendRequestT = TypeVar("BackendRequestT")
 """Backend-specific request type."""
-
-BackendResponseT = TypeVar("BackendResponseT")
-"""Backend-specific response type."""
 
 ResponseT = TypeVar("ResponseT")
 """User-defined response type of a service call."""

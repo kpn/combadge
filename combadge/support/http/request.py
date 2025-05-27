@@ -1,25 +1,26 @@
 from dataclasses import dataclass
 
-from combadge._helpers.dataclasses import SLOTS
+from annotated_types import SLOTS
+
 from combadge.support.http.abc import (
-    ContainsFormData,
-    ContainsHttpHeaders,
-    ContainsMethod,
-    ContainsPayload,
-    ContainsQueryParams,
-    ContainsUrlPath,
+    HttpRequestFormData,
+    HttpRequestHeaders,
+    HttpRequestMethod,
+    HttpRequestPayload,
+    HttpRequestQueryParams,
+    HttpRequestUrlPath,
 )
 from combadge.support.shared.request import BaseBackendRequest
 
 
 @dataclass(**SLOTS)
 class Request(
-    ContainsMethod,
-    ContainsUrlPath,
-    ContainsPayload,
-    ContainsQueryParams,
-    ContainsFormData,
-    ContainsHttpHeaders,
     BaseBackendRequest,
+    HttpRequestFormData,
+    HttpRequestHeaders,
+    HttpRequestMethod,
+    HttpRequestPayload,
+    HttpRequestQueryParams,
+    HttpRequestUrlPath,
 ):
     """Backend-agnostic HTTP request."""

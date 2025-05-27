@@ -4,12 +4,16 @@ from dataclasses import dataclass
 from http import HTTPStatus
 from typing import Any
 
-# noinspection PyUnresolvedReferences
+from annotated_types import SLOTS
 from typing_extensions import override
 
-from combadge._helpers.dataclasses import SLOTS
 from combadge.core.markers.response import ResponseMarker
-from combadge.support.http.abc import SupportsHeaders, SupportsReasonPhrase, SupportsStatusCode, SupportsText
+from combadge.support.http.abc import (
+    HttpResponseHeaders,
+    HttpResponseReasonPhrase,
+    HttpResponseStatusCode,
+    HttpResponseText,
+)
 
 
 @dataclass(frozen=True, **SLOTS)
@@ -26,7 +30,7 @@ class StatusCode(ResponseMarker):
     """Key under which the status code should mapped in the payload."""
 
     @override
-    def __call__(self, response: SupportsStatusCode, payload: Any) -> dict[Any, Any]:  # noqa: D102
+    def __call__(self, response: HttpResponseStatusCode, payload: Any) -> dict[Any, Any]:  # noqa: D102
         return {self.key: HTTPStatus(response.status_code)}
 
 
@@ -38,7 +42,7 @@ class ReasonPhrase(ResponseMarker):
     """Key under which the reason message should mapped in the payload."""
 
     @override
-    def __call__(self, response: SupportsReasonPhrase, payload: Any) -> dict[Any, Any]:  # noqa: D102
+    def __call__(self, response: HttpResponseReasonPhrase, payload: Any) -> dict[Any, Any]:  # noqa: D102
         return {self.key: response.reason_phrase}
 
 
@@ -62,7 +66,7 @@ class Text(ResponseMarker):
     """Key under which the text contents should assigned in the payload."""
 
     @override
-    def __call__(self, response: SupportsText, payload: Any) -> dict[Any, Any]:  # noqa: D102
+    def __call__(self, response: HttpResponseText, payload: Any) -> dict[Any, Any]:  # noqa: D102
         return {self.key: response.text}
 
 
@@ -96,7 +100,7 @@ class Header(ResponseMarker):
     """Key under which the header contents should assigned in the payload."""
 
     @override
-    def __call__(self, response: SupportsHeaders, payload: Any) -> dict[Any, Any]:  # noqa: D102
+    def __call__(self, response: HttpResponseHeaders, payload: Any) -> dict[Any, Any]:  # noqa: D102
         try:
             value = response.headers[self.header]
         except KeyError:

@@ -2,10 +2,7 @@ from abc import abstractmethod
 from typing import Any, Callable, Protocol
 from unittest.mock import Mock
 
-from typing_extensions import assert_type
-
 from combadge.core.binder import _enumerate_methods, _wrap, bind
-from combadge.core.interfaces import SupportsService
 from combadge.core.markers.method import MethodMarker, wrap_with
 from combadge.core.service import BaseBoundService
 
@@ -13,7 +10,7 @@ from combadge.core.service import BaseBoundService
 def test_enumerate_bindable_methods() -> None:
     """Test that bindable methods are returned."""
 
-    class TestService(SupportsService, Protocol):
+    class TestService(Protocol):
         @abstractmethod
         def invoke(self) -> None:
             raise NotImplementedError
@@ -31,7 +28,7 @@ def test_enumerate_bindable_methods() -> None:
 def test_enumerate_class_methods() -> None:
     """Test that class methods are ignored."""
 
-    class TestService(SupportsService, Protocol):
+    class TestService(Protocol):
         @classmethod
         def ignored(cls) -> None:
             raise NotImplementedError
@@ -42,7 +39,7 @@ def test_enumerate_class_methods() -> None:
 def test_enumerate_private_methods() -> None:
     """Test that «private» methods are ignored."""
 
-    class TestService(SupportsService, Protocol):
+    class TestService(Protocol):
         def _ignored(self) -> None:
             raise NotImplementedError
 
@@ -74,13 +71,6 @@ def test_decorator_ordering() -> None:
 def test_protocol_class_var() -> None:
     class ServiceProtocol(Protocol): ...
 
-    service = bind(ServiceProtocol, Mock())  # type: ignore[type-abstract]
+    service = bind(ServiceProtocol, Mock())
     assert isinstance(service, BaseBoundService)
     assert service.__combadge_protocol__ is ServiceProtocol
-
-
-def test_service_type() -> None:
-    class ServiceProtocol(SupportsService): ...
-
-    service = ServiceProtocol.bind(Mock())
-    assert_type(service, ServiceProtocol)

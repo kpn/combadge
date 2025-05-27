@@ -15,7 +15,8 @@ from combadge.core.service import BaseBoundService
 from combadge.core.typevars import BackendT, FunctionT, ServiceProtocolT
 
 if TYPE_CHECKING:
-    from combadge.core.interfaces import MethodBinder, ProvidesBinder, ServiceMethod
+    from combadge.core.backend import BaseBackend
+    from combadge.core.interfaces import ServiceMethod
 
     def lru_cache(maxsize: int | None) -> Callable[[FunctionT], FunctionT]: ...
 
@@ -23,7 +24,7 @@ else:
     from functools import lru_cache
 
 
-def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> ServiceProtocolT:
+def bind(from_protocol: type[ServiceProtocolT], to_backend: BaseBackend) -> ServiceProtocolT:
     """
     Create a service instance which implements the specified protocol by calling the specified backend.
 
@@ -32,13 +33,13 @@ def bind(from_protocol: type[ServiceProtocolT], to_backend: ProvidesBinder) -> S
         to_backend: backend which should perform the service requests
     """
 
-    return bind_class(from_protocol, to_backend.binder)(to_backend)
+    return bind_class(from_protocol, to_backend)(to_backend)
 
 
 @lru_cache(maxsize=100)
 def bind_class(
     from_protocol: type[ServiceProtocolT],
-    bind_method: MethodBinder[BackendT],
+    to_backend: BackendT,
 ) -> Callable[[BackendT], ServiceProtocolT]:
     """Create a class which implements the specified protocol, but not yet parametrized with a backend."""
 
@@ -51,9 +52,9 @@ def bind_class(
 
     for name, method in _enumerate_methods(from_protocol):
         signature = Signature.from_method(method)
-        bound_method: ServiceMethod = bind_method(signature)  # generate implementation by the backend
+        bound_method: ServiceMethod = to_backend.bind_method(signature)  # generate implementation by the backend
         update_wrapper(bound_method, method)
-        bound_method = _wrap(bound_method, signature.method_markers)  # apply user decorators
+        bound_method = _wrap(bound_method, signature.method_markers)
         bound_method = override(bound_method)  # no functional change, just possibly setting `__override__`
         setattr(BoundService, name, bound_method)
 
@@ -63,6 +64,15 @@ def bind_class(
 
 
 def _wrap(method: Callable[..., Any], with_markers: Iterable[MethodMarker]) -> Callable[..., Any]:
+    """
+    Apply method markers.
+
+    Method markers may wrap or modify the bound method.
+
+    Args:
+        method: bound method in the protocol implementation
+        with_markers: method markers to apply
+    """
     for marker in with_markers:
         method = marker.wrap(method)
     return method
