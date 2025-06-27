@@ -1,10 +1,10 @@
-from collections.abc import Hashable
+from collections.abc import Callable, Hashable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Annotated, Any, Callable, Generic, cast
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeAlias, cast
 
 from annotated_types import SLOTS
-from typing_extensions import TypeAlias, override
+from typing_extensions import override
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Annotated, Literal, Protocol, Union
+from typing import Annotated, Literal, Protocol
 
 import pytest
 from pydantic import BaseModel, Field, HttpUrl, RootModel
@@ -40,7 +40,7 @@ class SupportsNumberConversion(Protocol):
     def number_to_words(
         self,
         request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, _TestFault]:
+    ) -> NumberTooLargeResponse | NumberToWordsResponse | _TestFault:
         raise NotImplementedError
 
 
@@ -50,7 +50,7 @@ class SupportsNumberConversionAsync(Protocol):
     async def number_to_words(
         self,
         request: Annotated[NumberToWordsRequest, Payload(by_alias=True)],
-    ) -> Union[NumberTooLargeResponse, NumberToWordsResponse, _TestFault]:
+    ) -> NumberTooLargeResponse | NumberToWordsResponse | _TestFault:
         raise NotImplementedError
 
 
@@ -98,7 +98,7 @@ def test_sad_path_web_fault(number_conversion_service: SupportsNumberConversion)
 @pytest.mark.vcr
 async def test_happy_path_scalar_response_async(number_conversion_service_async: SupportsNumberConversionAsync) -> None:
     response = await number_conversion_service_async.number_to_words(NumberToWordsRequest(number=42))
-    assert_type(response, Union[NumberToWordsResponse, NumberTooLargeResponse, _TestFault])
+    assert_type(response, NumberToWordsResponse | NumberTooLargeResponse | _TestFault)
 
     response = response.unwrap()
     assert_type(response, NumberToWordsResponse)
@@ -119,7 +119,7 @@ async def test_happy_path_scalar_response_async(number_conversion_service_async:
         ),
     ],
 )
-def test_happy_path_with_params_sync(service: Union[ByServiceName, ByBindingName]) -> None:
+def test_happy_path_with_params_sync(service: ByServiceName | ByBindingName) -> None:
     backend = SyncZeepBackend.with_params(
         Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
         service=service,
@@ -143,7 +143,7 @@ def test_happy_path_with_params_sync(service: Union[ByServiceName, ByBindingName
         ),
     ],
 )
-async def test_happy_path_with_params_async(service: Union[ByServiceName, ByBindingName]) -> None:
+async def test_happy_path_with_params_async(service: ByServiceName | ByBindingName) -> None:
     backend = AsyncZeepBackend.with_params(
         Path(__file__).parent / "wsdl" / "NumberConversion.wsdl",
         service=service,

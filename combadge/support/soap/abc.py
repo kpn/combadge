@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from annotated_types import SLOTS
 
@@ -8,7 +8,7 @@ from annotated_types import SLOTS
 class SoapOperationName:
     """SOAP operation name."""
 
-    operation_name: Optional[str] = None
+    operation_name: str | None = None
 
     def get_operation_name(self) -> str:
         """Get validated SOAP operation name."""
@@ -21,5 +21,5 @@ class SoapOperationName:
 class SoapHeader:
     """SOAP request header."""
 
-    soap_header: Optional[Any] = None
+    soap_header: Any | None = None
     """SOAP header payload."""

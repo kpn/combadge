@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from functools import update_wrapper
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from typing_extensions import override
 

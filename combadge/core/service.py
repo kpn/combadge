@@ -1,5 +1,5 @@
 from types import TracebackType
-from typing import Any, ClassVar, Generic, Optional
+from typing import Any, ClassVar, Generic
 
 from typing_extensions import Self
 
@@ -23,9 +23,9 @@ class BaseBoundService(Generic[BackendT]):
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         # Remove the freed instance from the cache:
         del self.__combadge_backend__[self.__combadge_protocol__]  # type: ignore[attr-defined]
@@ -38,9 +38,9 @@ class BaseBoundService(Generic[BackendT]):
 
     async def __aexit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> Any:
         # Remove the freed instance from the cache:
         del self.__combadge_backend__[self.__combadge_protocol__]  # type: ignore[attr-defined]

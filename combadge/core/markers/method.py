@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC
+from collections.abc import Callable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import Any, Callable, Generic
+from typing import Any, Generic
 
 from annotated_types import SLOTS
 from typing_extensions import override

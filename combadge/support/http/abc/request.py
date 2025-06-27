@@ -1,7 +1,7 @@
 """Mixins for HTTP-related request and response classes."""
 
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -15,7 +15,7 @@ class HttpRequestHeaders:
 class HttpRequestUrlPath:
     """HTTP request URL path."""
 
-    url_path: Optional[str] = None
+    url_path: str | None = None
 
     def get_url_path(self) -> str:
         """Get validated URL path."""
@@ -28,7 +28,7 @@ class HttpRequestUrlPath:
 class HttpRequestMethod:
     """HTTP request method."""
 
-    method: Optional[str] = None
+    method: str | None = None
 
     def get_method(self) -> str:
         """Get a validated HTTP method."""
@@ -66,4 +66,4 @@ class HttpRequestFormData:
 class HttpRequestPayload:
     """HTTP request payload."""
 
-    payload: Optional[Any] = None
+    payload: Any | None = None
