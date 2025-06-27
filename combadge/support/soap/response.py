@@ -1,6 +1,6 @@
 """Response extensions for SOAP."""
 
-from typing import NoReturn, Optional
+from typing import NoReturn
 
 from combadge.core.response import ErrorResponse
 
@@ -26,7 +26,7 @@ class BaseSoapFault(ErrorResponse):
     code: str
     message: str
 
-    def raise_for_result(self, exception: Optional[BaseException] = None) -> NoReturn:
+    def raise_for_result(self, exception: BaseException | None = None) -> NoReturn:
         """Raise the derived error for this fault."""
         if not exception:
             raise self.Error(self)  # type: ignore[arg-type]

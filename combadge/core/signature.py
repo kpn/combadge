@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from inspect import BoundArguments
 from inspect import signature as get_signature
-from typing import Any, Callable, Generic
+from typing import Any, Generic
 
 from annotated_types import SLOTS
 from pydantic import BaseModel, TypeAdapter

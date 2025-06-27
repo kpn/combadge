@@ -2,19 +2,18 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from types import GenericAlias
+from types import GenericAlias, UnionType
 from typing import Any, Generic, TypeVar, Union
+from typing import get_args as get_type_args
+from typing import get_origin as get_type_origin
 
 from annotated_types import SLOTS
 from pydantic import HttpUrl, TypeAdapter
 from pydantic_core import Url
-from typing_extensions import get_args as get_type_args
-from typing_extensions import get_origin as get_type_origin
 from zeep.exceptions import Fault
 from zeep.proxy import OperationProxy, ServiceProxy
 
 from combadge._helpers.pydantic import get_type_adapter
-from combadge._helpers.typing import UnionType
 from combadge.core.backend import BaseBackend
 from combadge.core.errors import BackendError
 from combadge.support.soap.response import BaseSoapFault
@@ -69,11 +68,11 @@ class BaseZeepBackend(BaseBackend, ABC, Generic[_ServiceProxyT, _OperationProxyT
                 and issubclass(return_type, BaseSoapFault)
             ):
                 # We should treat the return type as a SOAP fault type.
-                fault_type = Union[fault_type, return_type] if fault_type is not _UNSET else return_type
+                fault_type = fault_type | return_type if fault_type is not _UNSET else return_type
             elif response_type is _UNSET:
                 response_type = return_type
             else:
-                response_type = Union[response_type, return_type]
+                response_type = response_type | return_type
 
         if response_type is _UNSET:
             response_type = None
@@ -81,7 +80,7 @@ class BaseZeepBackend(BaseBackend, ABC, Generic[_ServiceProxyT, _OperationProxyT
             fault_type = BaseSoapFault
 
         # Base SOAP fault should always be present as a fallback.
-        return response_type, Union[fault_type, BaseSoapFault]
+        return response_type, fault_type | BaseSoapFault
 
     @classmethod
     def _adapt_response_type(cls, response_type: Any) -> tuple[TypeAdapter[Any], TypeAdapter[Any]]:

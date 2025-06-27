@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Annotated, Any, Callable, Protocol, Union
+from collections.abc import Callable
+from typing import Annotated, Any, Protocol
 
 import pytest
 from httpx import AsyncClient, Client
@@ -84,7 +85,7 @@ def test_headers_sync() -> None:
             self,
             foo: Annotated[str, CustomHeader("x-foo")],
             bar: Annotated[str, CustomHeader("x-bar")] = "barval",
-            baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
+            baz: Annotated[str | Callable[[], str], CustomHeader("x-baz")] = lambda: "bazval",
         ) -> Annotated[_HeadersResponse, Mixin(Header("content-length", "content_length"))]: ...
 
     service = SyncHttpxBackend(Client(base_url="https://httpbin.org"))[SupportsHttpbin]
@@ -112,7 +113,7 @@ async def test_headers_async() -> None:
             self,
             foo: Annotated[str, CustomHeader("x-foo")],
             bar: Annotated[str, CustomHeader("x-bar")] = "barval",
-            baz: Annotated[Union[str, Callable[[], str]], CustomHeader("x-baz")] = lambda: "bazval",
+            baz: Annotated[str | Callable[[], str], CustomHeader("x-baz")] = lambda: "bazval",
         ) -> Annotated[_HeadersResponse, Mixin(Header("content-length", "content_length"))]: ...
 
     service = AsyncHttpxBackend(AsyncClient(base_url="https://httpbin.org"))[SupportsHttpbin]

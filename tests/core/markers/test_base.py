@@ -1,4 +1,4 @@
-from typing import Annotated, Any, TypeVar, Union
+from typing import Annotated, Any, TypeVar
 
 import pytest
 
@@ -15,7 +15,7 @@ AnyT = TypeVar("AnyT")
         (Payload[int], [Payload()]),
         (Annotated[str, CustomHeader("X-Header")], [CustomHeader("X-Header")]),
         (
-            Annotated[Union[AnyT, int], Mixin(StatusCode())][Annotated[int, Map("items")]],
+            Annotated[AnyT | int, Mixin(StatusCode())][Annotated[int, Map("items")]],
             [Map("items"), Mixin(StatusCode())],
         ),
     ],

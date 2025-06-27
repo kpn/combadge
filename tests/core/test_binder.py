@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Any, Callable, Protocol
+from collections.abc import Callable
+from typing import Any, Protocol
 from unittest.mock import Mock
 
 from combadge.core.binder import _enumerate_methods, _wrap, bind

@@ -1,6 +1,7 @@
 """Internal type variables."""
 
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, TypeVar
 
 if TYPE_CHECKING:
     from combadge.core.backend import BaseBackend
