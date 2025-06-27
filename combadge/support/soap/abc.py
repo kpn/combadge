@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 
 from annotated_types import SLOTS
 
@@ -21,5 +20,5 @@ class SoapOperationName:
 class SoapHeader:
     """SOAP request header."""
 
-    soap_header: Any | None = None
+    soap_header: object | None = None
     """SOAP header payload."""

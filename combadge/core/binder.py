@@ -63,7 +63,7 @@ def bind_class(
     return BoundService
 
 
-def _wrap(method: Callable[..., Any], with_markers: Iterable[MethodMarker]) -> Callable[..., Any]:
+def _wrap(method: FunctionT, with_markers: Iterable[MethodMarker]) -> FunctionT:
     """
     Apply method markers.
 
@@ -78,7 +78,7 @@ def _wrap(method: Callable[..., Any], with_markers: Iterable[MethodMarker]) -> C
     return method
 
 
-def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Any]]:
+def _enumerate_methods(of_protocol: type) -> Iterable[tuple[str, Callable[..., Any]]]:
     """Enumerate the service protocol methods."""
 
     for name, method in get_members(of_protocol, callable):

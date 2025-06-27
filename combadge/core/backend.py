@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import cast
 
 from typing_extensions import Self
 
@@ -20,7 +20,7 @@ class BaseBackend(ABC):
     __slots__ = ("_service_cache",)
 
     def __init__(self) -> None:  # noqa: D107
-        self._service_cache: dict[type, Any] = {}
+        self._service_cache: dict[type, object] = {}
 
     @classmethod
     @abstractmethod
@@ -56,7 +56,7 @@ class BaseBackend(ABC):
         service = self._service_cache.get(protocol)
         if service is None:
             service = self._service_cache[protocol] = bind(protocol, self)
-        return service  # noqa: RET504
+        return cast(ServiceProtocolT, service)  # noqa: RET504
 
     def __delitem__(self, protocol: type) -> None:
         """
