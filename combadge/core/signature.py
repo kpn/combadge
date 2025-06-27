@@ -42,7 +42,7 @@ class Signature:
     """A callable that binds the method's arguments, it is cached here to improve performance."""
 
     @classmethod
-    def from_method(cls, method: Any) -> Signature:
+    def from_method(cls, method: Callable[..., Any]) -> Signature:
         """Create a signature from the specified method."""
         annotations_ = get_annotations(method, eval_str=True)
         return_type = cls._extract_return_type(annotations_)
