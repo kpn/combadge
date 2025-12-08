@@ -143,7 +143,7 @@ urllib3 = "1.26.20"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-black = "24.10.0"
+black = "25.12.0"
 cairosvg = "2.7.1"
 mkdocs-autorefs = "1.4.1"
 mkdocs-git-committers-plugin-2 = "2.5.0"
