@@ -48,10 +48,10 @@ class HttpxBackend(BaseHttpxBackend[Client]):
                 response: Response = self.__combadge_backend__._client.request(
                     request.get_method(),
                     request.get_url_path(),
-                    json=request.payload,
-                    data=request.form_data,
-                    params=request.query_params,
-                    headers=request.http_headers,
+                    json=(request.payload or None),
+                    data=(request.form_data or None),
+                    params=(request.query_params or None),
+                    headers=(request.http_headers or None),
                 )
                 payload = self.__combadge_backend__._parse_payload(response)
             return signature.apply_response_markers(response, payload, response_type)
