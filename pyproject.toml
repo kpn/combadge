@@ -148,7 +148,7 @@ cairosvg = "2.7.1"
 mkdocs-autorefs = "1.4.1"
 mkdocs-git-committers-plugin-2 = "2.5.0"
 mkdocs-git-revision-date-localized-plugin = "1.4.5"
-mkdocs-material = "9.6.12"
+mkdocs-material = "9.7.7"
 mkdocstrings = { version = "0.29.1", extras = ["python"] }
 pillow = "11.2.1"
 
