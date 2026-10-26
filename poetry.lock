@@ -157,13 +157,13 @@ xcb = ["xcffib (>=1.4.0)"]
 
 [[package]]
 name = "cairosvg"
-version = "2.7.1"
+version = "2.9.1"
 description = "A Simple SVG Converter based on Cairo"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.10"
 files = [
-    {file = "CairoSVG-2.7.1-py3-none-any.whl", hash = "sha256:8a5222d4e6c3f86f1f7046b63246877a63b49923a1cd202184c3a634ef546b3b"},
-    {file = "CairoSVG-2.7.1.tar.gz", hash = "sha256:432531d72347291b9a9ebfb6777026b607563fd8719c46ee742db0aef7271ba0"},
+    {file = "cairosvg-2.9.1-py3-none-any.whl", hash = "sha256:f91c5628e834be024a0ed4544d76261cd84016a4c73bcdf26c386495825c05a1"},
+    {file = "cairosvg-2.9.1.tar.gz", hash = "sha256:861bc28ad97ce4f537d50eb3d6ee97a7afcccec9c61ac25c4e7d073fe409aec7"},
 ]
 
 [package.dependencies]
@@ -174,7 +174,7 @@ pillow = "*"
 tinycss2 = "*"
 
 [package.extras]
-doc = ["sphinx", "sphinx-rtd-theme"]
+doc = ["sphinx", "sphinx_rtd_theme"]
 test = ["flake8", "isort", "pytest"]
 
 [[package]]
@@ -2479,4 +2479,4 @@ zeep = ["zeep"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10.0"
-content-hash = "c18bdb95d5afb6cc24cbf435c2a222661e3dd7b7670d3dce6e56a6c3c017a9fe"
+content-hash = "0802a5b837a0aee3f71c37e2b53c433093b8cf41d6ab0ec218156ddcc937576e"
