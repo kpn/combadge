@@ -144,7 +144,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 black = "26.3.1"
-cairosvg = "2.7.1"
+cairosvg = "2.9.1"
 mkdocs-autorefs = "1.4.1"
 mkdocs-git-committers-plugin-2 = "2.5.0"
 mkdocs-git-revision-date-localized-plugin = "1.4.5"
