@@ -38,7 +38,7 @@ jobs:
         name: "✨ Set up Python"
         id: "setup-python"
         with:
-          python-version: 3.13
+          python-version: 3.13 || 3.15
           cache: poetry
 
       - name: "📥 Install dependencies"
