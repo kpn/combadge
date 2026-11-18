@@ -1,9 +1,9 @@
 .PHONY: all
-all: install lint test build docs
+all: install lint test publish docs
 
 .PHONY: clean
 clean:
-	poetry run ruff --clean
+	poetry run ruff clean
 	rm -rf .mypy_cache
 	rm -rf .pytest_cache
 	rm -rf *.coverage coverage.*
@@ -11,7 +11,7 @@ clean:
 
 .PHONY: install
 install:
-	poetry install --sync --all-extras --with=dev --with=docs
+	poetry sync --all-extras --with=dev --with=docs
 
 .PHONY: check
 check: lint test
@@ -43,9 +43,9 @@ test:
 test/record:
 	poetry run pytest --record-mode=once tests
 
-.PHONY: build
-build:
-	poetry build
+.PHONY: publish
+publish:
+	poetry publish --build --dry-run --ansi
 
 .PHONY: docs
 docs:

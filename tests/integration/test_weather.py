@@ -1,9 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Protocol
 
 import pytest
-from httpx import AsyncClient, Client
+from httpx2 import AsyncClient, Client
 from pydantic import BaseModel, Field, ValidationError, validate_call
-from typing_extensions import Protocol
 
 from combadge.core.markers.method import wrap_with
 from combadge.support.http.markers import QueryParam, http_method, path

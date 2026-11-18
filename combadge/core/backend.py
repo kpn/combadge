@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import cast
-
-from typing_extensions import Self
+from typing import Self, cast
 
 from combadge.core.binder import bind
 from combadge.core.interfaces import ServiceMethod

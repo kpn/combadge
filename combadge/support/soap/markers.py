@@ -1,10 +1,7 @@
 from collections.abc import Callable, Hashable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeAlias, cast
-
-from annotated_types import SLOTS
-from typing_extensions import override
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeAlias, cast, override
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
@@ -13,7 +10,7 @@ from combadge.core.typevars import AnyT, FunctionT
 from combadge.support.soap.abc import SoapHeader, SoapOperationName
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class OperationName(Generic[FunctionT], MethodMarker[SoapOperationName, FunctionT]):  # noqa: D101
     name: str
 
@@ -42,7 +39,7 @@ if TYPE_CHECKING:
     Header: TypeAlias = Annotated[AnyT, ...]
 else:
 
-    @dataclass(**SLOTS)
+    @dataclass(slots=True)
     class Header(ParameterMarker[SoapHeader]):
         """
         Mark parameter as a request header.

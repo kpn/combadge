@@ -3,7 +3,7 @@ from collections.abc import Callable
 from typing import Annotated, Any, Protocol
 
 import pytest
-from httpx import AsyncClient, Client
+from httpx2 import AsyncClient, Client
 from pydantic import BaseModel, Field
 
 from combadge.core.errors import BackendError

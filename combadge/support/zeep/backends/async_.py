@@ -4,10 +4,9 @@ from collections.abc import Collection
 from os import PathLike, fspath
 from ssl import SSLContext
 from types import TracebackType
-from typing import Any
+from typing import Any, Self, override
 
-import httpx
-from typing_extensions import Self, override
+import httpx2
 from zeep import AsyncClient, Plugin
 from zeep.exceptions import Fault
 from zeep.helpers import serialize_object
@@ -39,7 +38,7 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy]):
         operation_timeout: float | None = None,
         wsse: UsernameToken | None = None,
         verify_ssl: PathLike | bool | SSLContext = True,
-        cert: PathLike | tuple[PathLike, PathLike | None] | tuple[PathLike, PathLike | None, str | None] | None = None,
+        cert: PathLike | tuple[PathLike, PathLike] | tuple[PathLike, PathLike, str] | None = None,
     ) -> ZeepBackend:
         """
         Instantiate the backend using a set of the most common parameters.
@@ -49,10 +48,12 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy]):
         verify = verify_ssl if isinstance(verify_ssl, (bool, SSLContext)) else fspath(verify_ssl)
 
         if isinstance(cert, tuple):
-            cert_file = cert[0]
-            key_file = cert[1]
-            password = cert[2] if len(cert) == 3 else None  # type: ignore[misc]
-            cert_ = (fspath(cert_file), fspath(key_file) if key_file else None, password)
+            cert_file = fspath(cert[0])
+            key_file = fspath(cert[1])
+            if len(cert) == 2:
+                cert_ = (cert_file, key_file)
+            elif len(cert) == 3:
+                cert_ = (cert_file, key_file, cert[2])
         elif cert is not None:
             cert_ = fspath(cert)
         else:
@@ -60,8 +61,8 @@ class ZeepBackend(BaseZeepBackend[AsyncServiceProxy, AsyncOperationProxy]):
 
         transport = AsyncTransport(
             timeout=None,  # overloaded
-            client=httpx.AsyncClient(timeout=operation_timeout, verify=verify, cert=cert_),
-            wsdl_client=httpx.Client(timeout=load_timeout, verify=verify, cert=cert_),
+            client=httpx2.AsyncClient(timeout=operation_timeout, verify=verify, cert=cert_),
+            wsdl_client=httpx2.Client(timeout=load_timeout, verify=verify, cert=cert_),
         )
 
         client = AsyncClient(fspath(wsdl_path), wsse=wsse, plugins=plugins, transport=transport)

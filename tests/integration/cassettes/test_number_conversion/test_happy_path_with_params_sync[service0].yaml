@@ -23,20 +23,19 @@ interactions:
     uri: https://www.dataaccess.com/webservicesserver/NumberConversion.wso
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Ih7/Hu8W
-        ZXqZ101RLT/7aHe881GaL6fVrFhefPbRuj3fPvjo9zj6jZPHTZWtHp0uL/OyWuUpvbRsHuGzzz6a
-        t+3q0d27zXSeL7JmTF/h83FVX9zFL3dzfenuRwQnTQXSk2p2zX/SB4tHL9aLSV6/qb5b1bPmVd6s
-        qmVjOlnYHq6ursazrM2y6TRvmvG0Wty9yidNXl8W+IB+5rV2gicCd122R+dV3V6n7VWVPr4bbyEA
-        Yt8yXvz9Yx6bGYb+Zchz9P8A3rWog1YBAAA=
+      string: '<?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+          <soap:Body>
+            <m:NumberToWordsResponse xmlns:m="http://www.dataaccess.com/webservicesserver/">
+              <m:NumberToWordsResult>forty two </m:NumberToWordsResult>
+            </m:NumberToWordsResponse>
+          </soap:Body>
+        </soap:Envelope>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
       Cache-Control:
       - private, max-age=0
-      Content-Encoding:
-      - gzip
       Content-Length:
       - '311'
       Content-Security-Policy:

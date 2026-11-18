@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, assert_type
 
 import pytest
-from typing_extensions import assert_type
 
 from combadge.core.response import BaseResponse, ErrorResponse, SuccessfulResponse, _BaseDerivedError
 

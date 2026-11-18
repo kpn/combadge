@@ -6,7 +6,6 @@ from inspect import BoundArguments
 from inspect import signature as get_signature
 from typing import Any, Generic
 
-from annotated_types import SLOTS
 from pydantic import BaseModel, TypeAdapter
 
 from combadge._helpers.typing import unwrap_annotated, unwrap_type_alias
@@ -22,7 +21,7 @@ except ImportError:
     from get_annotations import get_annotations  # type: ignore[no-redef, import-not-found, import-untyped]
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class Signature:
     """Extracted information about a service method."""
 
@@ -111,7 +110,7 @@ class Signature:
             # Implicitly parse a Pydantic model.
             # TODO: come up with something smarter to better uncouple Combadge from Pydantic.
             payload = response_type.validate_python(payload)
-        return payload
+        return payload  # type: ignore[return-value]
 
     @staticmethod
     def _extract_parameter_infos(annotations_: dict[str, Any]) -> Iterable[ParameterInfo]:
@@ -132,7 +131,7 @@ class Signature:
             return None
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class ParameterInfo(Generic[BackendRequestT]):  # noqa: D101
     name: str
     """The parameter's name."""

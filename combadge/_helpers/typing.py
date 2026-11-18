@@ -1,6 +1,4 @@
-from typing import Annotated, Any, get_args, get_origin
-
-from typing_extensions import TypeAliasType
+from typing import Annotated, Any, TypeAliasType, get_args, get_origin
 
 
 def unwrap_type_alias(type_: type[Any] | None) -> type[Any] | None:

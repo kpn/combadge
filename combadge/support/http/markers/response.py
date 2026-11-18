@@ -2,10 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import Any
-
-from annotated_types import SLOTS
-from typing_extensions import override
+from typing import Any, override
 
 from combadge.core.markers.response import ResponseMarker
 from combadge.support.http.abc import (
@@ -16,7 +13,7 @@ from combadge.support.http.abc import (
 )
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class StatusCode(ResponseMarker):
     """
     Enrich the payload with response status code.
@@ -34,7 +31,7 @@ class StatusCode(ResponseMarker):
         return {self.key: HTTPStatus(response.status_code)}
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class ReasonPhrase(ResponseMarker):
     """Enrich the payload with HTTP reason message."""
 
@@ -46,7 +43,7 @@ class ReasonPhrase(ResponseMarker):
         return {self.key: response.reason_phrase}
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class Text(ResponseMarker):
     """
     Enrich the payload with HTTP response text.
@@ -70,7 +67,7 @@ class Text(ResponseMarker):
         return {self.key: response.text}
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class Header(ResponseMarker):
     """
     Enrich the payload with the specified HTTP header's value.

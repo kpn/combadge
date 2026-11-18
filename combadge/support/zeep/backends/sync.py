@@ -3,9 +3,8 @@ from __future__ import annotations
 from collections.abc import Collection
 from os import PathLike, fspath
 from types import TracebackType
-from typing import Any
+from typing import Any, Self, override
 
-from typing_extensions import Self, override
 from zeep import Client, Plugin, Transport
 from zeep.exceptions import Fault
 from zeep.helpers import serialize_object

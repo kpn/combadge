@@ -3,10 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Mapping, MutableMapping
 from dataclasses import dataclass
-from typing import Any, TypeVar
-
-from annotated_types import SLOTS
-from typing_extensions import override
+from typing import Any, TypeVar, override
 
 from combadge.core.markers.base import AnnotatedMarker
 
@@ -14,7 +11,7 @@ _InputPayloadT = TypeVar("_InputPayloadT")
 _OutputPayloadT = TypeVar("_OutputPayloadT")
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class ResponseMarker(AnnotatedMarker, ABC):
     """Response marker: it transforms or contructs a response."""
 
@@ -23,7 +20,7 @@ class ResponseMarker(AnnotatedMarker, ABC):
         """Transform the response."""
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class Map(ResponseMarker):
     """Map a payload to a dictionary under the specified key."""
 
@@ -35,7 +32,7 @@ class Map(ResponseMarker):
         return {self.key: payload}
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class Extract(ResponseMarker):
     """Extract a value from the specified key."""
 
