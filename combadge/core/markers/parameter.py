@@ -4,13 +4,11 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic
 
-from annotated_types import SLOTS
-
 from combadge.core.markers.base import AnnotatedMarker
 from combadge.core.typevars import BackendRequestT
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class ParameterMarker(AnnotatedMarker, Generic[BackendRequestT], ABC):
     """Parameter marker: it modifies a request with a call-time argument."""
 

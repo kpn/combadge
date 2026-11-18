@@ -7,7 +7,6 @@ from typing import Any, Generic, TypeVar, Union
 from typing import get_args as get_type_args
 from typing import get_origin as get_type_origin
 
-from annotated_types import SLOTS
 from pydantic import HttpUrl, TypeAdapter
 from pydantic_core import Url
 from zeep.exceptions import Fault
@@ -58,7 +57,7 @@ class BaseZeepBackend(BaseBackend, ABC, Generic[_ServiceProxyT, _OperationProxyT
         else:
             return_types = (response_type,)
 
-        response_type: Any = _UNSET
+        response_type: Any = _UNSET  # type: ignore[no-redef]
         fault_type: Any = _UNSET
 
         for return_type in return_types:
@@ -101,7 +100,7 @@ class BaseZeepBackend(BaseBackend, ABC, Generic[_ServiceProxyT, _OperationProxyT
         return fault_type.validate_python(exception.__dict__)
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class ByBindingName:
     """
     Create service by binding name and address.
@@ -125,7 +124,7 @@ class ByBindingName:
         return self.address
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class ByServiceName:
     """
     Create service by service and port names.

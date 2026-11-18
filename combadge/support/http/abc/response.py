@@ -1,8 +1,7 @@
 """Interfaces for HTTP-related request and response classes."""
 
 from collections.abc import Mapping
-
-from typing_extensions import Protocol
+from typing import Protocol
 
 
 class HttpResponseHeaders(Protocol):

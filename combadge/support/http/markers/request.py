@@ -4,10 +4,7 @@ from collections.abc import Callable, Hashable
 from dataclasses import dataclass
 from enum import Enum
 from inspect import BoundArguments
-from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeAlias, cast
-
-from annotated_types import SLOTS
-from typing_extensions import override
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeAlias, cast, override
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.markers.method import MethodMarker
@@ -23,7 +20,7 @@ from combadge.support.http.abc import (
 )
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class CustomHeader(ParameterMarker[HttpRequestHeaders]):
     """
     Mark a parameter as a header value. Argument is passed «as is» during a service call.
@@ -41,7 +38,7 @@ class CustomHeader(ParameterMarker[HttpRequestHeaders]):
         request.http_headers.append((self.name, value))
 
 
-@dataclass(init=False, **SLOTS)
+@dataclass(init=False, slots=True)
 class Path(Generic[FunctionT], MethodMarker[HttpRequestUrlPath, FunctionT]):  # noqa: D101
     _factory: Callable[[BoundArguments], str]
 
@@ -82,7 +79,7 @@ def path(path_or_factory: str | Callable[..., str]) -> Callable[[FunctionT], Fun
     return Path[Any](path_or_factory).mark
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class HttpMethod(Generic[FunctionT], MethodMarker[HttpRequestMethod, FunctionT]):  # noqa: D101
     method: str
 
@@ -102,7 +99,7 @@ def http_method(method: str) -> Callable[[FunctionT], FunctionT]:
     return HttpMethod[Any](method).mark
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class QueryParam(ParameterMarker[HttpRequestQueryParams]):
     """
     Mark parameter as a query parameter.
@@ -119,7 +116,7 @@ class QueryParam(ParameterMarker[HttpRequestQueryParams]):
         request.query_params.append((self.name, value.value if isinstance(value, Enum) else value))
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class QueryArrayParam(ParameterMarker[HttpRequestQueryParams]):
     """
     Mark parameter as an array-like query parameter.
@@ -146,7 +143,7 @@ if TYPE_CHECKING:
     Payload: TypeAlias = Annotated[AnyT, ...]
 else:
 
-    @dataclass(**SLOTS)
+    @dataclass(slots=True)
     class Payload(ParameterMarker[HttpRequestPayload]):
         """
         Mark parameter as a request payload.
@@ -182,7 +179,7 @@ else:
             return Annotated[item, cls()]
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class Field(ParameterMarker[HttpRequestPayload]):
     """
     Mark a parameter as a value of a separate payload field.
@@ -208,7 +205,7 @@ if TYPE_CHECKING:
     FormData: TypeAlias = Annotated[AnyT, ...]
 else:
 
-    @dataclass(**SLOTS)
+    @dataclass(slots=True)
     class FormData(ParameterMarker[HttpRequestFormData]):
         """
         Mark parameter as a request form data.
@@ -235,7 +232,7 @@ else:
             return Annotated[item, cls()]
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class FormField(ParameterMarker[HttpRequestFormData]):
     """
     Mark a parameter as a separate form field value.

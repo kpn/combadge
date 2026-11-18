@@ -1,4 +1,3 @@
-from sys import version_info
 from typing import Annotated, Any
 
 import pytest
@@ -30,7 +29,7 @@ def test_unwrap_type_alias_with_primitives(type_: Any, expected: Any) -> None:
     assert unwrap_type_alias(type_) is expected
 
 
-@pytest.mark.skipif(version_info < (3, 12), reason="PEP 695 required")
 def test_unwrap_type_alias() -> None:
     """Verify with an actual alias."""
-    exec("type Alias = int; assert unwrap_type_alias(Alias) is int", globals(), locals())
+    type Alias = int
+    assert unwrap_type_alias(Alias) is int  # type: ignore[arg-type]

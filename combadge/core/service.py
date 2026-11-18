@@ -1,7 +1,5 @@
 from types import TracebackType
-from typing import Any, ClassVar, Generic
-
-from typing_extensions import Self
+from typing import Any, ClassVar, Generic, Self
 
 from combadge.core.typevars import BackendT
 

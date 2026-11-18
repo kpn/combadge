@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 
-from annotated_types import SLOTS
 
-
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class SoapOperationName:
     """SOAP operation name."""
 

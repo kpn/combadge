@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Any
 
 import pytest
-from httpx import Response
+from httpx2 import Response
 
 from combadge.support.http.abc import HttpRequestUrlPath
 from combadge.support.http.markers import Header, Path, ReasonPhrase, StatusCode, Text

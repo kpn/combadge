@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from collections.abc import Hashable
 from types import TracebackType
-from typing import Any, cast
+from typing import Any, Self, cast, override
 
-from httpx import Client, Response
+from httpx2 import Client, Response
 from pydantic import TypeAdapter
-from typing_extensions import Self, override
 
 from combadge._helpers.pydantic import get_type_adapter
 from combadge.core.binder import BaseBoundService

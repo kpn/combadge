@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from itertools import chain
 from types import UnionType
-from typing import Annotated, Any, Union, get_origin
+from typing import Annotated, Any, Self, TypeAliasType, Union, get_origin
 from typing import get_args as get_type_args
-
-from typing_extensions import Self, TypeAliasType
 
 
 class AnnotatedMarker:

@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from typing import Any, ClassVar, Generic
+from typing import Any, ClassVar, Generic, Never, Self
 
 from pydantic import BaseModel
-from typing_extensions import Never, Self
 
 from combadge.core.errors import CombadgeError
 from combadge.core.typevars import ResponseT

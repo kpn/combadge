@@ -4,15 +4,12 @@ from abc import ABC
 from collections.abc import Callable
 from dataclasses import dataclass
 from inspect import BoundArguments
-from typing import Any, Generic
-
-from annotated_types import SLOTS
-from typing_extensions import override
+from typing import Any, Generic, override
 
 from combadge.core.typevars import BackendRequestT, FunctionT
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
     """Method marker that modifies an entire request based on all the call arguments."""
 
@@ -59,7 +56,7 @@ class MethodMarker(ABC, Generic[BackendRequestT, FunctionT]):
         return marks
 
 
-@dataclass(**SLOTS)
+@dataclass(slots=True)
 class WrapWith(Generic[FunctionT], MethodMarker[Any, FunctionT]):  # noqa: D101
     decorator: Callable[[FunctionT], FunctionT]
 

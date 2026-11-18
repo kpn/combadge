@@ -34,9 +34,7 @@ jobs:
         body: ${{ steps.changelog.outputs.changelog }}
 
     - name: "✨ Install Poetry"
-      run: |
-        pipx install "poetry<2.0.0"
-        pipx inject poetry poetry-dynamic-versioning
+      run: pipx install "poetry<3.0.0"
 
     - name: 📦 Build package
       run: poetry build --ansi

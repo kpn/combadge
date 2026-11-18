@@ -6,9 +6,7 @@ from collections.abc import Callable, Iterable
 from functools import update_wrapper
 from inspect import getmembers as get_members
 from inspect import signature as get_signature
-from typing import TYPE_CHECKING, Any
-
-from typing_extensions import override
+from typing import TYPE_CHECKING, Any, override
 
 from combadge.core.markers.method import MethodMarker
 from combadge.core.service import BaseBoundService

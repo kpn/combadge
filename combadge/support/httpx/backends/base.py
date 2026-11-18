@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, Generic, TypeVar
 
-from httpx import AsyncClient, Client, Response
+from httpx2 import AsyncClient, Client, Response
 
 from combadge.core.backend import BaseBackend
 
